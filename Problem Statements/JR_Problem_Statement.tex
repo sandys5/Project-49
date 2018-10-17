@@ -1,0 +1,41 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{setspace}
+
+
+\usepackage{geometry}
+\geometry{margin=.75in}
+
+\begin{document}
+
+\title{Senior Capstone - Problem Statement\\
+	\large 461 Senior Design - Fall 2018\\
+	\large Jonathan Ropp\\
+	\large October 11, 2018}
+
+\maketitle
+
+\begin{abstract}
+July 2019 will mark the 50th anniversary of the Apollo 11 Moon Landing. To commemorate this anniversary, the Oregon Museum of Science and Industry (OMSI) has partnered with Oregon State University (OSU) to produce a twenty-five-minute 3D animation of the Apollo 11 mission to be displayed in the museum. This animation will encompass all aspects of the mission, from takeoff, to moon landing, to Earth landing, and every part in-between. This project is meant to give viewers an accurate depiction of the Apollo 11 mission so that they will be able to fully appreciate the scale and complexity of such an undertaking. The animation will be viewed by audiences of all ages and backgrounds, meaning that the end product needs to be made in a way that anyone can view and understand the stages and processes of the Apollo 11 Mission.
+\end{abstract}
+
+\section{Problem Description}
+
+OMSI strives to engage their audiences through curiosity and encourage exploration of ideas. With the 50th anniversary of the Apollo 11 Moon Landing approaching in July 2019, OMSI has teamed with OSU to produce a 3D animation of the mission to capture the complexity and vastness of the mission in all its parts. To do this, the animation will need to be able to be viewed from any viewpoint that the user chooses, of any part of the mission. Producing this animation is a large task, but presenting it in such a way that a wide audience can engage with it is a whole separate challenge. The animation has to be technically accurate while also appealing to audiences ranging from industry professionals to families with young children. 
+
+\section{Proposed Solution}
+
+To best accomplish the goal of a twenty-five-minute, 3D animation, we will primarily use a combination of C++ and OpenGL to produce the graphics. OpenGL allows us to insert 3D models into a scene, animate them, and view them from arbitrary viewpoints. This, combined with the logical programming power of C++ allows for high-end computer graphics managed by a powerful code base. As the project progresses, we may start including other programming languages and techniques for specific problems we encounter that c++ and OpenGL do not support, but this will be a strong place to start. 
+ 
+We will use 3D models that most accurately represent the Apollo 11 mission, using real images and textures when possible. When we cannot use real images, we will analyze the real mission closely and produce a solution that will be as close to the real thing as possible. When animating the 3D models, we will use physics to represent as much movement as we can and using idealized motion in other scenarios for the most accurate representation possible. Things we will consider may include gravity, drag, thrust, escape velocity, and more. These will all play a part when launching the rocket, releasing the propulsion systems, landing on the moon, command module docking, Earth landing, etc. 
+
+Between each section of the mission, the transitions should be smooth so that for the viewers, this experience is closer to a movie. This means that bringing in and taking out 3D objects should be done in such a way that the immersion of the animation is not broke. This being said, for back-end purposes, we may want an easy way to switch between each scene immediately for testing purposes, but may also be useful for instructional purposes as well. Also, being able to pause the animation to change viewpoints will also prove to be useful.
+
+If all goes well, the finished animation will be shown in a 10 projector theater and also be accompanied by a presentation walking the viewers through the stages of the mission. The animation may need to be edited and formatted in such a way that it can be viewed in good quality in such a setting. Any accompanying presentation will need to be technically accurate while also not being too complex for viewers to understand. This will require in-depth understanding of the Apollo 11 Mission and a family friendly presentation style. This may be lead by presenters at OMSI or our group may be tasked with the presentation is applicable. 
+
+\section{Metrics}
+Ideally, we will be able to produce a twenty-five-minute long, 3D animation of all stages of the Apollo 11 mission that will be able to be shown at OMSI in their 10-projector planetarium. This would consist of the following scenes: Earth launch, trans-lunar injection, lunar flight, moon landing, moon launch, command module docking, trans-Earth injection, flight to the Earth, and Earth landing. All of these scenes will need to be smoothly strung together while also providing the viewer with the ability to view the scene from any vantage point they choose. Each scene will use physics for animation and actual texture data for the models where possible. Ideally, all motion will be physics based and 3D models will be as close to lifelike as possible, but realistically, we hope that most of the physics and textures will be life-like. Depending on what we decide with the client, we may also work on narration for the animation since it will be displayed as a show. Lastly, and above all else, we want to align with OMSI’s mission statement: "Inspire curiosity through engaging science learning experiences, foster experimentation and the exchange of ideas, and stimulate informed action.” 
+
+\end{document}
+
