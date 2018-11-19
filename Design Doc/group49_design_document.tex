@@ -136,10 +136,15 @@
     Our project will consist of eleven main scenes of the Apollo 11 mission: launch, to orbit, to trans-lunar injection, to moon, to lunar orbit, to landing, to re-launch, to lunar orbit, to trans-Earth injection, to Earth, to splashdown. Then, within each of these scenes, there will be many different parts that make the scene: 3D objects, animation, audio, textures, lighting, orbital mechanics acting on objects, and possibly captioning for the audience. While there are not direct relationships between all these parts, they all add to the overall detail and quality of the animation. 
     
     \subsection{Logical Viewpoint}
-    %Classes we use, big libraries, etc.
+
+    Most of our logic will be based on how far along the mission we are in the animation. We will have a flight path and as we make progress along that path, different actions will happen at different points, such as turning rockets on/off, dropping booster rockets, starting to land, etc. 
+    %What is the flight path? An array of vertices? A function?
     
     \subsection{Dependency Viewpoint}
-    %What we are using? OpenGL
+
+    Some texturing will need to change depending on where the viewpoint is. A main example is that we don't want to use incredibly detailed textures for the Moon when the rocket has barely left Earth, and vice versa. We can have the textures change depending on distance, but this change should not be noticeable to the viewer.
+    
+    Our audio triggers will be dependant on what point in the mission we are at, such as audio at launch, leaving the atmosphere, landing on the moon, etc. 
     
     \subsection{Information Viewpoint}
     %The physics, math, numbers, etc.
