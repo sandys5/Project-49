@@ -87,7 +87,7 @@ Next Summer, the Summer of 2019, will be the 50th anniversary of the Apollo 11 M
 
 \section{Overview}
        \subsection{Scope}
-        This document focuses on the 3D animation for the Apollo 11 Mission that will be created by our group, "The Apolloers" for display at OMSI. The design principals of the project will be outlined here, as well as design elements, such as functionality, usability, requirements, and more. %MORE HERE
+        This document focuses on the 3D animation for the Apollo 11 Mission that will be created by our group, "The Apolloers" for display at OMSI. The design principals of the project will be outlined here, as well as design elements, such as functionality, usability, and requirements. These principals and elements will outline the deliverables of our project as well as the resources needed to complete it. The context, stakeholders, and intended audience our project will be used in will also be outlined, which will provide supplementary reasoning for our chosen delivarables.  %MORE HERE
         
     \subsection{Purpose}
         The design and structure of this project will be outlined so that readers would be able to understand how the 3D animation is organized from a development viewpoint. In addition to the readers, this document will also serve as guidelines for our group to follow throughout the year. This document will be changed throughout the year as we refine our design. 
@@ -97,8 +97,7 @@ Next Summer, the Summer of 2019, will be the 50th anniversary of the Apollo 11 M
 
 \section{Definitions}
 %Alphabetize this table!!!
-\begin{table}
-\begin{tabular} {|l|l|}
+\begin{tabular} {|l|p{13.5cm}|}
 \hline
 Term & definition \\ \hline
 API & An Application Programming Interface is a set of protocols and tools that are used to build a software application. Essentially the `building blocks' that a programmer uses to build an application.  \\ \hline
@@ -106,25 +105,30 @@ Apollo 11 Mission & A spaceflight operated by NASA to land the first humans on t
 Graphics Pipeline & A conceptual model that describes the steps that a graphics system needs to perform in order to render a 3D scene. \\ \hline
 NASA & The National Aeronautics and Space Administration is a federal agency that focuses on research and development related to air and space.	\\ \hline
 OMSI & The Oregon Museum of Science and Industry, located in Portland, Oregon	\\ \hline
-OpenAL & An open-source audio library API that is based off of OpenGL so that audio can be implemented with a 3D render in a familiar fashion as OpenGL. \\ \hline
+OpenAL & An open-source audio library API that is based off of OpenGL so that audio can be implemented into a 3D render in a similar fashion to OpenGL. \\ \hline
 OpenGL & An open-source graphics library API that is used to interact with graphics hardware to design 3D renderings.	\\ \hline
 SDK & A Software Development Kit is a set of tools that program developers use to write programs for an application. \\ \hline
 
 \end{tabular}
-\end{table}
-\section{Conceptual Model}
-%Mini-requirements doc
-    \subsection{}
 
 \section{Design Description}
 
     \subsection{Design Stakeholders}
     The stakeholders for our project are OMSI as well as the audiences who will be viewing our video. The educational and technical quality of our video will reflect on OMSI. Our group will also be using a storyboard created by some of OMSI's staff to base the video's narrative off of, so OMSI will also have influence over how this video is created. The planetarium audiences will also be affected by the technical and educational quality of our video. If the video is more entertaining than educational, then the audience will not understand the impact and ambition of the Apollo 11 mission. If the video is more educational than entertaining, then the audience will be bored and less likely to pay attention to the content of the video.
-    \subsection{Design Views}
-    %Is our view the whole project?
+    
+\subsection{Design Views}
+    The Apollo 11 animation project can be broken into different views that can all be used to describe the animation. This document will look at the design of the animation through the different viewpoints listed below, and will explain those viewpoints in detail in Section 4. 
     
     \subsection{Design Viewpoints}
-    The Apollo 11 animation project can be broken into different viewpoints that can all be used to describe the animation. We have broken the project into the following: Context, Composition, Logical, Dependency, Information, Interface, Interaction, and Resources viewpoints. Each of these viewpoints aim to provide an answer to various questions proposed by the project such as: what will the animation consist of, how will data be stored and used, how will users interact with the project, etc. 
+    \begin{enumerate}
+        \item \textbf{Context}: In what context will this animation be viewed.
+        \item \textbf{Composition}: How the animation is separated into different entities.
+        \item \textbf{Logical}: What logic is constant throughout the animation, regardless of design decisions.
+        \item \textbf{Dependency}: How different entities of the animation depend on others.
+        \item \textbf{Information}: What data will be needed and how it will be used in the animation. 
+        \item \textbf{Interface}: How developers should correctly use the animation.
+        \item \textbf{Resources}: What external entities are needed for the animation. 
+    \end{enumerate}
     
     \subsection{Design Elements}
     There are many elements of a 3D animation that all need to work with the other elements to produce a quality project. Programming platforms such as OpenAL and OpenGL will be used for managing the other elements relating to 3D graphics and audio respectively. OpenAL will be used to work with audio files from the transmissions from the mission, as well as various sound effects that will be included to immerse the audience. 
@@ -173,7 +177,7 @@ SDK & A Software Development Kit is a set of tools that program developers use t
 
     Some texturing will need to change depending on where the viewpoint is. A main example is that we don't want to use incredibly detailed textures for the Moon when the rocket has barely left Earth, and vice versa. We can have the textures change depending on distance, but this change should not be noticeable to the viewer.
     
-    Our audio triggers will be dependant on what point in the mission we are at, such as audio at launch, leaving the atmosphere, landing on the moon, etc. 
+    Our audio triggers will be dependant on what point in the mission the video is at. For example, the audio for the Saturn 5 rockets will be triggered during the launch phase of the mission. The volume of the audio will also depend on what viewpoint is currently being used. If the viewpoint is outside of the Apollo 11, the conversations between Tranquility Base and the Apollo 11 will be at a lower volume than if the viewpoint was inside of the Apollo 11.
     
     \subsection{Information Viewpoint}
     %The physics, math, numbers, etc.
