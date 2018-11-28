@@ -139,7 +139,13 @@ SDK & A Software Development Kit is a set of tools that program developers use t
 %    - Audio files of the mission transmissions and sound effects
 %    - Textures for our 3D models
 %    - Lighting 
-    \subsection{Design Overlays}
+    \subsection{Design Overlays} %Any additional information on certain viewpoints.
+	\subsubsection{Textures and 3D Models}
+	Most of these textures will come from the NASA websites, which are readily available for everyone to use. Do note that these textures are high poly textures, and are rather accurate as they can be for just being a picture. The 3D model of the Saturn 5 will come from somewhere else, probably from some model sharing site, there is millions of models made within the modeling community, making it highly probable that someone has already made the Saturn 5 3D model. If we cannot find a low poly 3D model of the Saturn 5, we must settle for a high poly model, or maybe will have to make one ourselves. If we are left with a high poly 3D model, we must separate the more fine details from the model in attempt to reduce increase in our polygon budget. Our last choice is to make it ourselves, in this case the project will take more time due to more allocation of time to finish the 3D model.
+	\subsubsection{The Flight Path}
+	In terms of the flight path, optimally we would want a dataset of the whole flight and back, it is very easy to convert flight data into a virtual path instead of calculating and predicting the path through the use of initial and final variables. If it turns out that we cannot find any dataset for the flight, we can calculate the flight path in a similar amount of time, but will require us to sit down and research orbital mechanics. 
+	\subsubsection{Planetarium SDK}
+	One of our biggest stretch goals is to manage to pipe in our animation into one of their planetariums. We suspect that their planetariums use some type of SDK to interpolate subsections or FOV's into smaller chunks, we just don't have access to their SDK. The SDK is probably within the hands of the company that built the planetarium for OMSI, and will probably need some negotiation to get our hands on it. 
     \subsection{Design Rationale}
     \subsection{Design Languages}
 
@@ -176,10 +182,6 @@ SDK & A Software Development Kit is a set of tools that program developers use t
     \subsection{Interface Viewpoint}
        
        The 3D animation will be compiled into an executable file (.exe) so that the user can open the whole animation from one file. Then, the user will be able to start and stop the animation using a keyboard, and change their viewpoint by clicking and dragging their mouse, or choose set viewpoints using the keyboard. If the user does not want to change the viewpoint, the viewpoint will be set to default viewing positions that our group has chosen. The user will be able to view the video from outside of the spacecraft, inside the spacecraft, on the moon, and on Earth. As the animation progresses, there will be functionality for the user to step back or forward through the animation, and possibly jump to pre-defined points in the flight path.
-
-        
-    \subsection{Interaction Viewpoint}
-    %Is this section actually applicable? Our entities dont really interact...
     
     \subsection{Resources Viewpoint}
     To obtain the audio of the transmissions between the Apollo 11 crew and Tranquility Base, we will use NASA's archive of audio files from the Apollo 11 mission. Using OpenAL, these files will be played approximately at the same stage of the mission as they were recorded in. Our group will not be implementing every audio file in the Apollo 11 audio archive. We will be including audio files that are entertaining and not filled with jargon, so the audience can understand and enjoy the conversations between Tranquility Base and the Apollo 11.
