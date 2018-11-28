@@ -134,22 +134,18 @@ SDK & A Software Development Kit is a set of tools that program developers use t
     There are many elements of a 3D animation that all need to work with the other elements to produce a quality project. Programming platforms such as OpenAL and OpenGL will be used for managing the other elements relating to 3D graphics and audio respectively. OpenAL will be used to work with audio files from the transmissions from the mission, as well as various sound effects that will be included to immerse the audience. 
     
     The programming in OpenGL will dictate what 3D objects are in the project, where they are in the scene, and how they look. Many 3D objects in our project will come from an online repository, which we may need to add textures to, which would also be found online. Once the 3D object is in the scene, different lighting features will be programmed in to account for the Sun and that light reflecting off of the other objects. Animating the objects will require use of real physics and orbital mechanics applied to the objects to provide realistic movement. 
-    
-%   The elements of our project include:
-%    - OpenGL
-%    - OpenAL
-%    - Orbital mechanics
-%    - 3D models of .....
-%    - Audio files of the mission transmissions and sound effects
-%    - Textures for our 3D models
-%    - Lighting 
+
     \subsection{Design Overlays} %Any additional information on certain viewpoints.
+	
 	\subsubsection{Textures and 3D Models}
 	Most of these textures will come from the NASA websites, which are readily available for everyone to use. Do note that these textures are high poly textures, and are rather accurate as they can be for just being a picture. The 3D model of the Saturn 5 will come from somewhere else, probably from some model sharing site, there is millions of models made within the modeling community, making it highly probable that someone has already made the Saturn 5 3D model. If we cannot find a low poly 3D model of the Saturn 5, we must settle for a high poly model, or maybe will have to make one ourselves. If we are left with a high poly 3D model, we must separate the more fine details from the model in attempt to reduce increase in our polygon budget. Our last choice is to make it ourselves, in this case the project will take more time due to more allocation of time to finish the 3D model.
+	
 	\subsubsection{The Flight Path}
 	In terms of the flight path, optimally we would want a dataset of the whole flight and back, it is very easy to convert flight data into a virtual path instead of calculating and predicting the path through the use of initial and final variables. If it turns out that we cannot find any dataset for the flight, we can calculate the flight path in a similar amount of time, but will require us to sit down and research orbital mechanics. 
+	
 	\subsubsection{Planetarium SDK}
 	One of our biggest stretch goals is to manage to pipe in our animation into one of their planetariums. We suspect that their planetariums use some type of SDK to interpolate subsections or FOV's into smaller chunks, we just don't have access to their SDK. The SDK is probably within the hands of the company that built the planetarium for OMSI, and will probably need some negotiation to get our hands on it. 
+    
     \subsection{Design Rationale}
 	The basic rationale of our project is that setting the scene correctly is the most important factor in making this animation the best it can be. The Earth, Moon, and Sun need to be in the right position and the camera (or Eye) needs to be in the right position to reflect that. The lighting from the sun needs to be accurate as it reflects and refracts off the lunar capsule, moon, and Earth. The small details matter the most, such as the Earth having its iridescent glow thats given off by its atmosphere, or both planetoids having a dark and a light side. All of these combined truly create the scene, the flight path is the simpliest part, but making it feel like the Apollo 11 mission is the hardest.
     \subsection{Design Languages}
@@ -159,7 +155,6 @@ SDK & A Software Development Kit is a set of tools that program developers use t
 \section{Design Viewpoints}
 
     \subsection{Context Viewpoint}
-    %This will be an OMSI presentation, viewers would be visitors, etc.
     %careful about overlap with Interface viewpoint
     
     This animation will be viewed primarily by OMSI visitors. This audience can range from young school children on field trips, to very technical industry leaders. We will want the user of this program to be able to change the viewpoint of the scene, regardless of if the user is a visitor or a staff member running the program.  
@@ -192,8 +187,9 @@ SDK & A Software Development Kit is a set of tools that program developers use t
     To obtain the audio of the transmissions between the Apollo 11 crew and Tranquility Base, we will use NASA's archive of audio files from the Apollo 11 mission. Using OpenAL, these files will be played approximately at the same stage of the mission as they were recorded in. Our group will not be implementing every audio file in the Apollo 11 audio archive. We will be including audio files that are entertaining and not filled with jargon, so the audience can understand and enjoy the conversations between Tranquility Base and the Apollo 11.
     
     To obtain the audio for the sound effects in our project, our group will download audio files from free online sound effects libraries. We will only need two audio files for sound effects, one for the splash of the splashdown and another for the roar of the Saturn 5 rockets. Like the audio files obtained from NASA's archive, the audio will be implemented in a 3D space using OpenAL. 
-    % where are we getting 3-D objects, audio files, etc.
 
+    Similarly to audio, our group will also need to obtain 3D models and textures from online repositories. Models will include the Saturn 5 rocket, Command Module Columbia, and Lunar Module Eagle. Multiple textures will be needed for the Earth and the Moon at different levels of detail, depending on how close the view port is during the animation. Finally, the background will need an accurate star-map to emphasize the vastness of space. 
+    
 \section{Conclusion}
 A 3D animation consists of many different elements that all need to work together based on the implementation in a given API. We will be using OpenGL as our primary API that will manage the main graphical elements of our group's Apollo 11 3D animation. The animation will include all parts of the mission from takeoff to splashdown on Earth with full functioning elements such as 3D objects, texturing on those objects, lighting for the scene, etc. With a completed animation, direct users of the animation will be able to use a mouse and keyboard to navigate through the animation and view the scene through arbitrary viewpoints. Lastly, the main goal of this Apollo 11 animation is to engage audiences at OMSI and encourage curiosity in regards to the vastness of space. 
 
