@@ -89,20 +89,26 @@ Our group will be recreating the Apollo 11 mission in a 25-minute video using 3D
     This project will be a 25 minute video whose target audience are the people attending the planetarium at OMSI. This includes school children on a field trip, people interested in space travel, and people who are attending the planetarium to be entertained. Since the planetarium at OMSI has a large audience of diverse people, the Apollo 11 recreation will need to be accessible, entertaining, as well as realistic in order to educate the audience without boring them.
     \subsection{Overview}
     For the video of the Apollo 11 to be considered complete the following features will need to be implemented: textured 3D objects, a variety of camera positions for the viewer, the flight path of Apollo 11, docking of the modules, physics, and audio files and transcriptions. This is a general overview of the requirements for this project. The System Requirements section will go into more detail explaining  
-    \subsection{Definitions}
-    \begin{itemize}
-        \item SDK: The set of software tools that allows for applications of a certain software, hardware, computer system, operating system or similar development platform.
-        \item OMSI: The Oregon Museum of Science and Industry, located in Portland, OR.
-    \end{itemize}
+    \begin{tabular} {|l|p{13.5cm}|}
+\hline
+Term & definition \\ \hline
+API & An Application Programming Interface is a set of protocols and tools that are used to build a software application. Essentially the `building blocks' that a programmer uses to build an application.  \\ \hline
+Apollo 11 Mission & A spaceflight operated by NASA to land the first humans on the Moon, launched July 16th, 1969.  \\ \hline
+NASA & The National Aeronautics and Space Administration is a federal agency that focuses on research and development related to air and space.	\\ \hline
+OMSI & The Oregon Museum of Science and Industry, located in Portland, Oregon	\\ \hline
+OpenGL & An open-source graphics library API that is used to interact with graphics hardware to design 3D renderings.	\\ \hline
+SDK & A Software Development Kit is a set of tools that program developers use to write programs for an application. \\ \hline
+
+\end{tabular}
 \section{Specific Requirements}
     \subsection{External Interfaces}
     At minimum, the animation will need to be viewed on some sort of computer display. Ideally, we will be able to gain access to OMSI's projector SDK so that we can display the animation in OMSI's planetarium through 10 projectors. There will also be audio alongside the animation, such as the sounds of the boosters, mission communications, and possibly captions.
     \subsection{Functions}
     The 3D animation of the Apollo 11 Mission will include the entire flight path (launch to orbit, orbit to trans-lunar injection, to moon, to lunar orbit, to landing, to re-launch, to lunar orbit, to trans-Earth injection, to Earth, to splashdown). 3D objects will include the Earth, Moon, Lunar Module \textit{Eagle}, Saturn 5 rocket, Command Module, and others as we see fit. All of these sections will be smoothly animated together and be as scientifically accurate as possible.
     \subsection{Usability Requirements}
-    Users will be able to view the animation from arbitrary viewpoints. This will be controlled by a computer mouse or some other input device. Any user with only basic computer knowledge should be able to change these viewpoints.
+    Users will be able to view the animation from arbitrary viewpoints. This will be controlled by a computer mouse and keyboard, and be designed in such a way that any user, even without vast knowlege of computers, would be able to fully intereact with the animation. There will also be static viewpoints placed inside the command module that users can swap to using the keyboard. 
     \subsection{Performance Requirements}
-    The animation will need to run at a steady frame rate throughout the whole mission to avoid breaking immersion. Also, there cannot be any errors when running the program; it will need to be robust enough to keep running even in edge-case environments.
+    The animation will need to run at a steady frame rate throughout the whole mission to avoid breaking immersion. Also, there cannot be any errors when running the program; it will need to be robust enough to run without interuption even in edge-case environments.
 \section{Verification}
     \subsection{External Interfaces}
     Minimally, we can make sure that we can view the animation from a computer display. Then, if we gain access to the projector SDK, we can attempt to view the animation in OMSI's planetarium and make sure the animation scales to the correct size. Also, we need to make sure the audio sounds good from a computer station, but if we present in the planetarium, we will need to make sure the audience is treated to the best audio the planetarium can provide. 
@@ -110,9 +116,9 @@ Our group will be recreating the Apollo 11 mission in a 25-minute video using 3D
     We will make sure to include all parts of the flight path in the animation and these scenes need to transition from one to the other without any noticeable change. We will have 3D objects for all notable objects in the animation (Earth, Moon, Saturn 5 Rocket, etc.). Ideally, we will use physics for all movement, but a reasonable goal would be to have at least half the movement be based on real physics and used idealized motion for the rest.
     \subsection{Usability Requirements}
     Allow a user from outside of our project group take control of the animation and make sure that they system is user-friendly. They 
-    should be able to fully operate the program with minimal instruction from our group. 
+    should be able to fully operate the program with minimal instruction from our group. User testing may be organized later in the development cycle to ensure that a wide variety of users from different backgrounds are not struggling to interact with the animation. 
     \subsection{Performance Requirements}
-    On a suitable, mid-range computer, the animation should be able to run and keep a steady frame rate even when given extreme values for input. We will aim for a frame rate that varies less than +/- 5 frames per second.
+    On a suitable, mid-range computer, the animation should be able to run and keep a steady frame rate even when given extreme values for input. Ideally, the animation will run at 60 frames per second with little variation, but even more important than the frames per second is that the animation is not `choppy' and is easy to watch.
 
 \newpage
 
