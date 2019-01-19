@@ -30,15 +30,21 @@ const int GLUIFALSE = { false };
 #define ESCAPE		0x1b
 
 // initial window size:
-const int INIT_WINDOW_SIZE = { 600 };
+const int INIT_WINDOW_SIZE = { 800 };
 
-// size of the box:
-const float BOXSIZE = { 2.f };
+// Important positions
+int EarthXYZ[] = { 150, 150, 150 };
+int SunXYZ[] = { 200, 100, 300 };
+
+// Dimentions
+int EarthDiameter = 10;
+int SunDiameter = EarthDiameter * 109; //Sun has ~109 times the diameter of the Earth
 
 // Lights
 int Light1On = 1;
-int Light2On = 1;
-int Light3On = 1;
+
+// Views
+int View = 1;
 
 // multiplication factors for input interaction:
 //  (these are known from previous experience)
@@ -132,9 +138,6 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-
-int EarthDiameter = 10;
-int SunDiameter = EarthDiameter * 109;
 
 
 // function prototypes:
@@ -571,38 +574,37 @@ MjbSphere(float radius, int slices, int stacks)
 // draw the complete scene:
 
 void
-Display( )
+Display()
 {
-
 	// set which window we want to do the graphics into:
-	glutSetWindow( MainWindow );
+	glutSetWindow(MainWindow);
 
 	// erase the background:
-	glDrawBuffer( GL_BACK );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glDrawBuffer(GL_BACK);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable( GL_DEPTH_TEST );
+	glEnable(GL_DEPTH_TEST);
 
 	// specify shading to be flat:
-	glShadeModel( GL_FLAT );
+	glShadeModel(GL_FLAT);
 
 	// set the viewport to a square centered in the window:
-	GLsizei vx = glutGet( GLUT_WINDOW_WIDTH );
-	GLsizei vy = glutGet( GLUT_WINDOW_HEIGHT );
+	GLsizei vx = glutGet(GLUT_WINDOW_WIDTH);
+	GLsizei vy = glutGet(GLUT_WINDOW_HEIGHT);
 	GLsizei v = vx < vy ? vx : vy;			// minimum dimension
-	GLint xl = ( vx - v ) / 2;
-	GLint yb = ( vy - v ) / 2;
-	glViewport( xl, yb,  v, v );
+	GLint xl = (vx - v) / 2;
+	GLint yb = (vy - v) / 2;
+	glViewport(xl, yb, v, v);
 
 	//Perspective	
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity( );
-	gluPerspective( 90., 1.,	0.1, 1000. );
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90., 1., 0.1, 1000.);
 
 	// place the objects into the scene:
 
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity( );
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	if (Light1On) {
 		glEnable(GL_LIGHT1);
@@ -610,49 +612,60 @@ Display( )
 	else {
 		glDisable(GL_LIGHT1);
 	}
-	if (Light2On) {
-		glEnable(GL_LIGHT2);
-	}
-	else {
-		glDisable(GL_LIGHT2);
-	}
-	if (Light3On) {
-		glEnable(GL_LIGHT3);
-	}
-	else {
-		glDisable(GL_LIGHT3);
-	}
+
 	glEnable(GL_LIGHTING);
 
+
+
+	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
+	//Default view on Moon
+	if (View == 1) {
+		EyePosX = -10; EyePosY = -10; EyePosZ = 5;
+		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+		UpVecX = 0; UpVecY = 0; UpVecZ = 10;
+	}
+	//View from Earth
+	if (View == 2) {
+		EyePosX = EarthXYZ[0] - (EarthDiameter / 2);
+		EyePosY = EarthXYZ[1] - (EarthDiameter / 2);
+		EyePosZ = EarthXYZ[2] - (EarthDiameter / 2);
+		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
+	}
+	//View from above moon base
+	if (View == 3) {
+		EyePosX = -75; EyePosY = -75; EyePosZ = 60;
+		LookAtX = 0; LookAtY = 0; LookAtZ = 10;
+		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
+	}
+
 	// set the eye position, look-at position, and up-vector:
-	gluLookAt( -10., -10., 5.,     0., 0., 0.,     0., 10., 0. );
+	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
 
 	// rotate the scene:
-	glRotatef( (GLfloat)Yrot, 0., 1., 0. );
-	glRotatef( (GLfloat)Xrot, 1., 0., 0. );
+	glRotatef((GLfloat)Yrot, 0., 1., 0.);
+	glRotatef((GLfloat)Xrot, 1., 0., 0.);
 
 
 	// uniformly scale the scene:
-	if( Scale < MINSCALE )
+	if (Scale < MINSCALE)
 		Scale = MINSCALE;
-	glScalef( (GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale );
+	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
 
 	//Earth
 	glPushMatrix();
 	SetMaterial(1, 1, 1, 128);
-	glTranslatef(150, 150, 150);
+	glTranslatef(EarthXYZ[0],EarthXYZ[1],EarthXYZ[2]);
 	MjbSphere(EarthDiameter/2, 100, 100);
 	glPopMatrix();
 
 	//Temp moon surface
-	glBegin(GL_TRIANGLES);
+	glBegin(GL_QUADS);
 		glVertex3f(-100, -100, 0);
 		glVertex3f(100, -100, 0);
 		glVertex3f(100, 100, 0);
-		glVertex3f(-100, -100, 0);
 		glVertex3f(-100, 100, 0);
-		glVertex3f(100, 100, 0);
 	glEnd();
 
 	glDisable(GL_LIGHTING);
@@ -936,6 +949,8 @@ InitLists( )
 			Axes( 1.5 );
 		glLineWidth( 1. );
 	glEndList( );
+
+
 }
 
 
@@ -963,14 +978,20 @@ Keyboard( unsigned char c, int x, int y )
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 
-		case '1':
+		case 'l':
 			Light1On = !Light1On;
 			break;
-		case '2':
-			Light2On = !Light2On;
+		case '1':
+			Xrot = Yrot = 0.;
+			View = 1;
+			break;	
+		case '2':	
+			Xrot = Yrot = 0.;
+			View = 2;
 			break;
 		case '3':
-			Light3On = !Light3On;
+			Xrot = Yrot = 0.;
+			View = 3;
 			break;
 
 		case '-':
