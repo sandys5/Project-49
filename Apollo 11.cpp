@@ -22,7 +22,7 @@ const char *WINDOWTITLE = { "Apollo 11 Animation" };
 
 // what the glui package defines as true and false:
 
-const int GLUITRUE  = { true  };
+const int GLUITRUE = { true };
 const int GLUIFALSE = { false };
 
 
@@ -31,6 +31,9 @@ const int GLUIFALSE = { false };
 
 // initial window size:
 const int INIT_WINDOW_SIZE = { 800 };
+
+//Textures
+GLuint TexE, TexS;
 
 // Important positions
 int EarthXYZ[] = { 150, 150, 150 };
@@ -55,9 +58,9 @@ const float SCLFACT = { 0.005f };
 const float MINSCALE = { 0.01f };
 
 // active mouse buttons (or them together):
-const int LEFT   = { 4 };
+const int LEFT = { 4 };
 const int MIDDLE = { 2 };
-const int RIGHT  = { 1 };
+const int RIGHT = { 1 };
 
 // which projection:
 enum Projections
@@ -74,10 +77,10 @@ enum ButtonVals
 };
 
 // window background color (rgba):
-const GLfloat BACKCOLOR[ ] = { 0., 0., 0., 1. };
+const GLfloat BACKCOLOR[] = { 0., 0., 0., 1. };
 
 // line width for the axes:
-const GLfloat AXES_WIDTH   = { 3. };
+const GLfloat AXES_WIDTH = { 3. };
 
 // the color numbers:
 // this order must match the radio button order
@@ -93,7 +96,7 @@ enum Colors
 	BLACK
 };
 
-char * ColorNames[ ] =
+char * ColorNames[] =
 {
 	"Red",
 	"Yellow",
@@ -109,7 +112,7 @@ char * ColorNames[ ] =
 // the color definitions:
 // this order must match the menu order
 
-const GLfloat Colors[ ][3] = 
+const GLfloat Colors[][3] =
 {
 	{ 1., 0., 0. },		// red
 	{ 1., 1., 0. },		// yellow
@@ -123,10 +126,10 @@ const GLfloat Colors[ ][3] =
 
 // fog parameters:
 const GLfloat FOGCOLOR[4] = { .0, .0, .0, 1. };
-const GLenum  FOGMODE     = { GL_LINEAR };
-const GLfloat FOGDENSITY  = { 0.30f };
-const GLfloat FOGSTART    = { 1.5 };
-const GLfloat FOGEND      = { 4. };
+const GLenum  FOGMODE = { GL_LINEAR };
+const GLfloat FOGDENSITY = { 0.30f };
+const GLfloat FOGSTART = { 1.5 };
+const GLfloat FOGEND = { 4. };
 
 // non-constant global variables:
 int		ActiveButton;			// current button that is down
@@ -141,67 +144,67 @@ float	Xrot, Yrot;				// rotation angles in degrees
 
 
 // function prototypes:
-void	Animate( );
-void	Display( );
-void	DoAxesMenu( int );
-void	DoColorMenu( int );
-void	DoMainMenu( int );
-void	DoProjectMenu( int );
-void	DoRasterString( float, float, float, char * );
-void	DoStrokeString( float, float, float, float, char * );
-float	ElapsedSeconds( );
-void	InitGraphics( );
-void	InitLists( );
-void	InitMenus( );
-void	Keyboard( unsigned char, int, int );
-void	MouseButton( int, int, int, int );
-void	MouseMotion( int, int );
-void	Reset( );
-void	Resize( int, int );
-void	Visibility( int );
-void	Axes( float );
+void	Animate();
+void	Display();
+void	DoAxesMenu(int);
+void	DoColorMenu(int);
+void	DoMainMenu(int);
+void	DoProjectMenu(int);
+void	DoRasterString(float, float, float, char *);
+void	DoStrokeString(float, float, float, float, char *);
+float	ElapsedSeconds();
+void	InitGraphics();
+void	InitLists();
+void	InitMenus();
+void	Keyboard(unsigned char, int, int);
+void	MouseButton(int, int, int, int);
+void	MouseMotion(int, int);
+void	Reset();
+void	Resize(int, int);
+void	Visibility(int);
+void	Axes(float);
 
 
 int
-main( int argc, char *argv[ ] )
+main(int argc, char *argv[])
 {
 	// turn on the glut package:
 	// (do this before checking argc and argv since it might
 	// pull some command line arguments out)
-	glutInit( &argc, argv );
+	glutInit(&argc, argv);
 
 	// setup all the graphics stuff:
-	InitGraphics( );
+	InitGraphics();
 
 	// create the display structures that will not change:
-	InitLists( );
+	InitLists();
 
 	// init all the global variables used by Display( ):
 	// this will also post a redisplay
-	Reset( );
+	Reset();
 
 	// setup all the user interface stuff:
-	InitMenus( );
+	InitMenus();
 
 	// draw the scene once and wait for some interaction:
 	// (this will never return)
-	glutSetWindow( MainWindow );
-	glutMainLoop( );
+	glutSetWindow(MainWindow);
+	glutMainLoop();
 
 	// this is here to make the compiler happy:
 	return 0;
 }
 
 void
-Animate( )
+Animate()
 {
 	// put animation stuff in here -- change some global variables
 	// for Display( ) to find:
 
 	// force a call to Display( ) next time it is convenient:
 
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 // utility to create an array from 3 separate values:
@@ -493,7 +496,7 @@ MjbSphere(float radius, int slices, int stacks)
 
 			p->s = (lng + M_PI) / (2.*M_PI);
 			p->t = (lat + M_PI / 2.) / M_PI;
-			
+
 		}
 	}
 
@@ -656,18 +659,29 @@ Display()
 	//Earth
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, TexE);
 	SetMaterial(1, 1, 1, 128);
-	glTranslatef(EarthXYZ[0],EarthXYZ[1],EarthXYZ[2]);
+	glTranslatef(EarthXYZ[0], EarthXYZ[1], EarthXYZ[2]);
 	glRotatef(105., 1., 0., 0.);
-	MjbSphere(EarthDiameter/2, 100, 100);
+	MjbSphere(EarthDiameter / 2, 100, 100);
+	glPopMatrix();
+
+	//Sun
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, TexS);
+	SetMaterial(1, 1, 0, 128);
+	glTranslatef(SunXYZ[0], SunXYZ[1], SunXYZ[2]);
+	MjbSphere(EarthDiameter, 100, 100);
 	glPopMatrix();
 
 	//Temp moon surface
+	SetMaterial(.75, .75, .75, 128);
 	glBegin(GL_QUADS);
-		glVertex3f(-100, -100, 0);
-		glVertex3f(100, -100, 0);
-		glVertex3f(100, 100, 0);
-		glVertex3f(-100, 100, 0);
+	glVertex3f(-100, -100, 0);
+	glVertex3f(100, -100, 0);
+	glVertex3f(100, 100, 0);
+	glVertex3f(-100, 100, 0);
 	glEnd();
 
 	glDisable(GL_LIGHTING);
@@ -679,12 +693,12 @@ Display()
 		glColor3fv(&Colors[WhichColor][0]);
 		glCallList(AxesList);
 	}
-	
+
 	//Light 1: Stationary, White Point Light at center (+.5z)
 	glPushMatrix();
 	glColor3f(1, 1, 1);
 	SetPointLight(GL_LIGHT1, 0, 0, .5, 1, 1, 1);
-	glutSolidSphere(.1, 20, 20);
+	//glutSolidSphere(.1, 20, 20);
 	glPopMatrix();
 
 
@@ -700,112 +714,112 @@ Display()
 
 	// swap the double-buffered framebuffers:
 
-	glutSwapBuffers( );
+	glutSwapBuffers();
 
 
 	// be sure the graphics buffer has been sent:
 	// note: be sure to use glFlush( ) here, not glFinish( ) !
-	glFlush( );
+	glFlush();
 }
 
 
 void
-DoAxesMenu( int id )
+DoAxesMenu(int id)
 {
 	AxesOn = id;
 
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 
 void
-DoColorMenu( int id )
+DoColorMenu(int id)
 {
 	WhichColor = id - RED;
 
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 
 // main menu callback:
 void
-DoMainMenu( int id )
+DoMainMenu(int id)
 {
-	switch( id )
+	switch (id)
 	{
-		case RESET:
-			Reset( );
-			break;
+	case RESET:
+		Reset();
+		break;
 
-		case QUIT:
-			// gracefully close out the graphics:
-			// gracefully close the graphics window:
-			// gracefully exit the program:
-			glutSetWindow( MainWindow );
-			glFinish( );
-			glutDestroyWindow( MainWindow );
-			exit( 0 );
-			break;
+	case QUIT:
+		// gracefully close out the graphics:
+		// gracefully close the graphics window:
+		// gracefully exit the program:
+		glutSetWindow(MainWindow);
+		glFinish();
+		glutDestroyWindow(MainWindow);
+		exit(0);
+		break;
 
-		default:
-			fprintf( stderr, "Don't know what to do with Main Menu ID %d\n", id );
+	default:
+		fprintf(stderr, "Don't know what to do with Main Menu ID %d\n", id);
 	}
 
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 void
-DoProjectMenu( int id )
+DoProjectMenu(int id)
 {
 	WhichProjection = id;
 
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 
 // use glut to display a string of characters using a raster font:
 void
-DoRasterString( float x, float y, float z, char *s )
+DoRasterString(float x, float y, float z, char *s)
 {
-	glRasterPos3f( (GLfloat)x, (GLfloat)y, (GLfloat)z );
+	glRasterPos3f((GLfloat)x, (GLfloat)y, (GLfloat)z);
 
 	char c;			// one character to print
-	for( ; ( c = *s ) != '\0'; s++ )
+	for (; (c = *s) != '\0'; s++)
 	{
-		glutBitmapCharacter( GLUT_BITMAP_TIMES_ROMAN_24, c );
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
 	}
 }
 
 
 // use glut to display a string of characters using a stroke font:
 void
-DoStrokeString( float x, float y, float z, float ht, char *s )
+DoStrokeString(float x, float y, float z, float ht, char *s)
 {
-	glPushMatrix( );
-		glTranslatef( (GLfloat)x, (GLfloat)y, (GLfloat)z );
-		float sf = ht / ( 119.05f + 33.33f );
-		glScalef( (GLfloat)sf, (GLfloat)sf, (GLfloat)sf );
-		char c;			// one character to print
-		for( ; ( c = *s ) != '\0'; s++ )
-		{
-			glutStrokeCharacter( GLUT_STROKE_ROMAN, c );
-		}
-	glPopMatrix( );
+	glPushMatrix();
+	glTranslatef((GLfloat)x, (GLfloat)y, (GLfloat)z);
+	float sf = ht / (119.05f + 33.33f);
+	glScalef((GLfloat)sf, (GLfloat)sf, (GLfloat)sf);
+	char c;			// one character to print
+	for (; (c = *s) != '\0'; s++)
+	{
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, c);
+	}
+	glPopMatrix();
 }
 
 
 // return the number of seconds since the start of the program:
 
 float
-ElapsedSeconds( )
+ElapsedSeconds()
 {
 	// get # of milliseconds since the start of the program:
 
-	int ms = glutGet( GLUT_ELAPSED_TIME );
+	int ms = glutGet(GLUT_ELAPSED_TIME);
 
 	// convert it to seconds:
 
@@ -816,35 +830,35 @@ ElapsedSeconds( )
 // initialize the glui window:
 
 void
-InitMenus( )
+InitMenus()
 {
-	glutSetWindow( MainWindow );
+	glutSetWindow(MainWindow);
 
-	int numColors = sizeof( Colors ) / ( 3*sizeof(int) );
-	int colormenu = glutCreateMenu( DoColorMenu );
-	for( int i = 0; i < numColors; i++ )
+	int numColors = sizeof(Colors) / (3 * sizeof(int));
+	int colormenu = glutCreateMenu(DoColorMenu);
+	for (int i = 0; i < numColors; i++)
 	{
-		glutAddMenuEntry( ColorNames[i], i );
+		glutAddMenuEntry(ColorNames[i], i);
 	}
 
-	int axesmenu = glutCreateMenu( DoAxesMenu );
-	glutAddMenuEntry( "Off",  0 );
-	glutAddMenuEntry( "On",   1 );
+	int axesmenu = glutCreateMenu(DoAxesMenu);
+	glutAddMenuEntry("Off", 0);
+	glutAddMenuEntry("On", 1);
 
-	int projmenu = glutCreateMenu( DoProjectMenu );
-	glutAddMenuEntry( "Orthographic",  ORTHO );
-	glutAddMenuEntry( "Perspective",   PERSP );
+	int projmenu = glutCreateMenu(DoProjectMenu);
+	glutAddMenuEntry("Orthographic", ORTHO);
+	glutAddMenuEntry("Perspective", PERSP);
 
-	int mainmenu = glutCreateMenu( DoMainMenu );
-	glutAddSubMenu(   "Axes",          axesmenu);
-	glutAddSubMenu(   "Colors",        colormenu);
-	glutAddSubMenu(   "Projection",    projmenu );
-	glutAddMenuEntry( "Reset",         RESET );
-	glutAddMenuEntry( "Quit",          QUIT );
+	int mainmenu = glutCreateMenu(DoMainMenu);
+	glutAddSubMenu("Axes", axesmenu);
+	glutAddSubMenu("Colors", colormenu);
+	glutAddSubMenu("Projection", projmenu);
+	glutAddMenuEntry("Reset", RESET);
+	glutAddMenuEntry("Quit", QUIT);
 
-// attach the pop-up menu to the right mouse button:
+	// attach the pop-up menu to the right mouse button:
 
-	glutAttachMenu( GLUT_RIGHT_BUTTON );
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 
@@ -853,26 +867,26 @@ InitMenus( )
 //	also setup display lists and callback functions
 
 void
-InitGraphics( )
+InitGraphics()
 {
 	// request the display modes:
 	// ask for red-green-blue-alpha color, double-buffering, and z-buffering:
 
-	glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
 	// set the initial window configuration:
 
-	glutInitWindowPosition( 0, 0 );
-	glutInitWindowSize( INIT_WINDOW_SIZE, INIT_WINDOW_SIZE );
+	glutInitWindowPosition(0, 0);
+	glutInitWindowSize(INIT_WINDOW_SIZE, INIT_WINDOW_SIZE);
 
 	// open the window and set its title:
 
-	MainWindow = glutCreateWindow( WINDOWTITLE );
-	glutSetWindowTitle( WINDOWTITLE );
+	MainWindow = glutCreateWindow(WINDOWTITLE);
+	glutSetWindowTitle(WINDOWTITLE);
 
 	// set the framebuffer clear values:
 
-	glClearColor( BACKCOLOR[0], BACKCOLOR[1], BACKCOLOR[2], BACKCOLOR[3] );
+	glClearColor(BACKCOLOR[0], BACKCOLOR[1], BACKCOLOR[2], BACKCOLOR[3]);
 
 	// setup the callback functions:
 	// DisplayFunc -- redraw the window
@@ -895,52 +909,72 @@ InitGraphics( )
 	// TimerFunc -- trigger something to happen a certain time from now
 	// IdleFunc -- what to do when nothing else is going on
 
-	glutSetWindow( MainWindow );
-	glutDisplayFunc( Display );
-	glutReshapeFunc( Resize );
-	glutKeyboardFunc( Keyboard );
-	glutMouseFunc( MouseButton );
-	glutMotionFunc( MouseMotion );
-	glutPassiveMotionFunc( NULL );
-	glutVisibilityFunc( Visibility );
-	glutEntryFunc( NULL );
-	glutSpecialFunc( NULL );
-	glutSpaceballMotionFunc( NULL );
-	glutSpaceballRotateFunc( NULL );
-	glutSpaceballButtonFunc( NULL );
-	glutButtonBoxFunc( NULL );
-	glutDialsFunc( NULL );
-	glutTabletMotionFunc( NULL );
-	glutTabletButtonFunc( NULL );
-	glutMenuStateFunc( NULL );
-	glutTimerFunc( -1, NULL, 0 );
-	glutIdleFunc( NULL );
+	glutSetWindow(MainWindow);
+	glutDisplayFunc(Display);
+	glutReshapeFunc(Resize);
+	glutKeyboardFunc(Keyboard);
+	glutMouseFunc(MouseButton);
+	glutMotionFunc(MouseMotion);
+	glutPassiveMotionFunc(NULL);
+	glutVisibilityFunc(Visibility);
+	glutEntryFunc(NULL);
+	glutSpecialFunc(NULL);
+	glutSpaceballMotionFunc(NULL);
+	glutSpaceballRotateFunc(NULL);
+	glutSpaceballButtonFunc(NULL);
+	glutButtonBoxFunc(NULL);
+	glutDialsFunc(NULL);
+	glutTabletMotionFunc(NULL);
+	glutTabletButtonFunc(NULL);
+	glutMenuStateFunc(NULL);
+	glutTimerFunc(-1, NULL, 0);
+	glutIdleFunc(NULL);
 
 	// init glew (a window must be open to do this):
 
 #ifdef WIN32
-	GLenum err = glewInit( );
-	if( err != GLEW_OK )
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
 	{
-		fprintf( stderr, "glewInit Error\n" );
+		fprintf(stderr, "glewInit Error\n");
 	}
 	else
-		fprintf( stderr, "GLEW initialized OK\n" );
-	fprintf( stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+		fprintf(stderr, "GLEW initialized OK\n");
+	fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
 
 	int width = 1024;
 	int height = 512;
 
-	unsigned char* Texture = BmpToTexture("worldtex.bmp", &width, &height);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, Texture);
+
+	glGenTextures(1, &TexE);
+	glGenTextures(1, &TexS);
+
+	unsigned char* EarthTexA = BmpToTexture("worldtex.bmp", &width, &height);
+	unsigned char* SunTexA = BmpToTexture("2k_sun.bmp", &width, &height);
+
+	glBindTexture(GL_TEXTURE_2D, TexE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, EarthTexA);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	glBindTexture(GL_TEXTURE_2D, TexS);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, SunTexA);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+
 }
 
 
@@ -950,19 +984,19 @@ InitGraphics( )
 //  with a call to glCallList( )
 
 void
-InitLists( )
+InitLists()
 {
 
-	glutSetWindow( MainWindow );
+	glutSetWindow(MainWindow);
 
 	// create the axes:
 
-	AxesList = glGenLists( 1 );
-	glNewList( AxesList, GL_COMPILE );
-		glLineWidth( AXES_WIDTH );
-			Axes( 1.5 );
-		glLineWidth( 1. );
-	glEndList( );
+	AxesList = glGenLists(1);
+	glNewList(AxesList, GL_COMPILE);
+	glLineWidth(AXES_WIDTH);
+	Axes(1.5);
+	glLineWidth(1.);
+	glEndList();
 
 
 }
@@ -971,91 +1005,91 @@ InitLists( )
 // the keyboard callback:
 
 void
-Keyboard( unsigned char c, int x, int y )
+Keyboard(unsigned char c, int x, int y)
 {
 
-	switch( c )
+	switch (c)
 	{
-		case 'o':
-		case 'O':
-			WhichProjection = ORTHO;
-			break;
+	case 'o':
+	case 'O':
+		WhichProjection = ORTHO;
+		break;
 
-		case 'p':
-		case 'P':
-			WhichProjection = PERSP;
-			break;
+	case 'p':
+	case 'P':
+		WhichProjection = PERSP;
+		break;
 
-		case 'q':
-		case 'Q':
-		case ESCAPE:
-			DoMainMenu( QUIT );	// will not return here
-			break;				// happy compiler
+	case 'q':
+	case 'Q':
+	case ESCAPE:
+		DoMainMenu(QUIT);	// will not return here
+		break;				// happy compiler
 
-		case 'l':
-			Light1On = !Light1On;
-			break;
-		case '1':
-			Xrot = Yrot = 0.;
-			View = 1;
-			break;	
-		case '2':	
-			Xrot = Yrot = 0.;
-			View = 2;
-			break;
-		case '3':
-			Xrot = Yrot = 0.;
-			View = 3;
-			break;
+	case 'l':
+		Light1On = !Light1On;
+		break;
+	case '1':
+		Xrot = Yrot = 0.;
+		View = 1;
+		break;
+	case '2':
+		Xrot = Yrot = 0.;
+		View = 2;
+		break;
+	case '3':
+		Xrot = Yrot = 0.;
+		View = 3;
+		break;
 
-		case '-':
-			Scale = Scale - .1;
-			break;
-		case '+':
-		case '=':	//I don't want to keep hitting shift to get '+'
-			Scale = Scale + .1;
-			break;
+	case '-':
+		Scale = Scale - .1;
+		break;
+	case '+':
+	case '=':	//I don't want to keep hitting shift to get '+'
+		Scale = Scale + .1;
+		break;
 
-		default:
-			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
+	default:
+		fprintf(stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c);
 	}
 
 	// force a call to Display( ):
 
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 
 // called when the mouse button transitions down or up:
 
 void
-MouseButton( int button, int state, int x, int y )
+MouseButton(int button, int state, int x, int y)
 {
 	int b = 0;			// LEFT, MIDDLE, or RIGHT
-	
+
 	// get the proper button bit mask:
 
-	switch( button )
+	switch (button)
 	{
-		case GLUT_LEFT_BUTTON:
-			b = LEFT;		break;
+	case GLUT_LEFT_BUTTON:
+		b = LEFT;		break;
 
-		case GLUT_MIDDLE_BUTTON:
-			b = MIDDLE;		break;
+	case GLUT_MIDDLE_BUTTON:
+		b = MIDDLE;		break;
 
-		case GLUT_RIGHT_BUTTON:
-			b = RIGHT;		break;
+	case GLUT_RIGHT_BUTTON:
+		b = RIGHT;		break;
 
-		default:
-			b = 0;
-			fprintf( stderr, "Unknown mouse button: %d\n", button );
+	default:
+		b = 0;
+		fprintf(stderr, "Unknown mouse button: %d\n", button);
 	}
 
 
 	// button down sets the bit, up clears the bit:
 
-	if( state == GLUT_DOWN )
+	if (state == GLUT_DOWN)
 	{
 		Xmouse = x;
 		Ymouse = y;
@@ -1071,34 +1105,34 @@ MouseButton( int button, int state, int x, int y )
 // called when the mouse moves while a button is down:
 
 void
-MouseMotion( int x, int y )
+MouseMotion(int x, int y)
 {
 
 	int dx = x - Xmouse;		// change in mouse coords
 	int dy = y - Ymouse;
 
-	if( ( ActiveButton & LEFT ) != 0 )
+	if ((ActiveButton & LEFT) != 0)
 	{
-		Xrot += ( ANGFACT*dy );
-		Yrot += ( ANGFACT*dx );
+		Xrot += (ANGFACT*dy);
+		Yrot += (ANGFACT*dx);
 	}
 
 
-	if( ( ActiveButton & MIDDLE ) != 0 )
+	if ((ActiveButton & MIDDLE) != 0)
 	{
-		Scale += SCLFACT * (float) ( dx - dy );
+		Scale += SCLFACT * (float)(dx - dy);
 
 		// keep object from turning inside-out or disappearing:
 
-		if( Scale < MINSCALE )
+		if (Scale < MINSCALE)
 			Scale = MINSCALE;
 	}
 
 	Xmouse = x;			// new current position
 	Ymouse = y;
 
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 
@@ -1107,11 +1141,11 @@ MouseMotion( int x, int y )
 // the glut main loop is responsible for redrawing the scene
 
 void
-Reset( )
+Reset()
 {
 	ActiveButton = 0;
 	AxesOn = 1;
-	Scale  = 1.0;
+	Scale = 1.0;
 	WhichColor = WHITE;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
@@ -1121,24 +1155,24 @@ Reset( )
 // called when user resizes the window:
 
 void
-Resize( int width, int height )
+Resize(int width, int height)
 {
 	// don't really need to do anything since window size is
 	// checked each time in Display( ):
-	glutSetWindow( MainWindow );
-	glutPostRedisplay( );
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 
 // handle a change to the window's visibility:
 
 void
-Visibility ( int state )
+Visibility(int state)
 {
-	if( state == GLUT_VISIBLE )
+	if (state == GLUT_VISIBLE)
 	{
-		glutSetWindow( MainWindow );
-		glutPostRedisplay( );
+		glutSetWindow(MainWindow);
+		glutPostRedisplay();
 	}
 	else
 	{
@@ -1155,41 +1189,41 @@ Visibility ( int state )
 
 // the stroke characters 'X' 'Y' 'Z' :
 
-static float xx[ ] = {
+static float xx[] = {
 		0.f, 1.f, 0.f, 1.f
-	      };
+};
 
-static float xy[ ] = {
+static float xy[] = {
 		-.5f, .5f, .5f, -.5f
-	      };
+};
 
-static int xorder[ ] = {
+static int xorder[] = {
 		1, 2, -3, 4
-		};
+};
 
-static float yx[ ] = {
+static float yx[] = {
 		0.f, 0.f, -.5f, .5f
-	      };
+};
 
-static float yy[ ] = {
+static float yy[] = {
 		0.f, .6f, 1.f, 1.f
-	      };
+};
 
-static int yorder[ ] = {
+static int yorder[] = {
 		1, 2, 3, -2, 4
-		};
+};
 
-static float zx[ ] = {
+static float zx[] = {
 		1.f, 0.f, 1.f, 0.f, .25f, .75f
-	      };
+};
 
-static float zy[ ] = {
+static float zy[] = {
 		.5f, .5f, -.5f, -.5f, 0.f, 0.f
-	      };
+};
 
-static int zorder[ ] = {
+static int zorder[] = {
 		1, 2, 3, 4, -5, 6
-		};
+};
 
 // fraction of the length to use as height of the characters:
 const float LENFRAC = 0.10f;
@@ -1201,67 +1235,67 @@ const float BASEFRAC = 1.10f;
 //	(length is the axis length in world coordinates)
 
 void
-Axes( float length )
+Axes(float length)
 {
-	glBegin( GL_LINE_STRIP );
-		glVertex3f( length, 0., 0. );
-		glVertex3f( 0., 0., 0. );
-		glVertex3f( 0., length, 0. );
-	glEnd( );
-	glBegin( GL_LINE_STRIP );
-		glVertex3f( 0., 0., 0. );
-		glVertex3f( 0., 0., length );
-	glEnd( );
+	glBegin(GL_LINE_STRIP);
+	glVertex3f(length, 0., 0.);
+	glVertex3f(0., 0., 0.);
+	glVertex3f(0., length, 0.);
+	glEnd();
+	glBegin(GL_LINE_STRIP);
+	glVertex3f(0., 0., 0.);
+	glVertex3f(0., 0., length);
+	glEnd();
 
 	float fact = LENFRAC * length;
 	float base = BASEFRAC * length;
 
-	glBegin( GL_LINE_STRIP );
-		for( int i = 0; i < 4; i++ )
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < 4; i++)
+	{
+		int j = xorder[i];
+		if (j < 0)
 		{
-			int j = xorder[i];
-			if( j < 0 )
-			{
-				
-				glEnd( );
-				glBegin( GL_LINE_STRIP );
-				j = -j;
-			}
-			j--;
-			glVertex3f( base + fact*xx[j], fact*xy[j], 0.0 );
-		}
-	glEnd( );
 
-	glBegin( GL_LINE_STRIP );
-		for( int i = 0; i < 5; i++ )
-		{
-			int j = yorder[i];
-			if( j < 0 )
-			{
-				
-				glEnd( );
-				glBegin( GL_LINE_STRIP );
-				j = -j;
-			}
-			j--;
-			glVertex3f( fact*yx[j], base + fact*yy[j], 0.0 );
+			glEnd();
+			glBegin(GL_LINE_STRIP);
+			j = -j;
 		}
-	glEnd( );
+		j--;
+		glVertex3f(base + fact * xx[j], fact*xy[j], 0.0);
+	}
+	glEnd();
 
-	glBegin( GL_LINE_STRIP );
-		for( int i = 0; i < 6; i++ )
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < 5; i++)
+	{
+		int j = yorder[i];
+		if (j < 0)
 		{
-			int j = zorder[i];
-			if( j < 0 )
-			{
-				
-				glEnd( );
-				glBegin( GL_LINE_STRIP );
-				j = -j;
-			}
-			j--;
-			glVertex3f( 0.0, fact*zy[j], base + fact*zx[j] );
+
+			glEnd();
+			glBegin(GL_LINE_STRIP);
+			j = -j;
 		}
-	glEnd( );
+		j--;
+		glVertex3f(fact*yx[j], base + fact * yy[j], 0.0);
+	}
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < 6; i++)
+	{
+		int j = zorder[i];
+		if (j < 0)
+		{
+
+			glEnd();
+			glBegin(GL_LINE_STRIP);
+			j = -j;
+		}
+		j--;
+		glVertex3f(0.0, fact*zy[j], base + fact * zx[j]);
+	}
+	glEnd();
 
 }
