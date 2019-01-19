@@ -655,8 +655,10 @@ Display()
 
 	//Earth
 	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
 	SetMaterial(1, 1, 1, 128);
 	glTranslatef(EarthXYZ[0],EarthXYZ[1],EarthXYZ[2]);
+	glRotatef(105., 1., 0., 0.);
 	MjbSphere(EarthDiameter/2, 100, 100);
 	glPopMatrix();
 
@@ -927,6 +929,18 @@ InitGraphics( )
 	fprintf( stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
 
+	int width = 1024;
+	int height = 512;
+
+	unsigned char* Texture = BmpToTexture("worldtex.bmp", &width, &height);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, Texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
 
