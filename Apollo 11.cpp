@@ -163,6 +163,7 @@ const GLfloat FOGEND = { 4. };
 int		ActiveButton;			// current button that is down
 GLuint	AxesList;				// list to hold the axes
 GLuint	LunarSurface;			// list to load in lunar surface obj
+GLuint	LunarModule;			// list to load in lunar module obj
 int		AxesOn;					// != 0 means to draw the axes
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
@@ -1132,10 +1133,23 @@ Display()
 
 	glDisable(GL_LIGHTING);
 
+	glDisable(GL_TEXTURE_2D);
 	// Load in lunar surface
+	glPushMatrix();
 	SetMaterial(0, 0, 1, 128);
 	glRotatef(90, 1, 0, 0);
+	glColor3f(.3, .4, .4);
 	glCallList(LunarSurface);
+	glPopMatrix();
+
+	// Load in lunar module
+	glPushMatrix();
+	SetMaterial(1, 1, 1, 4);
+	glTranslatef(0., 0., 10.5);
+	glRotatef(90, 1, 0, 0);
+	glColor3f(1., 1., 1.);
+	glCallList(LunarModule);
+	glPopMatrix();
 
 
 	// possibly draw the axes:
@@ -1455,6 +1469,11 @@ InitLists()
 	LunarSurface = glGenLists(1);
 	glNewList(LunarSurface, GL_COMPILE);
 	LoadObjFile("LunarSurface.obj");
+	glEndList();
+
+	LunarModule = glGenLists(1);
+	glNewList(LunarModule, GL_COMPILE);
+	LoadObjFile("LunarModule.obj");
 	glEndList();
 
 }
