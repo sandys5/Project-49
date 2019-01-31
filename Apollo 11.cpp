@@ -36,15 +36,17 @@ const int GLUIFALSE = { false };
 const int INIT_WINDOW_SIZE = { 800 };
 
 //Textures
-GLuint TexE, TexS;
+GLuint TexE, TexM, TexS;
+
+// Dimentions (NOT GOOD NUMBERS)
+int MoonDiameter = 500;
+int EarthDiameter = 1000;
+int SunDiameter = 2500;
 
 // Important positions
-int EarthXYZ[] = { 150, 150, 150 };
-int SunXYZ[] = { 200, 100, 300 };
-
-// Dimentions
-int EarthDiameter = 10;
-int SunDiameter = EarthDiameter * 109; //Sun has ~109 times the diameter of the Earth
+int MoonXYZ[] = { 0, -(MoonDiameter/2), 0 };
+int EarthXYZ[] = { 1000, 1000, 5 };
+int SunXYZ[] = { 5000, 5000, 10};
 
 // Lights
 int Light1On = 1;
@@ -162,7 +164,7 @@ const GLfloat FOGEND = { 4. };
 // non-constant global variables:
 int		ActiveButton;			// current button that is down
 GLuint	AxesList;				// list to hold the axes
-GLuint	LunarSurface;			// list to load in lunar surface obj
+GLuint	LandingSite;			// list to load in lunar surface obj
 GLuint	LunarModule;			// list to load in lunar module obj
 int		AxesOn;					// != 0 means to draw the axes
 int		MainWindow;				// window id for main graphics window
@@ -1075,21 +1077,19 @@ Display()
 
 	glEnable(GL_LIGHTING);
 
-
-
 	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
 	//Default view on Moon
 	if (View == 1) {
-		EyePosX = -50; EyePosY = -50; EyePosZ = 50;
+		EyePosX = -75; EyePosY = -75; EyePosZ = 40;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 50;
 		UpVecX = 0; UpVecY = 0; UpVecZ = 10;
 	}
 	//View from Earth
 	if (View == 2) {
-		EyePosX = EarthXYZ[0] - (EarthDiameter / 2) + 20;
-		EyePosY = EarthXYZ[1] - (EarthDiameter / 2); 
-		EyePosZ = EarthXYZ[2] - (EarthDiameter / 2) + 20;
-		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+		EyePosX = EarthXYZ[0] - (EarthDiameter ) -50;
+		EyePosY = EarthXYZ[1] - (EarthDiameter ) -50; 
+		EyePosZ = EarthXYZ[2] - (EarthDiameter ) -50;
+		LookAtX = MoonXYZ[0]; LookAtY = MoonXYZ[1]; LookAtZ = MoonXYZ[2];
 		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
 	}
 	//View from above moon base
@@ -1107,13 +1107,39 @@ Display()
 	glRotatef((GLfloat)Yrot, 0., 1., 0.);
 	glRotatef((GLfloat)Xrot, 1., 0., 0.);
 
-
 	// uniformly scale the scene:
 	if (Scale < MINSCALE)
 		Scale = MINSCALE;
 	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
 	
+	// possibly draw the axes:
+	if (AxesOn != 0)
+	{
+		glColor3fv(&Colors[WhichColor][0]);
+		glCallList(AxesList);
+	}
+	
+	/*
+	//Moon
+	glPushMatrix();
+	SetMaterial(1, 1, 1, 128);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, TexM);
+	glRotatef(90, 1, 0, 0);
+	glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
+	MjbSphere(MoonDiameter/2, 100, 100);
+	glPopMatrix();
+	*/
 
+	// Load in lunar surface
+	glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+	//glTranslatef(0, 0, 0);
+	//glScalef(.25, .25, .25);
+	glCallList(LandingSite);
+	glPopMatrix();
+	
+	/*
 	//Earth
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
@@ -1122,49 +1148,32 @@ Display()
 	glRotatef(105., 1., 0., 0.);
 	MjbSphere(EarthDiameter / 2, 100, 100);
 	glPopMatrix();
-
+	*/
+	
+	/*
 	//Sun
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexS);
 	glTranslatef(SunXYZ[0], SunXYZ[1], SunXYZ[2]);
-	MjbSphere(EarthDiameter, 100, 100);
+	MjbSphere(SunDiameter/2, 100, 100);
 	glPopMatrix();
-
+	*/
 	glDisable(GL_LIGHTING);
-
-	glDisable(GL_TEXTURE_2D);
-	// Load in lunar surface
-	glPushMatrix();
-	SetMaterial(0, 0, 1, 128);
-	glRotatef(90, 1, 0, 0);
-	glColor3f(.3, .4, .4);
-	glCallList(LunarSurface);
-	glPopMatrix();
 
 	// Load in lunar module
 	glPushMatrix();
 	SetMaterial(1, 1, 1, 4);
-	glTranslatef(0., 0., 10.5);
+	glTranslatef(-1., -1., 10.5);
 	glRotatef(90, 1, 0, 0);
 	glColor3f(1., 1., 1.);
 	glCallList(LunarModule);
 	glPopMatrix();
 
-
-	// possibly draw the axes:
-
-	if (AxesOn != 0)
-	{
-		glColor3fv(&Colors[WhichColor][0]);
-		glCallList(AxesList);
-	}
-
-
 	//Light 1: test
 	glPushMatrix();
 	glColor3f(0, 0, 1);
-	glTranslatef(50, 50, 50);
+	glTranslatef(50, 25, 35);
 	SetPointLight(GL_LIGHT1, 0, 0, .5, 0, 0, 1);
 	glutSolidSphere(5, 20, 20);
 	glPopMatrix();
@@ -1417,9 +1426,11 @@ InitGraphics()
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	glGenTextures(1, &TexE);
+	glGenTextures(1, &TexM);
 	glGenTextures(1, &TexS);
 
 	unsigned char* EarthTexA = BmpToTexture("worldtex.bmp", &width, &height);
+	unsigned char* MoonTexA = BmpToTexture("2k_moon.bmp", &width, &height);
 	unsigned char* SunTexA = BmpToTexture("2k_sun.bmp", &width, &height);
 
 	glBindTexture(GL_TEXTURE_2D, TexE);
@@ -1442,6 +1453,15 @@ InitGraphics()
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
+	glBindTexture(GL_TEXTURE_2D, TexM);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, MoonTexA);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 }
 
@@ -1466,15 +1486,16 @@ InitLists()
 	glLineWidth(1.);
 	glEndList();
 
-	LunarSurface = glGenLists(1);
-	glNewList(LunarSurface, GL_COMPILE);
-	LoadObjFile("LunarSurface.obj");
+	LandingSite = glGenLists(1);
+	glNewList(LandingSite, GL_COMPILE);
+	LoadObjFile("LandingSite.obj");
 	glEndList();
 
 	LunarModule = glGenLists(1);
 	glNewList(LunarModule, GL_COMPILE);
 	LoadObjFile("LunarModule.obj");
 	glEndList();
+
 
 }
 
