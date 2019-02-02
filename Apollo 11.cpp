@@ -1081,8 +1081,8 @@ Display()
 	//Default view on Moon
 	if (View == 1) {
 		EyePosX = -75; EyePosY = -75; EyePosZ = 40;
-		LookAtX = 0; LookAtY = 0; LookAtZ = 50;
-		UpVecX = 0; UpVecY = 0; UpVecZ = 10;
+		LookAtX = 0; LookAtY = -50; LookAtZ = 0;
+		UpVecX = 0; UpVecY = -10; UpVecZ = 10;
 	}
 	//View from Earth
 	if (View == 2) {
@@ -1100,15 +1100,15 @@ Display()
 	}
 
 	if (View == 4) {
-		EyePosX = 1.5;
-		EyePosY = -2;
-		EyePosZ = 14;
-		LookAtX = 10;
-		LookAtY = 10;
+		EyePosX = 2;
+		EyePosY = -13;
+		EyePosZ = 11;
+		LookAtX = 11;
+		LookAtY = -20;
 		LookAtZ = 11;
 		UpVecX = 0;
-		UpVecY = 0;
-		UpVecZ = 20;
+		UpVecY = -20;
+		UpVecZ = 0;
 
 
 	}
@@ -1178,8 +1178,9 @@ Display()
 	// Load in lunar module
 	glPushMatrix();
 	SetMaterial(1, 1, 1, 4);
-	glTranslatef(-1., -1., 10.5);
-	glRotatef(90, 1, 0, 0);
+	glTranslatef(0., -11., 10.5);
+	glRotatef(90, 0., 1., 0.);
+	glRotatef(180, 1, 0, 0);
 	glColor3f(1., 1., 1.);
 	glCallList(LunarModule);
 	glPopMatrix();
