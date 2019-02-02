@@ -1099,6 +1099,20 @@ Display()
 		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
 	}
 
+	if (View == 4) {
+		EyePosX = 1.5;
+		EyePosY = -2;
+		EyePosZ = 14;
+		LookAtX = 10;
+		LookAtY = 10;
+		LookAtZ = 11;
+		UpVecX = 0;
+		UpVecY = 0;
+		UpVecZ = 20;
+
+
+	}
+
 	// set the eye position, look-at position, and up-vector:
 	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
@@ -1541,6 +1555,12 @@ Keyboard(unsigned char c, int x, int y)
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 3;
+		break;
+
+	case '4':
+		Xrot = Yrot = 0.;
+		Scale = 1.0;
+		View = 4;
 		break;
 
 	case '-':
