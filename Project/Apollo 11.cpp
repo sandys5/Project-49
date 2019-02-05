@@ -39,36 +39,44 @@ const int INIT_WINDOW_SIZE = { 800 };
 GLuint TexE, TexM, TexS;
 
 // Dimentions (NOT GOOD NUMBERS)
-int MoonDiameter = 500;
-int EarthDiameter = 1000;
-int SunDiameter = 2500;
+float MoonDiameter = 500;
+float EarthDiameter = 1000;
+float SunDiameter = 2500;
 
 // Important positions
-int MoonXYZ[] = { 0, -(MoonDiameter/2), 0 };
-int EarthXYZ[] = { 1000, 1000, 5 };
-int SunXYZ[] = { 5000, 5000, 10};
+float LM_XYZ[] = { 0., 11., 10.5};
+float SaturnXYZ[] = { 10., 11., 10.5};
+float AstroXYZ[] = {0, 0, 0};
+float FlagXYZ[] = {0, 0, 0};
+float MoonXYZ[] = { 0, -(MoonDiameter / 2), 0 };
+float EarthXYZ[] = { 1000, 1000, 5 };
+float SunXYZ[] = { 5000, 5000, 10 };
 
 // Lights
 int Light1On = 1;
+int Light2On = 1;
+int Light3On = 1;
+int Light4On = 1;
+int Light5On = 1;
 
-// Views
+// Views variable
 int View = 1;
 
 //To load in .obj
 /////////////
-struct Vertex{
+struct Vertex {
 	float x, y, z;
 };
 
-struct Normal{
+struct Normal {
 	float nx, ny, nz;
 };
 
-struct TextureCoord{
+struct TextureCoord {
 	float s, t, p;
 };
 
-struct face{
+struct face {
 	int v, n, t;
 };
 
@@ -166,6 +174,7 @@ int		ActiveButton;			// current button that is down
 GLuint	AxesList;				// list to hold the axes
 GLuint	LandingSite;			// list to load in lunar surface obj
 GLuint	LunarModule;			// list to load in lunar module obj
+GLuint	SaturnV;				// list to load Saturn V rocket
 int		AxesOn;					// != 0 means to draw the axes
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
@@ -1073,49 +1082,70 @@ Display()
 	}
 	else {
 		glDisable(GL_LIGHT1);
+	}	
+	if (Light2On) {
+		glEnable(GL_LIGHT2);
+	}
+	else {
+		glDisable(GL_LIGHT2);
+	}	
+	if (Light3On) {
+		glEnable(GL_LIGHT3);
+	}
+	else {
+		glDisable(GL_LIGHT3);
+	}	
+	if (Light4On) {
+		glEnable(GL_LIGHT4);
+	}
+	else {
+		glDisable(GL_LIGHT4);
+	}	
+	if (Light5On) {
+		glEnable(GL_LIGHT5);
+	}
+	else {
+		glDisable(GL_LIGHT5);
 	}
 
 	glEnable(GL_LIGHTING);
 
 	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
 	//Default view on Moon
-	if (View == 1) {
-		EyePosX = -75; EyePosY = -75; EyePosZ = 40;
-		LookAtX = 0; LookAtY = -50; LookAtZ = 0;
-		UpVecX = 0; UpVecY = -10; UpVecZ = 10;
-	}
+	//if (View == 1) {
+		EyePosX = -75; EyePosY = 75; EyePosZ = 40;
+		LookAtX = 0; LookAtY = 50; LookAtZ = 0;
+		UpVecX = 0; UpVecY = 10; UpVecZ = 0;
+	
 	//View from Earth
-	if (View == 2) {
-		EyePosX = EarthXYZ[0] - (EarthDiameter ) -50;
-		EyePosY = EarthXYZ[1] - (EarthDiameter ) -50; 
-		EyePosZ = EarthXYZ[2] - (EarthDiameter ) -50;
+	/*if (View == 2) {
+		EyePosX = EarthXYZ[0] - (EarthDiameter)-50;
+		EyePosY = EarthXYZ[1] - (EarthDiameter)-50;
+		EyePosZ = EarthXYZ[2] - (EarthDiameter)-50;
 		LookAtX = MoonXYZ[0]; LookAtY = MoonXYZ[1]; LookAtZ = MoonXYZ[2];
 		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
-	}
+	}*/
 	//View from above moon base
 	if (View == 3) {
-		EyePosX = -150; EyePosY = -150; EyePosZ = 150;
+		EyePosX = -150; EyePosY = 150; EyePosZ = 150;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 10;
-		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	if (View == 4) {
-		EyePosX = 2;
-		EyePosY = -13;
+		EyePosX = 12;
+		EyePosY = 13;
 		EyePosZ = 11;
-		LookAtX = 11;
-		LookAtY = -20;
+		LookAtX = 11;		//Sorry, I might have broke this view a bit - Jonathan 2/4
+		LookAtY = 20;
 		LookAtZ = 11;
 		UpVecX = 0;
-		UpVecY = -20;
+		UpVecY = 20;
 		UpVecZ = 0;
-
-
 	}
 
 	// set the eye position, look-at position, and up-vector:
 	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
-
 
 	// rotate the scene:
 	glRotatef((GLfloat)Yrot, 0., 1., 0.);
@@ -1125,36 +1155,74 @@ Display()
 	if (Scale < MINSCALE)
 		Scale = MINSCALE;
 	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
-	
+
 	// possibly draw the axes:
 	if (AxesOn != 0)
 	{
 		glColor3fv(&Colors[WhichColor][0]);
 		glCallList(AxesList);
 	}
-	
+	////////////////////////////////////////////
+	//Set the scene//
+	// Positions found at begining of file (~line 46)
+	////////////////////////////////////////////
+
+	// Load in lunar surface 
+	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
+	glPushMatrix();
+	glCallList(LandingSite);
+	glPopMatrix();
+
+	// Load in lunar module
+	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
+	glPushMatrix();
+	SetMaterial(1, 1, 1, 4);
+	glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
+	glColor3f(1., 1., 1.);
+	glCallList(LunarModule);
+	glPopMatrix();
+
+	// Load in Saturn V rocket
+	// (Real dimensions: Height of 363 ft and 33 ft in diameter - https://www.space.com/18422-apollo-saturn-v-moon-rocket-nasa-infographic.html)
+	glPushMatrix();
+	SetMaterial(1, 1, 1, 4);
+	glTranslatef(SaturnXYZ[0], SaturnXYZ[1], SaturnXYZ[2]);
+	glScalef(10, 10, 10);
+	glColor3f(1., 1., 1.);
+	glCallList(SaturnV);
+	glPopMatrix();
+
+	// Load in Flag
+	// Real dimensions: 
+	/*glPushMatrix();
+	SetMaterial(1, 1, 1, 4);
+	glTranslatef(FlagXYZ[0], FlagXYZ[1], FlagXYZ[2]);
+	glColor3f(1., 1., 1.);
+	glCallList(?);
+	glPopMatrix();*/
+
+	// Load in Astronaut
+	// Real dimensions: 
+	/*glPushMatrix();
+	SetMaterial(1, 1, 1, 4);
+	glTranslatef(AstroXYZ[0], AstroXYZ[1], AstroXYZ[2]);
+	glColor3f(1., 1., 1.);
+	glCallList(?);
+	glPopMatrix();*/
+
 	/*
-	//Moon
+	// Load in the Moon
 	glPushMatrix();
 	SetMaterial(1, 1, 1, 128);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexM);
-	glRotatef(90, 1, 0, 0);
 	glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
 	MjbSphere(MoonDiameter/2, 100, 100);
 	glPopMatrix();
 	*/
 
-	// Load in lunar surface
-	glPushMatrix();
-	glRotatef(90, 1, 0, 0);
-	//glTranslatef(0, 0, 0);
-	//glScalef(.25, .25, .25);
-	glCallList(LandingSite);
-	glPopMatrix();
-	
 	/*
-	//Earth
+	// Load in the Earth
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexE);
@@ -1163,9 +1231,9 @@ Display()
 	MjbSphere(EarthDiameter / 2, 100, 100);
 	glPopMatrix();
 	*/
-	
+
 	/*
-	//Sun
+	//Load in the Sun
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexS);
@@ -1173,26 +1241,29 @@ Display()
 	MjbSphere(SunDiameter/2, 100, 100);
 	glPopMatrix();
 	*/
+
+	//Objects before this will be lit
 	glDisable(GL_LIGHTING);
-
-	// Load in lunar module
-	glPushMatrix();
-	SetMaterial(1, 1, 1, 4);
-	glTranslatef(0., -11., 10.5);
-	glRotatef(90, 0., 1., 0.);
-	glRotatef(180, 1, 0, 0);
-	glColor3f(1., 1., 1.);
-	glCallList(LunarModule);
-	glPopMatrix();
-
-	//Light 1: test
+	//Objects past this will not be lit
+	   
+	// Light 1: Blue test
+	// 
 	glPushMatrix();
 	glColor3f(0, 0, 1);
-	glTranslatef(50, 25, 35);
+	glTranslatef(50, 30, 35);
 	SetPointLight(GL_LIGHT1, 0, 0, .5, 0, 0, 1);
 	glutSolidSphere(5, 20, 20);
 	glPopMatrix();
-	
+
+	// Light 2: Green test
+	// 
+	glPushMatrix();
+	glColor3f(0, 1, 0);
+	glTranslatef(-50, 30, -35);
+	SetPointLight(GL_LIGHT2, 0, 0, .5, 0, 1, 0);
+	glutSolidSphere(5, 20, 20);
+	glPopMatrix();
+
 
 	// draw some gratuitous text that is fixed on the screen:
 	glDisable(GL_DEPTH_TEST);
@@ -1204,10 +1275,9 @@ Display()
 	glColor3f(1., 1., 1.);
 	DoRasterString(5., 5., 0., "Apollo 11");
 
+
 	// swap the double-buffered framebuffers:
-
 	glutSwapBuffers();
-
 
 	// be sure the graphics buffer has been sent:
 	// note: be sure to use glFlush( ) here, not glFinish( ) !
@@ -1501,6 +1571,11 @@ InitLists()
 	glLineWidth(1.);
 	glEndList();
 
+	SaturnV = glGenLists(1);
+	glNewList(SaturnV, GL_COMPILE);
+	LoadObjFile("SaturnV.obj");
+	glEndList();	
+	
 	LandingSite = glGenLists(1);
 	glNewList(LandingSite, GL_COMPILE);
 	LoadObjFile("LandingSite.obj");
@@ -1541,6 +1616,11 @@ Keyboard(unsigned char c, int x, int y)
 	case 'l':
 	case 'L':
 		Light1On = !Light1On;
+		Light2On = !Light2On;	
+		Light3On = !Light3On;
+		Light4On = !Light4On;
+		Light5On = !Light5On;
+
 		break;
 	case '1':
 		Xrot = Yrot = 0.;
@@ -1548,7 +1628,7 @@ Keyboard(unsigned char c, int x, int y)
 		View = 1;
 		break;
 	case '2':
-		Xrot = Yrot = 0.;	
+		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 2;
 		break;
@@ -1769,6 +1849,7 @@ Axes(float length)
 	glVertex3f(0., 0., length);
 	glEnd();
 
+
 	float fact = LENFRAC * length;
 	float base = BASEFRAC * length;
 
@@ -1820,5 +1901,7 @@ Axes(float length)
 		glVertex3f(0.0, fact*zy[j], base + fact * zx[j]);
 	}
 	glEnd();
+
+
 
 }
