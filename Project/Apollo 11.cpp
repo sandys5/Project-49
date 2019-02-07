@@ -1132,10 +1132,10 @@ Display()
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
-	if (View == 4) {
-		EyePosX = 12;
-		EyePosY = 13;
-		EyePosZ = 11;
+	if (View == 4) { //viewpoint from lunar module
+		EyePosX = LM_XYZ[0];
+		EyePosY = LM_XYZ[1]+5;
+		EyePosZ = LM_XYZ[2]+2;
 		LookAtX = 11;		//Sorry, I might have broke this view a bit - Jonathan 2/4
 		LookAtY = 20;
 		LookAtZ = 11;
@@ -1170,6 +1170,7 @@ Display()
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
 	glPushMatrix();
+	glRotatef(-90., 1., 0., 0.);
 	glCallList(LandingSite);
 	glPopMatrix();
 
