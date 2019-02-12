@@ -36,7 +36,7 @@ const int GLUIFALSE = { false };
 const int INIT_WINDOW_SIZE = { 800 };
 
 //Textures
-GLuint TexE, TexM, TexS;
+GLuint TexE, TexM, TexS, TexSt;
 
 // Dimentions (NOT GOOD NUMBERS)
 float MoonDiameter = 500;
@@ -49,6 +49,7 @@ float SaturnXYZ[] = { 750, 0, -500 };
 float AstroXYZ[] = { 0, 0, 0 };
 float FlagXYZ[] = { 0, 0, 0 };
 float MoonXYZ[] = { 0, 0, 0};
+float StarMapAnchor[] = { 0., 0., 0. };
 float EarthXYZ[] = { 3000, 0, -1600 };
 float SunXYZ[] = { 6000, 100, -3000 };
 
@@ -1071,7 +1072,7 @@ Display()
 	//Perspective	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90., 1., 0.1, 1000.);
+	gluPerspective(90., 1., 0.1, 10000.);
 
 	// place the objects into the scene:
 
@@ -1141,7 +1142,7 @@ Display()
 		LookAtY = 20;
 		LookAtZ = 11;
 		UpVecX = 0;
-		UpVecY = 20;
+		UpVecY = 1;
 		UpVecZ = 0;
 	}
 
@@ -1167,11 +1168,10 @@ Display()
 	//Set the scene//
 	// Positions found at begining of file (~line 46)
 	////////////////////////////////////////////
-
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
 	glPushMatrix();
-	//glRotatef(-90., 1., 0., 0.);
+	glRotatef(-90., 1., 0., 0.);
 	glCallList(LandingSite);
 	glPopMatrix();
 
@@ -1226,7 +1226,14 @@ Display()
 		glPopMatrix();
 	}
 
-	
+	//Load the Star Map
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, TexSt);
+	MjbSphere(8000., 200, 200);
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+
 	// Load in the Earth
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
@@ -1236,8 +1243,6 @@ Display()
 	MjbSphere(EarthDiameter / 2, 100, 100);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-	
-
 	
 	//Load in the Sun
 	glPushMatrix();
@@ -1258,7 +1263,7 @@ Display()
 	glPushMatrix();
 	glColor3f(0, 0, 1);
 	glTranslatef(50, 30, 35);
-	SetPointLight(GL_LIGHT1, 0, 0, .5, 0, 0, 1);
+	SetPointLight(GL_LIGHT1, 0, 0, 5., 0, 0, 1);
 	glutSolidSphere(5, 20, 20);
 	glPopMatrix();
 
@@ -1267,7 +1272,7 @@ Display()
 	glPushMatrix();
 	glColor3f(0, 1, 0);
 	glTranslatef(-50, 30, -35);
-	SetPointLight(GL_LIGHT2, 0, 0, .5, 0, 1, 0);
+	SetPointLight(GL_LIGHT2, 0, 0, 5., 0, 1, 0);
 	glutSolidSphere(5, 20, 20);
 	glPopMatrix();
 
@@ -1520,13 +1525,11 @@ InitGraphics()
 	glGenTextures(1, &TexE);
 	glGenTextures(1, &TexM);
 	glGenTextures(1, &TexS);
+	glGenTextures(1, &TexSt);
 
-	unsigned char* EarthTexA = BmpToTexture("worldtex.bmp", &width, &height);
-	unsigned char* MoonTexA = BmpToTexture("2k_moon.bmp", &width, &height);
-	unsigned char* SunTexA = BmpToTexture("2k_sun.bmp", &width, &height);
 
 	glBindTexture(GL_TEXTURE_2D, TexE);
-
+	unsigned char* EarthTexA = BmpToTexture("worldtex.bmp", &width, &height);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, EarthTexA);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1536,7 +1539,7 @@ InitGraphics()
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glBindTexture(GL_TEXTURE_2D, TexS);
-
+	unsigned char* SunTexA = BmpToTexture("2k_sun.bmp", &width, &height);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, SunTexA);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1546,7 +1549,7 @@ InitGraphics()
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glBindTexture(GL_TEXTURE_2D, TexM);
-
+	unsigned char* MoonTexA = BmpToTexture("2k_moon.bmp", &width, &height);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, MoonTexA);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1555,6 +1558,15 @@ InitGraphics()
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
+	glBindTexture(GL_TEXTURE_2D, TexSt);
+	unsigned char* StarMapTexA = BmpToTexture("2k_stars.bmp", &width, &height);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, StarMapTexA);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
 
