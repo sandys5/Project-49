@@ -38,20 +38,22 @@ const int INIT_WINDOW_SIZE = { 800 };
 //Textures
 GLuint TexE, TexM, TexS, TexSt;
 
-// Dimentions (NOT GOOD NUMBERS)
+// Dimentions
+// Earth to Moon ratio is realistic, Sun ratio had to be fudged
 float MoonDiameter = 500;
-float EarthDiameter = 500;
-float SunDiameter = 250;
+float EarthDiameter = MoonDiameter * 4;
+float SunDiameter = MoonDiameter;
 
 // Important positions
 float LM_XYZ[] = { 0., 11., 10.5 };
 float SaturnXYZ[] = { 750, 0, -500 };
-float AstroXYZ[] = { 0, 0, 0 };
-float FlagXYZ[] = { 0, 0, 0 };
+float AstroXYZ[] = { 2, 11, 12 };
+float FlagXYZ[] = { 4, 11, 15 };
 float MoonXYZ[] = { 0, 0, 0};
 float StarMapAnchor[] = { 0., 0., 0. };
-float EarthXYZ[] = { 3000, 0, -1600 };
-float SunXYZ[] = { 6000, 100, -3000 };
+float EarthXYZ[] = { MoonDiameter * 20, 0, 0 };
+float SunXYZ[] = { MoonDiameter * 20, MoonDiameter, -MoonDiameter * 20 };
+
 
 // Lights
 int Light1On = 1;
@@ -177,6 +179,7 @@ GLuint	AxesList;				// list to hold the axes
 GLuint	LandingSite;			// list to load in lunar surface obj
 GLuint	LunarModule;			// list to load in lunar module obj
 GLuint	SaturnV;				// list to load Saturn V rocket
+GLuint	Astronaut;				// list to load Astronaut
 int		AxesOn;					// != 0 means to draw the axes
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
@@ -1072,9 +1075,47 @@ Display()
 	//Perspective	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90., 1., 0.1, 10000.);
+	gluPerspective(90., 1., 0.1, 50000.);
 
-	// place the objects into the scene:
+
+	//Views
+	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
+	//Default view on Moon
+	//if (View == 1) {
+	EyePosX = -75; EyePosY = 75; EyePosZ = 40;
+	LookAtX = 0; LookAtY = 50; LookAtZ = 0;
+	UpVecX = 0; UpVecY = 10; UpVecZ = 0;
+
+	//View from Earth
+	if (View == 2) {
+		EyePosX = EarthXYZ[0] - (EarthDiameter)-50;
+		EyePosY = EarthXYZ[1] - (EarthDiameter)-50;
+		EyePosZ = EarthXYZ[2] - (EarthDiameter)-50;
+		LookAtX = MoonXYZ[0]; LookAtY = MoonXYZ[1]; LookAtZ = MoonXYZ[2];
+		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
+	}
+
+	//View from above moon base
+	if (View == 3) {
+		EyePosX = -150; EyePosY = 150; EyePosZ = 150;
+		LookAtX = 0; LookAtY = 0; LookAtZ = 10;
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+	}
+
+	if (View == 4) { //viewpoint from lunar module
+		EyePosX = LM_XYZ[0];
+		EyePosY = LM_XYZ[1] + 5;
+		EyePosZ = LM_XYZ[2] + 2;
+		LookAtX = 11;
+		LookAtY = 20;
+		LookAtZ = 11;
+		UpVecX = 0;
+		UpVecY = 1;
+		UpVecZ = 0;
+	}
+
+	// set the eye position, look-at position, and up-vector:
+	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -1103,51 +1144,8 @@ Display()
 	else {
 		glDisable(GL_LIGHT4);
 	}
-	if (Light5On) {
-		glEnable(GL_LIGHT5);
-	}
-	else {
-		glDisable(GL_LIGHT5);
-	}
 
 	glEnable(GL_LIGHTING);
-
-	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
-	//Default view on Moon
-	//if (View == 1) {
-	EyePosX = -75; EyePosY = 75; EyePosZ = 40;
-	LookAtX = 0; LookAtY = 50; LookAtZ = 0;
-	UpVecX = 0; UpVecY = 10; UpVecZ = 0;
-
-	//View from Earth
-	/*if (View == 2) {
-		EyePosX = EarthXYZ[0] - (EarthDiameter)-50;
-		EyePosY = EarthXYZ[1] - (EarthDiameter)-50;
-		EyePosZ = EarthXYZ[2] - (EarthDiameter)-50;
-		LookAtX = MoonXYZ[0]; LookAtY = MoonXYZ[1]; LookAtZ = MoonXYZ[2];
-		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
-	}*/
-	//View from above moon base
-	if (View == 3) {
-		EyePosX = -150; EyePosY = 150; EyePosZ = 150;
-		LookAtX = 0; LookAtY = 0; LookAtZ = 10;
-		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
-	}
-
-	if (View == 4) { //viewpoint from lunar module
-		EyePosX = LM_XYZ[0];
-		EyePosY = LM_XYZ[1] + 5;
-		EyePosZ = LM_XYZ[2] + 2;
-		LookAtX = 11;		//Sorry, I might have broke this view a bit - Jonathan 2/4
-		LookAtY = 20;
-		LookAtZ = 11;
-		UpVecX = 0;
-		UpVecY = 1;
-		UpVecZ = 0;
-	}
-
-	// set the eye position, look-at position, and up-vector:
-	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
 	// rotate the scene:
 	glRotatef((GLfloat)Yrot, 0., 1., 0.);
@@ -1164,10 +1162,12 @@ Display()
 		glColor3fv(&Colors[WhichColor][0]);
 		glCallList(AxesList);
 	}
+
 	////////////////////////////////////////////
 	//Set the scene//
 	// Positions found at begining of file (~line 46)
 	////////////////////////////////////////////
+
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
 	glPushMatrix();
@@ -1205,13 +1205,15 @@ Display()
 	glPopMatrix();*/
 
 	// Load in Astronaut
-	// Real dimensions: 
-	/*glPushMatrix();
+	// Real dimensions: Assuming space suit height is ~7 ft, model loads in about 10 ft
+	glPushMatrix();
 	SetMaterial(1, 1, 1, 4);
 	glTranslatef(AstroXYZ[0], AstroXYZ[1], AstroXYZ[2]);
+	glScalef(.7, .7, .7);
+	glRotatef(90, 0, 1, 0);
 	glColor3f(1., 1., 1.);
-	glCallList(?);
-	glPopMatrix();*/
+	glCallList(Astronaut);
+	glPopMatrix();
 
 	//Current moon hotkey - 'M'
 	if (loadMoon == 1) {
@@ -1225,14 +1227,6 @@ Display()
 		glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
 	}
-
-	//Load the Star Map
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, TexSt);
-	MjbSphere(8000., 200, 200);
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
 
 	// Load in the Earth
 	glPushMatrix();
@@ -1253,6 +1247,13 @@ Display()
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 	
+	//Load the Star Map
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, TexSt);
+	MjbSphere(8000., 200, 200);
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
 
 	//Objects before this will be lit
 	glDisable(GL_LIGHTING);
@@ -1593,6 +1594,11 @@ InitLists()
 	SaturnV = glGenLists(1);
 	glNewList(SaturnV, GL_COMPILE);
 	LoadObjFile("SaturnV.obj");
+	glEndList();
+
+	Astronaut = glGenLists(1);
+	glNewList(Astronaut, GL_COMPILE);
+	LoadObjFile("Astronaut_.obj");
 	glEndList();
 
 	LandingSite = glGenLists(1);
