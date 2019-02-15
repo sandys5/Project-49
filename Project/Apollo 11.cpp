@@ -63,31 +63,30 @@ GLuint TexE, TexM, TexS, TexSt;
 
 // Dimentions
 // Earth to Moon ratio is realistic, Sun ratio had to be fudged
-float MoonDiameter = 500;
+float MoonDiameter = 400;
 float EarthDiameter = MoonDiameter * 4;
-float SunDiameter = MoonDiameter;
+float SunDiameter = MoonDiameter * .75;
 
 // Important positions
 float LM_XYZ[] = { 0., 11., 10.5 };
-float SaturnXYZ[] = { 750, 0, -500 };
+float SaturnXYZ[] = { 900, 0, -100 };
 float AstroXYZ[] = { 2, 11, 12 };
 float FlagXYZ[] = { 4, 11, 15 };
-float MoonXYZ[] = { 0, 0, 0};
+float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
-float EarthXYZ[] = { MoonDiameter * 20, 0, 0 };
-float SunXYZ[] = { MoonDiameter * 20, MoonDiameter, -MoonDiameter * 20 };
-
+float EarthXYZ[] = { MoonDiameter * 17, 0, 0 };
+float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
 
 // Lights
 int Light1On = 1;
 int Light2On = 1;
 int Light3On = 1;
-int Light4On = 1;
-int Light5On = 1;
 
-// Views variable
+// View variables
+int loadMoon = 0;
 int View = 1;
-int loadMoon = 1;
+int video = 0;
+
 
 //To load in .obj
 /////////////
@@ -711,7 +710,7 @@ Array3(float a, float b, float c)
 	array[0] = a;
 	array[1] = b;
 	array[2] = c;
-	array[3] = 1.;
+	array[3] = 0; //Sets all lights to infinity for sun. Need to change if we add more lights
 	return array;
 }
 
@@ -1098,47 +1097,64 @@ Display()
 	//Perspective	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90., 1., 0.1, 50000.);
-
+	gluPerspective(90., 1., 0.1, 10000.);
 
 	//Views
 	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
+
 	//Default view on Moon
-	//if (View == 1) {
-	EyePosX = -75; EyePosY = 75; EyePosZ = 40;
-	LookAtX = 0; LookAtY = 50; LookAtZ = 0;
-	UpVecX = 0; UpVecY = 10; UpVecZ = 0;
+	EyePosX = -50; EyePosY = 50; EyePosZ = 30;
+	LookAtX = 0; LookAtY = 30; LookAtZ = 0;
+	UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 
 	//View from Earth
 	if (View == 2) {
-		EyePosX = EarthXYZ[0] - (EarthDiameter)-50;
-		EyePosY = EarthXYZ[1] - (EarthDiameter)-50;
-		EyePosZ = EarthXYZ[2] - (EarthDiameter)-50;
+		EyePosX = EarthXYZ[0] - (EarthDiameter / 2) - 50;
+		EyePosY = EarthXYZ[1] - (EarthDiameter / 2) - 50;
+		EyePosZ = EarthXYZ[2] - (EarthDiameter / 2) - 50;
 		LookAtX = MoonXYZ[0]; LookAtY = MoonXYZ[1]; LookAtZ = MoonXYZ[2];
 		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
 	}
 
 	//View from above moon base
 	if (View == 3) {
-		EyePosX = -150; EyePosY = 150; EyePosZ = 150;
-		LookAtX = 0; LookAtY = 0; LookAtZ = 10;
+		EyePosX = -250; EyePosY = 250; EyePosZ = 250;
+		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
-	if (View == 4) { //viewpoint from lunar module
-		EyePosX = LM_XYZ[0]+1;
-		EyePosY = LM_XYZ[1] + 1;
-		EyePosZ = LM_XYZ[2] + 2;
-		LookAtX = 11;
-		LookAtY = 20;
-		LookAtZ = 11;
-		UpVecX = 0;
-		UpVecY = 1;
-		UpVecZ = 0;
+	//viewpoint from lunar module
+	if (View == 4) {
+		EyePosX = LM_XYZ[0]; EyePosY = LM_XYZ[1] + 5; EyePosZ = LM_XYZ[2] + 2;
+		LookAtX = 11; LookAtY = 20; LookAtZ = 11;
+		UpVecX = 0;	UpVecY = 1;	UpVecZ = 0;
+	}
+
+	//View point of Saturn V
+	if (View == 5) {
+		EyePosX = SaturnXYZ[0] + 75; EyePosY = SaturnXYZ[1] + 50; EyePosZ = SaturnXYZ[2] + 75;
+		LookAtX = SaturnXYZ[0]; LookAtY = SaturnXYZ[1] + 50; LookAtZ = SaturnXYZ[2];
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+	}
+
+	//View point Lander/Neil
+	if (View == 6) {
+		EyePosX = LM_XYZ[0] + 6; EyePosY = LM_XYZ[1] + 2; EyePosZ = LM_XYZ[2] + 10;
+		LookAtX = LM_XYZ[0]; LookAtY = LM_XYZ[1]; LookAtZ = LM_XYZ[2];
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	// set the eye position, look-at position, and up-vector:
 	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
+
+	// rotate the scene:
+	glRotatef((GLfloat)Yrot, 0., 1., 0.);
+	glRotatef((GLfloat)Xrot, 1., 0., 0.);
+
+	// uniformly scale the scene:
+	if (Scale < MINSCALE)
+		Scale = MINSCALE;
+	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -1161,23 +1177,9 @@ Display()
 	else {
 		glDisable(GL_LIGHT3);
 	}
-	if (Light4On) {
-		glEnable(GL_LIGHT4);
-	}
-	else {
-		glDisable(GL_LIGHT4);
-	}
 
 	glEnable(GL_LIGHTING);
 
-	// rotate the scene:
-	glRotatef((GLfloat)Yrot, 0., 1., 0.);
-	glRotatef((GLfloat)Xrot, 1., 0., 0.);
-
-	// uniformly scale the scene:
-	if (Scale < MINSCALE)
-		Scale = MINSCALE;
-	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
 
 	// possibly draw the axes:
 	if (AxesOn != 0)
@@ -1194,7 +1196,7 @@ Display()
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
 	glPushMatrix();
-	//glRotatef(-90., 1., 0., 0.);
+	glRotatef(-90., 1., 0., 0.);
 	glCallList(LandingSite);
 	glPopMatrix();
 
@@ -1208,12 +1210,12 @@ Display()
 	glPopMatrix();
 
 	// Load in Saturn V rocket
-	// (Real dimensions: Height of 363 ft and 33 ft in diameter - https://www.space.com/18422-apollo-saturn-v-moon-rocket-nasa-infographic.html)
+	// Real dimensions: Height of 363 ft and 33 ft in diameter - https://www.space.com/18422-apollo-saturn-v-moon-rocket-nasa-infographic.html
 	glPushMatrix();
 	SetMaterial(1, 1, 1, 4);
 	glTranslatef(SaturnXYZ[0], SaturnXYZ[1], SaturnXYZ[2]);
 	glScalef(150, 150, 150);
-	glRotatef(90, 1, 0, 1);
+	glRotatef(90, 0, 0, 1);
 	glColor3f(1., 1., 1.);
 	glCallList(SaturnV);
 	glPopMatrix();
@@ -1228,12 +1230,12 @@ Display()
 	glPopMatrix();*/
 
 	// Load in Astronaut
-	// Real dimensions: Assuming space suit height is ~7 ft, model loads in about 10 ft
+	// Model loads in about 10 ft, assuming space suit height is ~7 ft
 	glPushMatrix();
 	SetMaterial(1, 1, 1, 4);
 	glTranslatef(AstroXYZ[0], AstroXYZ[1], AstroXYZ[2]);
 	glScalef(.7, .7, .7);
-	glRotatef(90, 0, 1, 0);
+	glRotatef(180, 0, 1, 0);
 	glColor3f(1., 1., 1.);
 	glCallList(Astronaut);
 	glPopMatrix();
@@ -1256,7 +1258,7 @@ Display()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexE);
 	glTranslatef(EarthXYZ[0], EarthXYZ[1], EarthXYZ[2]);
-	//glRotatef(105., 1., 0., 0.);
+	glRotatef(-105., 0., 1., 0.);
 	MjbSphere(EarthDiameter / 2, 100, 100);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
@@ -1282,24 +1284,10 @@ Display()
 	glDisable(GL_LIGHTING);
 	//Objects past this will not be lit
 
-	// Light 1: Blue test
-	// 
+	// Sun Light
 	glPushMatrix();
-	glColor3f(0, 0, 1);
-	glTranslatef(50, 30, 35);
-	SetPointLight(GL_LIGHT1, 0, 0, 5., 0, 0, 1);
-	glutSolidSphere(5, 20, 20);
+	SetPointLight(GL_LIGHT1, SunXYZ[0], SunXYZ[1], SunXYZ[2], 1, 1, 1);
 	glPopMatrix();
-
-	// Light 2: Green test
-	// 
-	glPushMatrix();
-	glColor3f(0, 1, 0);
-	glTranslatef(-50, 30, -35);
-	SetPointLight(GL_LIGHT2, 0, 0, 5., 0, 1, 0);
-	glutSolidSphere(5, 20, 20);
-	glPopMatrix();
-
 
 	// draw some gratuitous text that is fixed on the screen:
 	glDisable(GL_DEPTH_TEST);
@@ -1309,7 +1297,17 @@ Display()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(1., 1., 1.);
-	DoRasterString(5., 5., 0., "Apollo 11");
+	DoRasterString(3., 21., 0., "Apollo 11 - Alpha - 2/15/19");
+	DoRasterString(3., 17., 0., "A - Play Sound Byte");
+	DoRasterString(3., 13., 0., "L - Toggle Lights");
+	//M toggles moon
+	// '.' toggles axes
+	DoRasterString(3., 9., 0., "1-6 - Viewpoints");
+	DoRasterString(3., 5., 0., "Mouse wheel or +/- - Zoom");
+	DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
+	if (View == 2) {
+		DoRasterString(3., 50., 0., "View from Earth");
+	}
 
 
 	// swap the double-buffered framebuffers:
@@ -1678,6 +1676,12 @@ Keyboard(unsigned char c, int x, int y)
 
 	switch (c)
 	{
+
+	case 'a':
+	case 'A':
+		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
+		break;
+
 	case 'o':
 	case 'O':
 		WhichProjection = ORTHO;
@@ -1699,39 +1703,58 @@ Keyboard(unsigned char c, int x, int y)
 		Light1On = !Light1On;
 		Light2On = !Light2On;
 		Light3On = !Light3On;
-		Light4On = !Light4On;
-		Light5On = !Light5On;
+		break;
 
 	case 'm':
 	case 'M':
 		loadMoon = !loadMoon;
-
 		break;
 
-	case 'a':
-		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
+	case '.':
+	case '>':
+		AxesOn = !AxesOn;
 		break;
 
 	case '1':
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 1;
+		loadMoon = 0;
 		break;
+
 	case '2':
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 2;
+		loadMoon = 1;
 		break;
+
 	case '3':
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 3;
+		loadMoon = 1;
 		break;
 
 	case '4':
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 4;
+		loadMoon = 0;
+		break;
+
+	case '5':
+		Xrot = Yrot = 0.;
+		Scale = 1.0;
+		View = 5;
+		loadMoon = 1;
+		break;
+
+	case '6':
+		Xrot = Yrot = 0.;
+		Scale = 1.0;
+		View = 6;
+		loadMoon = 0;
 		break;
 
 	case '-':
