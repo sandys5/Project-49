@@ -16,6 +16,29 @@
 #include <GL/glu.h>
 #include "glut.h"
 
+/*#include "alc.h"
+#include "al.h"
+#include "alut.h"
+
+#define NUM_BUFFERS 1
+#define NUM_SOURCES 1
+#define NUM_ENVIRONMENTS 1	
+
+ALfloat listenerPos[] = { 0.0, 0.0, 4.0 }; //listener position
+ALfloat listenerVel[] = { 0.0, 0.0, 0.0 }; //listener velocity
+ALfloat listenerOri[] = { 0.0, 0.0, 1.0, 0.0, 1.0, 0.0 }; //listener direction
+
+ALfloat sourcePos[] = { 1.0, 0.0, 1.0 }; //audio source position
+ALfloat sourceVel[] = { 0.0, 0.0, 0.0 }; //audio source velocity
+
+ALuint buffer[NUM_BUFFERS];
+ALuint source[NUM_SOURCES];
+ALuint environment[NUM_ENVIRONMENTS]; 
+
+ALsizei size, freq;
+ALenum format;
+ALvoid *data;
+ALboolean loop = AL_FALSE;*/
 
 // title of these windows:
 
@@ -1103,8 +1126,8 @@ Display()
 	}
 
 	if (View == 4) { //viewpoint from lunar module
-		EyePosX = LM_XYZ[0];
-		EyePosY = LM_XYZ[1] + 5;
+		EyePosX = LM_XYZ[0]+1;
+		EyePosY = LM_XYZ[1] + 1;
 		EyePosZ = LM_XYZ[2] + 2;
 		LookAtX = 11;
 		LookAtY = 20;
@@ -1171,7 +1194,7 @@ Display()
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
 	glPushMatrix();
-	glRotatef(-90., 1., 0., 0.);
+	//glRotatef(-90., 1., 0., 0.);
 	glCallList(LandingSite);
 	glPopMatrix();
 
@@ -1568,6 +1591,39 @@ InitGraphics()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	//initialize audio file info
+	/*alListenerfv(AL_POSITION, listenerPos);
+	alListenerfv(AL_VELOCITY, listenerVel);
+	alListenerfv(AL_ORIENTATION, listenerOri);
+
+	alGetError(); //clear any error messages
+	alGenBuffers(NUM_BUFFERS, buffer); //generate the buffers so sound can happen
+
+	if (alGetError != AL_NO_ERROR) {
+		printf("Error in creating buffer\n");
+		exit(1);
+	}
+
+	alutLoadWAVFile("OneSmallStep.wav", &format, &data, &size, &freq, &loop); //load in the audio file
+	alBufferData(buffer[0], format, data, size, freq);
+	alutUnloadWAV(format, data, size, freq);
+
+	alGetError(); 
+	alGenSources(NUM_SOURCES, source);
+
+	if (alGetError() != AL_NO_ERROR) {
+		printf("Error creating source\n");
+		exit(2);
+	}
+
+	alSourcef(source[0], AL_PITCH, 1.0f);
+	alSourcef(source[0], AL_GAIN, 1.0f);
+	alSourcefv(source[0], AL_POSITION, sourcePos);
+	alSourcefv(source[0], AL_VELOCITY, sourceVel);
+	alSourcei(source[0], AL_BUFFER, buffer[0]);
+	alSourcei(source[0], AL_LOOPING, AL_FALSE);*/
+
 }
 
 
@@ -1651,6 +1707,11 @@ Keyboard(unsigned char c, int x, int y)
 		loadMoon = !loadMoon;
 
 		break;
+
+	case 'a':
+		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
+		break;
+
 	case '1':
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
