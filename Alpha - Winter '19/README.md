@@ -1,5 +1,4 @@
-This folder hold an executable for our Winter '19 Alpha. 
-To run the executable, download the folder (or the whole repo) and launch the executable from within the folder.
+This folder hold an executable for our Winter '19 Alpha. To run this program, download the folder (or the whole repo) and launch the executable from within the folder so that it has access to all dependable files. If issues arise, please contact one of The Apolloers. 
 
 Keybindings:
  
@@ -48,4 +47,7 @@ Coming soon:
     Real-life positioning/scaling
  
     More audio and video
+    
+NOTE: This project has only been tested on Windows. The audio specifically should only work on Windows. 
+
   
