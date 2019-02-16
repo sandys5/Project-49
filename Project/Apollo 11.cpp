@@ -730,7 +730,7 @@ float White[] = { 1.,1.,1.,1. };
 
 //Set material of object
 void
-SetMaterial(float r, float g, float b, float shininess)
+SetMaterial(float amb, float diff, float spec, float r, float g, float b, float shininess)
 {
 
 	glMaterialfv(GL_BACK, GL_EMISSION, Array3(0., 0., 0.));
@@ -738,10 +738,10 @@ SetMaterial(float r, float g, float b, float shininess)
 	glMaterialfv(GL_BACK, GL_DIFFUSE, MulArray3(1., White));
 	glMaterialfv(GL_BACK, GL_SPECULAR, Array3(0., 0., 0.));
 	glMaterialf(GL_BACK, GL_SHININESS, 2.f);
-	glMaterialfv(GL_FRONT, GL_EMISSION, Array3(0., 0., 0.));
-	glMaterialfv(GL_FRONT, GL_AMBIENT, Array3(r, g, b));
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, Array3(r, g, b));
-	glMaterialfv(GL_FRONT, GL_SPECULAR, MulArray3(.8f, White));
+	glMaterialfv(GL_FRONT, GL_EMISSION, Array3(0.,0.,0.));
+	glMaterialfv(GL_FRONT, GL_AMBIENT, MulArray3(amb, Array3(r, g, b)));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, MulArray3(diff, Array3(r, g, b)));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, MulArray3(spec, White));
 	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
@@ -1084,7 +1084,7 @@ Display()
 	glEnable(GL_DEPTH_TEST);
 
 	// specify shading to be flat:
-	glShadeModel(GL_FLAT);
+	glShadeModel(GL_SMOOTH);
 
 	// set the viewport to a square centered in the window:
 	GLsizei vx = glutGet(GLUT_WINDOW_WIDTH);
@@ -1097,9 +1097,13 @@ Display()
 	//Perspective	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90., 1., 0.1, 10000.);
+	gluPerspective(90., 1., 0.1, 12000.);
 
 	//Views
+		// Sun Light
+	glPushMatrix();
+	SetPointLight(GL_LIGHT1, SunXYZ[0], 5, SunXYZ[2], 1, 1.,1.);
+	glPopMatrix();
 	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
 
 	//Default view on Moon
@@ -1196,6 +1200,7 @@ Display()
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
 	glPushMatrix();
+	SetMaterial(.8, 1.,.8, 1, 1, 1, 4);
 	glRotatef(-90., 1., 0., 0.);
 	glCallList(LandingSite);
 	glPopMatrix();
@@ -1203,7 +1208,7 @@ Display()
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
 	glPushMatrix();
-	SetMaterial(1, 1, 1, 4);
+	SetMaterial(.4, .7, .8,1, 1, 1, 4);
 	glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
 	glColor3f(1., 1., 1.);
 	glCallList(LunarModule);
@@ -1212,7 +1217,7 @@ Display()
 	// Load in Saturn V rocket
 	// Real dimensions: Height of 363 ft and 33 ft in diameter - https://www.space.com/18422-apollo-saturn-v-moon-rocket-nasa-infographic.html
 	glPushMatrix();
-	SetMaterial(1, 1, 1, 4);
+	SetMaterial(.4, .7, .8,1, 1, 1, 4);
 	glTranslatef(SaturnXYZ[0], SaturnXYZ[1], SaturnXYZ[2]);
 	glScalef(150, 150, 150);
 	glRotatef(90, 0, 0, 1);
@@ -1232,7 +1237,7 @@ Display()
 	// Load in Astronaut
 	// Model loads in about 10 ft, assuming space suit height is ~7 ft
 	glPushMatrix();
-	SetMaterial(1, 1, 1, 4);
+	SetMaterial(.4,.7,.8,1, 1, 1, 4);
 	glTranslatef(AstroXYZ[0], AstroXYZ[1], AstroXYZ[2]);
 	glScalef(.7, .7, .7);
 	glRotatef(180, 0, 1, 0);
@@ -1244,7 +1249,7 @@ Display()
 	if (loadMoon == 1) {
 		// Load in the Moon
 		glPushMatrix();
-		SetMaterial(1, 1, 1, 128);
+		SetMaterial(.4, .7, .8, 1, 1, 1, 128);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, TexM);
 		glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
@@ -1276,18 +1281,13 @@ Display()
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexSt);
-	MjbSphere(8000., 200, 200);
+	MjbSphere(10000., 200, 200);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 
 	//Objects before this will be lit
 	glDisable(GL_LIGHTING);
 	//Objects past this will not be lit
-
-	// Sun Light
-	glPushMatrix();
-	SetPointLight(GL_LIGHT1, SunXYZ[0], SunXYZ[1], SunXYZ[2], 1, 1, 1);
-	glPopMatrix();
 
 	// draw some gratuitous text that is fixed on the screen:
 	glDisable(GL_DEPTH_TEST);
