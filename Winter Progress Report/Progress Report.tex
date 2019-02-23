@@ -2,6 +2,9 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{setspace}
+\usepackage{wrapfig}
+\usepackage[export]{adjustbox}
+
 
 \usepackage{geometry}
 \geometry{textheight=9.5in, textwidth=7in}
@@ -86,23 +89,48 @@ During this Winter term, our group has worked on creating a 3D animation for the
 % 8. now you write!
 
 \section{Updated Goals}
+
+\begin{wrapfigure}{c}{0.5\textwidth}
+    \includegraphics[width=0.4\textwidth]{View1.PNG} 
+    \caption{Apollo 11 Alpha - View 1}
+    \label{fig:View 1}
+\end{wrapfigure}
+
 On Thursday, January 3rd, our design group traveled to OMSI with Mike Bailey to meet with Jim Todd in person for the first time. We were treated to a full tour of the Harry C. Kendall Planetarium at OMSI and got to see the inner workings of their setup. We learned that the planetarium received a software upgrade about a year ago and now used DigitalSky: Dark Matter, a software produced by SkySkan, a provider of planetarium equipment and services. Jim showed us the Dark Matter interface on the main control computer and we got to see many different samples. This gave us a much better idea of how our project would look on a domed theater and how to best design the project to make the best use of the theater. 
 
 At the time of our visit, our group's plan was to animate all portions of the Apollo 11 mission, from launch to splashdown. However, when talking with Jim, we changed course to instead focus more on what happened on the Moon's surface and instead use original news footage to depict what happened before and after. We have some creative freedom with specifics, but our current story board is now as follows: 
 
-\begin{list}
+\begin{itemize}
     \item The animation will start with original video of the launch, show a flight path of the Saturn V rocket to the Moon, include audio snippets of relevant quotes, and then show the Lunar Lander descending on the surface of the Moon.
     \item The operator will now be able to interact with the animation, changing the view of the camera on the lunar surface. If no changes are made, the camera will follow a simulation of what Neil Armstrong did on the surface through his eyes. Key points will include: first steps on the surface, planting the American Flag, views of the Earth, and more. During this time, the operator will be able to take questions from the audience. 
     \item When the Operator is ready to end the animation, they will begin a scripted ending where Neil gets back in the Lunar Module and ascends from the surface, show the flight path again, show the Saturn V Rocket, audio snippets of relevant quotes, and then video of the splashdown on Earth, finishing with credits. 
-\end{list}
+\end{itemize}
 
 Our group will implement this animation in OpenGL. Unfortunately, we recently discovered this will not work directly with the DigitalSky system at OMSI. Instead, we will need to translate our animation into a unique scripting language for use in the planetarium. This will be good because we will be able to make full use of the software's capabilities, but could result in some complications when trying to convert our project to that language. Mike Bailey has been, and is currently in contact with Jim Todd and a contact with SkySkan to find the best ways to complete this conversion. Converting our animation into the scripting language has been added as a stretch goal for our project.
 
 \section{Current Progress}
 As of today, February 18th, our team has created a program in OpenGL that has all objects in the scene, fully textured, including the Saturn V Rocket, Lunar Module, astronaut, Earth, Sun, Moon, landing zone, and a star map background. All objects have been placed in their starting positions and we have six viewpoints highlighting various features.
 
+\begin{wrapfigure}{l}{0.5\textwidth}
+    \includegraphics[width=0.4\textwidth]{View2.PNG} 
+    \caption{Apollo 11 Alpha - View 2}
+    \label{fig:View 2}
+\end{wrapfigure}
+
 \section{To Do}
 In order to have our beta completed, 
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+    \includegraphics[width=0.45\textwidth, left]{View3.PNG} 
+    \caption{Apollo 11 Alpha - View 3}
+    \label{fig:View 3}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+    \includegraphics[width=0.4\textwidth, right]{View4.PNG} 
+    \caption{Apollo 11 Alpha - View 4}
+    \label{fig:View 4}
+\end{wrapfigure}
 
 %An infinite point light has been placed at the Sun to illuminate the scene. 
 %We have loaded one video...
@@ -116,10 +144,22 @@ In order to have our beta completed,
 \section{Problems and Solutions}
 One of the problems our group has encountered obtaining quality 3D objects for our scene. Luckily, NASA has a Github that contains .stl files for 3D objects from most of their missions. We obtained the models for the Saturn V, lunar module, astronaut, and lunar surface. However, these models were not to scale, so our group is continuing to adjust their sizes so they are more accurate. Another problem our group has encountered was implementing audio. The API we were planning on using uses a heavily deprecated library and the functions to play audio were not working. Instead, our group is currently using a Windows function to play audio files, making it so only computers with Windows OS can play audio. We will need to test our program on OMSI's planetarium computer to see if the audio files can be played. 
 
+\begin{wrapfigure}{l}{0.5\textwidth}
+    \includegraphics[width=0.4\textwidth, right]{View5.PNG} 
+    \caption{Apollo 11 Alpha - View 5}
+    \label{fig:View 5}
+\end{wrapfigure}
+
 Implementing historical videos was also a problem for our group. We met with Mike Bailey to discuss how we might achieve this. He told us how every frame of a video can be saved in memory and placed onto a quadrilateral object as an image. These images would upload so many frames per second in order to play the entire video. This technique does not play the audio of the video, however, so our group will have to sync the audio file with the video that is playing. A significant problem our group encountered was having SkySkan, the company that created the planetarium software, inform us that OpenGL might not be compatible with their software. Our group decided that creating an OpenGL animation will still be a requirement while making the video compatible with the planetarium software a stretch goal. Our stretch goal will be to use the scripting language to implement our OpenGL program. 
 %Where to get good models
 %How to include video
 %How to design for expo AND OMSI
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+    \includegraphics[width=0.4\textwidth, left]{View6.PNG} 
+    \caption{Apollo 11 Alpha - View 6}
+    \label{fig:View 6}
+\end{wrapfigure}
 
 
 \section{Conclusion}
