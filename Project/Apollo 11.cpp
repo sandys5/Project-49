@@ -15,6 +15,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
+#include "glslprogram.cpp"
 
 /*#include "alc.h"
 #include "al.h"
@@ -76,6 +77,7 @@ float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
 float EarthXYZ[] = { MoonDiameter * 17, 0, 0 };
 float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
+float LightXYZ[] = { 150., 5, -150. }; 
 
 // Lights
 int Light1On = 1;
@@ -87,6 +89,8 @@ int loadMoon = 0;
 int View = 1;
 int video = 0;
 
+//Shaders
+GLSLProgram *FragmentLight;
 
 //To load in .obj
 /////////////
@@ -1200,9 +1204,16 @@ Display()
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
 	glPushMatrix();
-	SetMaterial(.8, 1.,.8, 1, 1, 1, 4);
 	glRotatef(-90., 1., 0., 0.);
+	FragmentLight->Use();
+	FragmentLight->SetUniformVariable("uLightX", LightXYZ[0]);
+	FragmentLight->SetUniformVariable("uLightY", LightXYZ[1]);
+	FragmentLight->SetUniformVariable("uLightZ", LightXYZ[2]);
+	FragmentLight->SetUniformVariable("uLunarX", LM_XYZ[0]);
+	FragmentLight->SetUniformVariable("uLunarY", LM_XYZ[1]);
+	FragmentLight->SetUniformVariable("uLunarZ", LM_XYZ[2]);
 	glCallList(LandingSite);
+	FragmentLight->Use( 0 );
 	glPopMatrix();
 
 	// Load in lunar module
@@ -1528,17 +1539,18 @@ InitGraphics()
 
 	// init glew (a window must be open to do this):
 
-#ifdef WIN32
-	GLenum err = glewInit();
-	if (err != GLEW_OK)
-	{
-		fprintf(stderr, "glewInit Error\n");
-	}
-	else
-		fprintf(stderr, "GLEW initialized OK\n");
-	fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-#endif
+	#ifdef WIN32
+		GLenum err = glewInit();
+		if (err != GLEW_OK)
+		{
+			fprintf(stderr, "glewInit Error\n");
+		}
+		else
+			fprintf(stderr, "GLEW initialized OK\n");
+		fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+	#endif
 
+	//Texture initialization
 	int width = 1024;
 	int height = 512;
 
@@ -1621,6 +1633,17 @@ InitGraphics()
 	alSourcefv(source[0], AL_VELOCITY, sourceVel);
 	alSourcei(source[0], AL_BUFFER, buffer[0]);
 	alSourcei(source[0], AL_LOOPING, AL_FALSE);*/
+	
+	//Shader initiliazation
+	FragmentLight = new GLSLProgram();
+	bool valid = FragmentLight->Create("fragmentlight.vert", "fragmentlight.frag");
+	if (!valid)
+	{
+		fprintf(stderr, "GLSL Shader error\n");
+	}
+	else {
+		fprintf(stderr, "GLSL Successfully Initialized\n");
+	}
 
 }
 
