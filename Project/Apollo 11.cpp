@@ -78,7 +78,7 @@ float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
 float EarthXYZ[] = { MoonDiameter * 17, 0, 0 };
 float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
-float LightXYZ[] = { 150., 5, -150. };
+float LightXYZ[] = { 220., 5, -220. };
 
 // Lights
 int Light1On = 1;
@@ -1209,18 +1209,23 @@ Display()
 
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
-	glPushMatrix();
-	glRotatef(-90., 1., 0., 0.);
-	FragmentLight->Use();
-	FragmentLight->SetUniformVariable("uLightX", LightXYZ[0]);
-	FragmentLight->SetUniformVariable("uLightY", LightXYZ[1]);
-	FragmentLight->SetUniformVariable("uLightZ", LightXYZ[2]);
-	FragmentLight->SetUniformVariable("uLunarX", LM_XYZ[0]);
-	FragmentLight->SetUniformVariable("uLunarY", LM_XYZ[1]);
-	FragmentLight->SetUniformVariable("uLunarZ", LM_XYZ[2]);
-	glCallList(LandingSite);
-	FragmentLight->Use(0);
-	glPopMatrix();
+	//
+	//if the moons is loaded around the landing site, don't load the landing site or else it will clip through the moon!
+	if (loadMoon != 1) {
+		glPushMatrix();
+		glScalef(1.5, 1., 1.5);
+		glRotatef(-90., 1., 0., 0.);
+		FragmentLight->Use();
+		FragmentLight->SetUniformVariable("uLightX", LightXYZ[0]);
+		FragmentLight->SetUniformVariable("uLightY", LightXYZ[1]);
+		FragmentLight->SetUniformVariable("uLightZ", LightXYZ[2]);
+		FragmentLight->SetUniformVariable("uLunarX", LM_XYZ[0]);
+		FragmentLight->SetUniformVariable("uLunarY", LM_XYZ[1]);
+		FragmentLight->SetUniformVariable("uLunarZ", LM_XYZ[2]);
+		glCallList(LandingSite);
+		FragmentLight->Use(0);
+		glPopMatrix();
+	}
 
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
