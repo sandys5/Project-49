@@ -79,11 +79,7 @@ float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
 float EarthXYZ[] = { MoonDiameter * 17, 0, 0 };
 float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
-<<<<<<< HEAD
-float LightXYZ[] = { 175., 5, -175. }; 
-=======
 float LightXYZ[] = { 220., 5, -220. };
->>>>>>> 9d2546d1f96f7547fb210dad61e804f5354db291
 
 // Lights
 int Light1On = 1;
