@@ -16,6 +16,7 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include "glslprogram.cpp"
+#include "mtl.cpp"
 
 /*#include "alc.h"
 #include "al.h"
@@ -77,13 +78,17 @@ float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
 float EarthXYZ[] = { MoonDiameter * 17, 0, 0 };
 float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
-float LightXYZ[] = { 150., 5, -150. }; 
+float LightXYZ[] = { 175., 5, -175. }; 
 
 // Lights
 int Light1On = 1;
 int Light2On = 1;
 int Light3On = 1;
-
+//Materials
+Mtls LunarMat; 
+//Default Materials
+float dissolve = 1.;
+float SpecularExponant = 0;
 // View variables
 int loadMoon = 0;
 int View = 1;
@@ -1209,9 +1214,20 @@ Display()
 	FragmentLight->SetUniformVariable("uLightX", LightXYZ[0]);
 	FragmentLight->SetUniformVariable("uLightY", LightXYZ[1]);
 	FragmentLight->SetUniformVariable("uLightZ", LightXYZ[2]);
-	FragmentLight->SetUniformVariable("uLunarX", LM_XYZ[0]);
-	FragmentLight->SetUniformVariable("uLunarY", LM_XYZ[1]);
-	FragmentLight->SetUniformVariable("uLunarZ", LM_XYZ[2]);
+	FragmentLight->SetUniformVariable("uLunarX", MoonXYZ[0]);
+	FragmentLight->SetUniformVariable("uLunarY", MoonXYZ[1]);
+	FragmentLight->SetUniformVariable("uLunarZ", MoonXYZ[2]);
+	FragmentLight->SetUniformVariable("AmbientR", LunarMat.First->Ka[0]);
+	FragmentLight->SetUniformVariable("AmbientG", LunarMat.First->Ka[1]);
+	FragmentLight->SetUniformVariable("AmbientB", LunarMat.First->Ka[2]);
+	FragmentLight->SetUniformVariable("DiffuseR", LunarMat.First->Kd[0]);
+	FragmentLight->SetUniformVariable("DiffuseG", LunarMat.First->Kd[1]);
+	FragmentLight->SetUniformVariable("DiffuseB", LunarMat.First->Kd[2]);
+	FragmentLight->SetUniformVariable("SpecularR", LunarMat.First->Ks[0]);
+	FragmentLight->SetUniformVariable("SpecularG", LunarMat.First->Ks[1]);
+	FragmentLight->SetUniformVariable("SpecularB", LunarMat.First->Ks[2]);
+	FragmentLight->SetUniformVariable("dissolve", dissolve);
+	FragmentLight->SetUniformVariable("specExp", SpecularExponant);
 	glCallList(LandingSite);
 	FragmentLight->Use( 0 );
 	glPopMatrix();
@@ -1635,6 +1651,12 @@ InitGraphics()
 	alSourcei(source[0], AL_LOOPING, AL_FALSE);*/
 	
 	//Shader initiliazation
+	if (LunarMat.Open("LandingSite.mtl") != 0)
+	{
+		fprintf(stderr, "Could not read file name.\n");
+	}
+	LunarMat.ReadMtlFile();
+	LunarMat.Close();
 	FragmentLight = new GLSLProgram();
 	bool valid = FragmentLight->Create("fragmentlight.vert", "fragmentlight.frag");
 	if (!valid)
