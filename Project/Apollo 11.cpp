@@ -24,7 +24,7 @@
 
 #define NUM_BUFFERS 1
 #define NUM_SOURCES 1
-#define NUM_ENVIRONMENTS 1	
+#define NUM_ENVIRONMENTS 1
 
 ALfloat listenerPos[] = { 0.0, 0.0, 4.0 }; //listener position
 ALfloat listenerVel[] = { 0.0, 0.0, 0.0 }; //listener velocity
@@ -35,7 +35,7 @@ ALfloat sourceVel[] = { 0.0, 0.0, 0.0 }; //audio source velocity
 
 ALuint buffer[NUM_BUFFERS];
 ALuint source[NUM_SOURCES];
-ALuint environment[NUM_ENVIRONMENTS]; 
+ALuint environment[NUM_ENVIRONMENTS];
 
 ALsizei size, freq;
 ALenum format;
@@ -61,7 +61,7 @@ const int GLUIFALSE = { false };
 const int INIT_WINDOW_SIZE = { 800 };
 
 //Textures
-GLuint TexE, TexM, TexS, TexSt;
+GLuint TexE, TexM, TexS, TexSt, AFlag;
 
 // Dimentions
 // Earth to Moon ratio is realistic, Sun ratio had to be fudged
@@ -70,15 +70,20 @@ float EarthDiameter = MoonDiameter * 4;
 float SunDiameter = MoonDiameter * .75;
 
 // Important positions
-float LM_XYZ[] = { 0., 11., 10.5 };
+float BaseXYZ[] = { 168, 2, -89 };
+float LM_XYZ[] = { 20., 11.5, 15 };
 float SaturnXYZ[] = { 900, 0, -100 };
-float AstroXYZ[] = { 2, 11, 12 };
-float FlagXYZ[] = { 4, 11, 15 };
+float AstroXYZ[] = {14 , 12, 9 };
+float FlagXYZ[] = { 15, 11, 11 };
 float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
 float EarthXYZ[] = { MoonDiameter * 17, 0, 0 };
 float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
+<<<<<<< HEAD
 float LightXYZ[] = { 175., 5, -175. }; 
+=======
+float LightXYZ[] = { 220., 5, -220. };
+>>>>>>> 9d2546d1f96f7547fb210dad61e804f5354db291
 
 // Lights
 int Light1On = 1;
@@ -93,6 +98,10 @@ float SpecularExponant = 0;
 int loadMoon = 0;
 int View = 1;
 int video = 0;
+
+float dotPosX = MoonDiameter / 2;
+float dotPosY = 0;
+float dotPosZ = 0;
 
 //Shaders
 GLSLProgram *FragmentLight;
@@ -211,6 +220,7 @@ GLuint	LandingSite;			// list to load in lunar surface obj
 GLuint	LunarModule;			// list to load in lunar module obj
 GLuint	SaturnV;				// list to load Saturn V rocket
 GLuint	Astronaut;				// list to load Astronaut
+GLuint	FlagList;				// list to load Flag
 int		AxesOn;					// != 0 means to draw the axes
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
@@ -747,7 +757,7 @@ SetMaterial(float amb, float diff, float spec, float r, float g, float b, float 
 	glMaterialfv(GL_BACK, GL_DIFFUSE, MulArray3(1., White));
 	glMaterialfv(GL_BACK, GL_SPECULAR, Array3(0., 0., 0.));
 	glMaterialf(GL_BACK, GL_SHININESS, 2.f);
-	glMaterialfv(GL_FRONT, GL_EMISSION, Array3(0.,0.,0.));
+	glMaterialfv(GL_FRONT, GL_EMISSION, Array3(0., 0., 0.));
 	glMaterialfv(GL_FRONT, GL_AMBIENT, MulArray3(amb, Array3(r, g, b)));
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, MulArray3(diff, Array3(r, g, b)));
 	glMaterialfv(GL_FRONT, GL_SPECULAR, MulArray3(spec, White));
@@ -1109,9 +1119,9 @@ Display()
 	gluPerspective(90., 1., 0.1, 12000.);
 
 	//Views
-		// Sun Light
+	// Sun Light
 	glPushMatrix();
-	SetPointLight(GL_LIGHT1, SunXYZ[0], 5, SunXYZ[2], 1, 1.,1.);
+	SetPointLight(GL_LIGHT1, SunXYZ[0], 5, SunXYZ[2], 1, 1., 1.);
 	glPopMatrix();
 	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
 
@@ -1122,16 +1132,16 @@ Display()
 
 	//View from Earth
 	if (View == 2) {
-		EyePosX = EarthXYZ[0] - (EarthDiameter / 2) - 50;
+		EyePosX = EarthXYZ[0] - (EarthDiameter / 2) + 750;
 		EyePosY = EarthXYZ[1] - (EarthDiameter / 2) - 50;
 		EyePosZ = EarthXYZ[2] - (EarthDiameter / 2) - 50;
-		LookAtX = MoonXYZ[0]; LookAtY = MoonXYZ[1]; LookAtZ = MoonXYZ[2];
+		LookAtX = BaseXYZ[0]; LookAtY = BaseXYZ[1]; LookAtZ = BaseXYZ[2];
 		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
 	}
 
 	//View from above moon base
 	if (View == 3) {
-		EyePosX = -250; EyePosY = 250; EyePosZ = 250;
+		EyePosX = 250; EyePosY = 0; EyePosZ = -250;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
@@ -1139,21 +1149,21 @@ Display()
 	//viewpoint from lunar module
 	if (View == 4) {
 		EyePosX = LM_XYZ[0]; EyePosY = LM_XYZ[1] + 5; EyePosZ = LM_XYZ[2] + 2;
-		LookAtX = 11; LookAtY = 20; LookAtZ = 11;
+		LookAtX = EarthXYZ[0]; LookAtY = EarthXYZ[1]; LookAtZ = EarthXYZ[2];
 		UpVecX = 0;	UpVecY = 1;	UpVecZ = 0;
 	}
 
-	//View point of Saturn V
+	//Other view of landing site
 	if (View == 5) {
-		EyePosX = SaturnXYZ[0] + 75; EyePosY = SaturnXYZ[1] + 50; EyePosZ = SaturnXYZ[2] + 75;
-		LookAtX = SaturnXYZ[0]; LookAtY = SaturnXYZ[1] + 50; LookAtZ = SaturnXYZ[2];
+		EyePosX = 20; EyePosY = 20; EyePosZ = -10;
+		LookAtX = LM_XYZ[0]; LookAtY = LM_XYZ[1]; LookAtZ = LM_XYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//View point Lander/Neil
 	if (View == 6) {
-		EyePosX = LM_XYZ[0] + 6; EyePosY = LM_XYZ[1] + 2; EyePosZ = LM_XYZ[2] + 10;
-		LookAtX = LM_XYZ[0]; LookAtY = LM_XYZ[1]; LookAtZ = LM_XYZ[2];
+		EyePosX = LM_XYZ[0]+2; EyePosY = LM_XYZ[1] + 3; EyePosZ = LM_XYZ[2] -7;
+		LookAtX = FlagXYZ[0]+3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
@@ -1232,39 +1242,45 @@ Display()
 	FragmentLight->Use( 0 );
 	glPopMatrix();
 
+
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
 	glPushMatrix();
-	SetMaterial(.4, .7, .8,1, 1, 1, 4);
+	SetMaterial(.4, .7, .8, 1, 1, 1, 4);
 	glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
+	glRotatef(180, 0, 1, 0);
 	glColor3f(1., 1., 1.);
 	glCallList(LunarModule);
 	glPopMatrix();
 
 	// Load in Saturn V rocket
 	// Real dimensions: Height of 363 ft and 33 ft in diameter - https://www.space.com/18422-apollo-saturn-v-moon-rocket-nasa-infographic.html
-	glPushMatrix();
-	SetMaterial(.4, .7, .8,1, 1, 1, 4);
+	
+	//We might not have this at all...
+	/*glPushMatrix();
+	SetMaterial(.4, .7, .8, 1, 1, 1, 4);
 	glTranslatef(SaturnXYZ[0], SaturnXYZ[1], SaturnXYZ[2]);
 	glScalef(150, 150, 150);
 	glRotatef(90, 0, 0, 1);
 	glColor3f(1., 1., 1.);
 	glCallList(SaturnV);
-	glPopMatrix();
+	glPopMatrix();*/
 
 	// Load in Flag
-	// Real dimensions: 
-	/*glPushMatrix();
-	SetMaterial(1, 1, 1, 4);
-	glTranslatef(FlagXYZ[0], FlagXYZ[1], FlagXYZ[2]);
-	glColor3f(1., 1., 1.);
-	glCallList(?);
-	glPopMatrix();*/
+	// Real dimensions: 1 inch poles, 3 X 5 foot flag	
+	glPushMatrix();
+	glColor3f(1, 1, 1);
+	glTranslatef(FlagXYZ[0], FlagXYZ[1]+.5, FlagXYZ[2]);
+	glRotatef(-90, 1, 0, 0);
+	glScalef(.30, .30, .30);
+	glRotatef(-20, 0, 0, 1);
+	glCallList(FlagList);
+	glPopMatrix();
 
 	// Load in Astronaut
 	// Model loads in about 10 ft, assuming space suit height is ~7 ft
 	glPushMatrix();
-	SetMaterial(.4,.7,.8,1, 1, 1, 4);
+	SetMaterial(.4, .7, .8, 1, 1, 1, 4);
 	glTranslatef(AstroXYZ[0], AstroXYZ[1], AstroXYZ[2]);
 	glScalef(.7, .7, .7);
 	glRotatef(180, 0, 1, 0);
@@ -1290,20 +1306,22 @@ Display()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexE);
 	glTranslatef(EarthXYZ[0], EarthXYZ[1], EarthXYZ[2]);
-	glRotatef(-105., 0., 1., 0.);
+	glRotatef(90., 1., 0., 0.);
+	glRotatef(-180., 0., 1., 0.);
 	MjbSphere(EarthDiameter / 2, 100, 100);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-	
+
 	//Load in the Sun
-	glPushMatrix();
+	//We probably dont want the sun loaded in
+	/*glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexS);
 	glTranslatef(SunXYZ[0], SunXYZ[1], SunXYZ[2]);
-	MjbSphere(SunDiameter/2, 100, 100);
+	MjbSphere(SunDiameter / 2, 100, 100);
 	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
-	
+	glPopMatrix();*/
+
 	//Load the Star Map
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
@@ -1315,6 +1333,18 @@ Display()
 	//Objects before this will be lit
 	glDisable(GL_LIGHTING);
 	//Objects past this will not be lit
+
+	//Marker for the landing site
+	if (loadMoon == 1) {
+		glPushMatrix();
+		glColor3f(1, 0, 0);
+		glTranslatef(BaseXYZ[0], BaseXYZ[1], BaseXYZ[2]);
+		//Lots of trial and error, see commented out debugging at keybindings
+		MjbSphere(10, 50, 50);
+		glPopMatrix();
+		
+		DoRasterString(BaseXYZ[0]+15, BaseXYZ[1]+10, BaseXYZ[2]-10, "Tranquility Base");
+	}
 
 	// draw some gratuitous text that is fixed on the screen:
 	glDisable(GL_DEPTH_TEST);
@@ -1334,7 +1364,7 @@ Display()
 	DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
 	if (View == 2) {
 		DoRasterString(3., 50., 0., "View from Earth");
-	}
+	}	
 
 
 	// swap the double-buffered framebuffers:
@@ -1555,16 +1585,16 @@ InitGraphics()
 
 	// init glew (a window must be open to do this):
 
-	#ifdef WIN32
-		GLenum err = glewInit();
-		if (err != GLEW_OK)
-		{
-			fprintf(stderr, "glewInit Error\n");
-		}
-		else
-			fprintf(stderr, "GLEW initialized OK\n");
-		fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-	#endif
+#ifdef WIN32
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
+	{
+		fprintf(stderr, "glewInit Error\n");
+	}
+	else
+		fprintf(stderr, "GLEW initialized OK\n");
+	fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+#endif
 
 	//Texture initialization
 	int width = 1024;
@@ -1576,7 +1606,7 @@ InitGraphics()
 	glGenTextures(1, &TexM);
 	glGenTextures(1, &TexS);
 	glGenTextures(1, &TexSt);
-
+	glGenTextures(1, &AFlag);
 
 	glBindTexture(GL_TEXTURE_2D, TexE);
 	unsigned char* EarthTexA = BmpToTexture("worldtex.bmp", &width, &height);
@@ -1617,7 +1647,21 @@ InitGraphics()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	
+	int width2 = 1200;
+	int height2 = 632;
 
+	glBindTexture(GL_TEXTURE_2D, AFlag);
+	unsigned char* AmericanFlagTex = BmpToTexture("AFlag.bmp", &width2, &height2);
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, AmericanFlagTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	
 	//initialize audio file info
 	/*alListenerfv(AL_POSITION, listenerPos);
 	alListenerfv(AL_VELOCITY, listenerVel);
@@ -1635,7 +1679,7 @@ InitGraphics()
 	alBufferData(buffer[0], format, data, size, freq);
 	alutUnloadWAV(format, data, size, freq);
 
-	alGetError(); 
+	alGetError();
 	alGenSources(NUM_SOURCES, source);
 
 	if (alGetError() != AL_NO_ERROR) {
@@ -1649,7 +1693,7 @@ InitGraphics()
 	alSourcefv(source[0], AL_VELOCITY, sourceVel);
 	alSourcei(source[0], AL_BUFFER, buffer[0]);
 	alSourcei(source[0], AL_LOOPING, AL_FALSE);*/
-	
+
 	//Shader initiliazation
 	if (LunarMat.Open("LandingSite.mtl") != 0)
 	{
@@ -1682,13 +1726,54 @@ InitLists()
 	glutSetWindow(MainWindow);
 
 	// create the axes:
-
 	AxesList = glGenLists(1);
 	glNewList(AxesList, GL_COMPILE);
 	glLineWidth(AXES_WIDTH);
 	Axes(125);
 	glLineWidth(1.);
 	glEndList();
+
+
+	FlagList = glGenLists(1);
+	glNewList(FlagList, GL_COMPILE);
+	
+	//vertical cylinder
+	glPushMatrix();
+	glColor3f(1, 1, 1);
+	GLUquadricObj *quad1;
+	quad1 = gluNewQuadric();
+	gluCylinder(quad1, .04, .04, 7, 10, 100);
+	glPopMatrix();
+
+	//horizontal cylinder
+	glPushMatrix();
+	glTranslatef(0, 0, 7);
+	glRotatef(90, 0, 1, 0);
+	GLUquadricObj *quad2;
+	quad2 = gluNewQuadric();
+	gluCylinder(quad2, .04, .04, 5 + .04, 10, 100);
+	glPopMatrix();
+	
+	//flag
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, AFlag);
+	glBegin(GL_QUADS);
+	
+	glTexCoord2f(0, 0);
+	glVertex3f(0, 0, 4);
+	glTexCoord2f(0, 1);
+	glVertex3f(0, 0, 7 - .04);
+	glTexCoord2f(1, 1);
+	glVertex3f(5, 0, 7 - .04);
+	glTexCoord2f(1, 0);
+	glVertex3f(5, 0, 4);
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+	glEndList();
+	
 
 	SaturnV = glGenLists(1);
 	glNewList(SaturnV, GL_COMPILE);
@@ -1792,7 +1877,7 @@ Keyboard(unsigned char c, int x, int y)
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 5;
-		loadMoon = 1;
+		loadMoon = 0;
 		break;
 
 	case '6':
@@ -1810,6 +1895,31 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = Scale + .1;
 		break;
 
+	/*case '0':
+		dotPosX = dotPosX + 1;
+		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+		break;
+	case '9':
+		dotPosY = dotPosY + 1;
+		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+		break;
+	case '8':
+		dotPosZ = dotPosZ + 1;
+		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+		break;
+	case ')':
+		dotPosX = dotPosX - 1;
+		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+		break;
+	case '(':
+		dotPosY = dotPosY - 1;
+		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+		break;
+	case '*':
+		dotPosZ = dotPosZ - 1;
+		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+		break;
+		*/
 	default:
 		fprintf(stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c);
 	}
