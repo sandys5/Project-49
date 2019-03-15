@@ -71,6 +71,7 @@ float SunDiameter = MoonDiameter * .75;
 
 // Important positions
 float BaseXYZ[] = { 168, 2, -89 };
+float LaunchXYZ[] = { 6710, 385, -705 };
 float LM_XYZ[] = { 20., 11.5, 15 };
 float SaturnXYZ[] = { 900, 0, -100 };
 float AstroXYZ[] = {14 , 12, 9 };
@@ -85,16 +86,22 @@ float LightXYZ[] = { 220., 5, -220. };
 int Light1On = 1;
 int Light2On = 1;
 int Light3On = 1;
+
 //Materials
 Mtls LunarMat; 
+
 //Default Materials
 float dissolve = 1.;
 float SpecularExponant = 0;
-// View variables
-int loadMoon = 0;
-int View = 1;
-int video = 0;
 
+// View variables
+int loadMoon = 1;
+int View = 1;
+
+//Bezier curves
+int numPoints = 10;
+
+//point testing
 float dotPosX = MoonDiameter / 2;
 float dotPosY = 0;
 float dotPosZ = 0;
@@ -1084,8 +1091,55 @@ MjbSphere(float radius, int slices, int stacks)
 	Pts = NULL;
 }
 
-// draw the complete scene:
 
+struct Point
+{
+	double x, y, z;
+};
+
+struct Curve
+{
+	float r, g, b;
+	Point p0, p1, p2, p3;
+};
+
+void DrawCurve(struct Curve *curve)
+{
+	glLineWidth(3.);
+	glColor3f(curve->r, curve->g, curve->b);
+
+	struct Point p0 = curve->p0;
+	struct Point p1 = curve->p1;
+	struct Point p2 = curve->p2;
+	struct Point p3 = curve->p3;
+
+	glBegin(GL_LINE_STRIP);
+	for (int it = 0; it <= numPoints; it++)
+	{
+		float t = (float)it / (float)numPoints;
+		float omt = 1.f - t;
+		float x = omt * omt*omt*p0.x + 3.f*t*omt*omt*p1.x + 3.f*t*t*omt*p2.x + t * t*t*p3.x;
+		float y = omt * omt*omt*p0.y + 3.f*t*omt*omt*p1.y + 3.f*t*t*omt*p2.y + t * t*t*p3.y;
+		float z = omt * omt*omt*p0.z + 3.f*t*omt*omt*p1.z + 3.f*t*t*omt*p2.z + t * t*t*p3.z;
+		glVertex3f(x, y, z);
+	}
+	glEnd();
+	glLineWidth(1);
+
+	glColor3f(1, 1, 1);
+
+	// Draw control points
+	glPointSize(5.);
+	glBegin(GL_POINTS);
+	glVertex3f(p0.x, p0.y, p0.z);
+	glVertex3f(p1.x, p1.y, p1.z);
+	glVertex3f(p2.x, p2.y, p2.z);
+	glVertex3f(p3.x, p3.y, p3.z);
+	glEnd();
+}
+
+
+// draw the complete scene:
 void
 Display()
 {
@@ -1121,10 +1175,21 @@ Display()
 	glPopMatrix();
 	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
 
+	//Not a good view
+	/*
 	//Default view on Moon
 	EyePosX = -50; EyePosY = 50; EyePosZ = 30;
 	LookAtX = 0; LookAtY = 30; LookAtZ = 0;
 	UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+	*/
+
+	//Flight path
+	if (View == 1) {
+		//Default view of flight path
+		EyePosX = 3400; EyePosY = 5500; EyePosZ = 0;
+		LookAtX = 3400; LookAtY = 0; LookAtZ = 0;
+		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
+	}
 
 	//View from Earth
 	if (View == 2) {
@@ -1249,19 +1314,6 @@ Display()
 	glCallList(LunarModule);
 	glPopMatrix();
 
-	// Load in Saturn V rocket
-	// Real dimensions: Height of 363 ft and 33 ft in diameter - https://www.space.com/18422-apollo-saturn-v-moon-rocket-nasa-infographic.html
-	
-	//We might not have this at all...
-	/*glPushMatrix();
-	SetMaterial(.4, .7, .8, 1, 1, 1, 4);
-	glTranslatef(SaturnXYZ[0], SaturnXYZ[1], SaturnXYZ[2]);
-	glScalef(150, 150, 150);
-	glRotatef(90, 0, 0, 1);
-	glColor3f(1., 1., 1.);
-	glCallList(SaturnV);
-	glPopMatrix();*/
-
 	// Load in Flag
 	// Real dimensions: 1 inch poles, 3 X 5 foot flag	
 	glPushMatrix();
@@ -1302,21 +1354,14 @@ Display()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TexE);
 	glTranslatef(EarthXYZ[0], EarthXYZ[1], EarthXYZ[2]);
+	if (View == 1) {
+		glRotatef(-90, 1, 0, 0);
+	}
 	glRotatef(90., 1., 0., 0.);
 	glRotatef(-180., 0., 1., 0.);
 	MjbSphere(EarthDiameter / 2, 100, 100);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-
-	//Load in the Sun
-	//We probably dont want the sun loaded in
-	/*glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, TexS);
-	glTranslatef(SunXYZ[0], SunXYZ[1], SunXYZ[2]);
-	MjbSphere(SunDiameter / 2, 100, 100);
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();*/
 
 	//Load the Star Map
 	glPushMatrix();
@@ -1330,8 +1375,135 @@ Display()
 	glDisable(GL_LIGHTING);
 	//Objects past this will not be lit
 
+	// Flight Path
+	// https://airandspace.si.edu/sites/default/files/images/5317h.jpg
+	if (View == 1) {
+
+		float MOrbit, EOrbit;
+		EOrbit = (EarthDiameter / 2) + 250;
+		MOrbit = (MoonDiameter / 2) + 250;
+		struct Curve curve;
+		curve.r = 1;
+		curve.g = 0;
+		curve.b = 1;
+
+		//Earth
+		//Launch to orbit 'right'
+		struct Point p0 = { LaunchXYZ[0], LaunchXYZ[1], LaunchXYZ[2] };
+		struct Point p1 = { 6800 - 250, EOrbit / 2 - 100, -EOrbit / 2 - 275 };
+		struct Point p2 = { 6800 - EOrbit / 2 - 450, EOrbit / 2 - 100, -600 };
+		struct Point p3 = { 6800 - EOrbit, 100, 0 };
+		curve.p0 = p0;
+		curve.p1 = p1;
+		curve.p2 = p2;
+		curve.p3 = p3;
+		DrawCurve(&curve);
+
+		//1st orbit
+		//'right' to 'top'
+		curve.p0 = { 6800 - EOrbit, 100, 0 };
+		curve.p1 = { 6800 - EOrbit, 0, EOrbit / 2 + 150 };
+		curve.p2 = { 6800 - EOrbit / 2 + 150, 0, EOrbit };
+		curve.p3 = { 6800, 0, EOrbit };
+		DrawCurve(&curve);
+		//'top' to 'left'
+		curve.p0 = { 6800, 0, EOrbit };
+		curve.p1 = { 6800 + EOrbit / 2 + 150, 0, EOrbit };
+		curve.p2 = { 6800 + EOrbit, 0, EOrbit / 2 + 150 };
+		curve.p3 = { 6800 + EOrbit + 75, 0, 0 };
+		DrawCurve(&curve);
+		//'left' to 'bot'
+		curve.p0 = { 6800 + EOrbit + 75, 0, 0 };
+		curve.p1 = { 6800 + EOrbit, 0, -EOrbit / 2 - 150 };
+		curve.p2 = { 6800 + EOrbit / 2 + 150, 0, -EOrbit };
+		curve.p3 = { 6800, 0, -EOrbit - 50 };
+		DrawCurve(&curve);
+		//'bot' to 'right'
+		curve.p0 = { 6800, 0, -EOrbit - 50 };
+		curve.p1 = { 6800 - EOrbit / 2 - 150, 0, -EOrbit };
+		curve.p2 = { 6800 - EOrbit, 0, -EOrbit / 2 - 150 };
+		curve.p3 = { 6800 - EOrbit, 0, 0 };
+		DrawCurve(&curve);
+
+
+		//2nd orbit
+		//'right' to 'top'
+		curve.p0 = { 6800 - EOrbit, 0, 0 };
+		curve.p1 = { 6800 - EOrbit, 0, EOrbit / 2 + 150 };
+		curve.p2 = { 6800 - EOrbit / 2 + 150, 0, EOrbit };
+		curve.p3 = { 6800, 0, EOrbit };
+		DrawCurve(&curve);
+		//'top' to 'left'
+		curve.p0 = { 6800, 0, EOrbit };
+		curve.p1 = { 6800 + EOrbit / 2 + 150, 0, EOrbit };
+		curve.p2 = { 6800 + EOrbit, 0, EOrbit / 2 + 150 };
+		curve.p3 = { 6800 + EOrbit + 75, 0, 0 };
+		DrawCurve(&curve);
+		//'left' to 'bot'
+		curve.p0 = { 6800 + EOrbit + 75, 0, 0 };
+		curve.p1 = { 6800 + EOrbit, 0, -EOrbit / 2 - 150 };
+		curve.p2 = { 6800 + EOrbit / 2 + 150, 0, -EOrbit };
+		curve.p3 = { 6800, 0, -EOrbit - 50 };
+		DrawCurve(&curve);
+		
+		//Travel to Moon
+		//'bot' of Earth to 'top' of Moon
+		curve.p0 = { 6800, 0, -EOrbit - 50 };
+		curve.p1 = { 6800 - EOrbit / 2 + 250, 0, -EOrbit - 150 };
+		curve.p2 = { MOrbit, 0, MOrbit };
+		curve.p3 = { 0, 0,  MOrbit };
+		DrawCurve(&curve);
+
+		//Moon 1st orbit
+		//'top' to 'right'
+		curve.p0 = { 0, 0,  MOrbit };
+		curve.p1 = { -MOrbit + 150, 0, MOrbit };
+		curve.p2 = { -MOrbit, 0, MOrbit - 150 };
+		curve.p3 = { -MOrbit, 0, 0 };
+		DrawCurve(&curve);
+		//'right' to 'bot'
+		curve.p0 = { -MOrbit, 0, 0 };
+		curve.p1 = { -MOrbit, 0, -MOrbit + 150 };
+		curve.p2 = { -MOrbit + 150, 0, -MOrbit };
+		curve.p3 = { 0, 0, -MOrbit };
+		DrawCurve(&curve);
+		// 'bot' to 'left'
+		curve.p0 = { 0, 0,  -MOrbit };
+		curve.p1 = { MOrbit - 150, 0, -MOrbit };
+		curve.p2 = { MOrbit, 0, -MOrbit + 150 };
+		curve.p3 = { MOrbit, 0, 0 };
+		DrawCurve(&curve);
+		//'left' to 'top'
+		curve.p0 = { MOrbit, 0, 0 };
+		curve.p1 = { MOrbit, 0, MOrbit - 150 };
+		curve.p2 = { MOrbit - 150, 0, MOrbit };
+		curve.p3 = { 0, 0, MOrbit };
+		DrawCurve(&curve);
+		
+		//2nd orbit
+		//'top' 
+		curve.p0 = { 0, 0, MOrbit };
+		curve.p1 = { -MOrbit + 150, 0, MOrbit };
+		curve.p2 = { -MOrbit, 0, MOrbit - 150 };
+		curve.p3 = { -MOrbit, 0, 0 };
+		DrawCurve(&curve);
+		//'right'
+		curve.p0 = { -MOrbit, 0, 0 };
+		curve.p1 = { -MOrbit, 0, -MOrbit + 150 };
+		curve.p2 = { -MOrbit + 150, 0, -MOrbit };
+		curve.p3 = { 0, 0, -MOrbit };
+		DrawCurve(&curve);
+		//'bot' to base
+		curve.p0 = { 0, 0, -MOrbit };
+		curve.p1 = { 100, 0, -MOrbit };
+		curve.p2 = { MOrbit / 1.5, 0, -MOrbit / 1.5 };
+		curve.p3 = { BaseXYZ[0], BaseXYZ[1], BaseXYZ[2] };
+		DrawCurve(&curve);
+
+	}
+
 	//Marker for the landing site
-	if (loadMoon == 1) {
+	if (View == 3) {
 		glPushMatrix();
 		glColor3f(1, 0, 0);
 		glTranslatef(BaseXYZ[0], BaseXYZ[1], BaseXYZ[2]);
@@ -1339,7 +1511,7 @@ Display()
 		MjbSphere(10, 50, 50);
 		glPopMatrix();
 		
-		DoRasterString(BaseXYZ[0]+15, BaseXYZ[1]+10, BaseXYZ[2]-10, "Tranquility Base");
+		DoRasterString(BaseXYZ[0]+20, BaseXYZ[1]+15, BaseXYZ[2]-15, "Tranquility Base");
 	}
 
 	// draw some gratuitous text that is fixed on the screen:
@@ -1350,7 +1522,7 @@ Display()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(1., 1., 1.);
-	DoRasterString(3., 21., 0., "Apollo 11 - Alpha - 2/15/19");
+	DoRasterString(3., 21., 0., "Apollo 11 - Beta - 3/19/19");
 	DoRasterString(3., 17., 0., "A - Play Sound Byte");
 	DoRasterString(3., 13., 0., "L - Toggle Lights");
 	//M toggles moon
@@ -1358,9 +1530,6 @@ Display()
 	DoRasterString(3., 9., 0., "1-6 - Viewpoints");
 	DoRasterString(3., 5., 0., "Mouse wheel or +/- - Zoom");
 	DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
-	if (View == 2) {
-		DoRasterString(3., 50., 0., "View from Earth");
-	}	
 
 
 	// swap the double-buffered framebuffers:
@@ -1845,7 +2014,7 @@ Keyboard(unsigned char c, int x, int y)
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 1;
-		loadMoon = 0;
+		loadMoon = 1;
 		break;
 
 	case '2':
