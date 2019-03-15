@@ -61,7 +61,7 @@ const int GLUIFALSE = { false };
 const int INIT_WINDOW_SIZE = { 800 };
 
 //Textures
-GLuint TexE, TexM, TexS, TexSt, AFlag;
+GLuint TexE, TexM, TexS, TexSt, AFlag, DayEarthTex, NightEarthTex, CloudEarthTex;
 
 // Dimentions
 // Earth to Moon ratio is realistic, Sun ratio had to be fudged
@@ -81,6 +81,12 @@ float EarthXYZ[] = { MoonDiameter * 17, 0, 0 };
 float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
 float LightXYZ[] = { 220., 5, -220. };
 
+//Animation First Frames 
+float LM_Animate[] = { 20., 17., 15. };
+
+//Animate Variables
+const float TurnFactor = (.5 * M_PI) / 180;
+float currentFactor = 0;
 // Lights
 int Light1On = 1;
 int Light2On = 1;
@@ -101,7 +107,9 @@ float dotPosZ = 0;
 
 //Shaders
 GLSLProgram *FragmentLight;
+GLSLProgram *EarthShadeModel;
 
+int ShaderEarthTex, ShaderNightTex, ShaderCloudsTex;
 //To load in .obj
 /////////////
 struct Vertex {
@@ -227,7 +235,6 @@ float	Xrot, Yrot;				// rotation angles in degrees
 
 
 // function prototypes:
-void	Animate();
 void	Display();
 void	DoAxesMenu(int);
 void	DoColorMenu(int);
@@ -237,6 +244,7 @@ void	DoRasterString(float, float, float, char *);
 void	DoStrokeString(float, float, float, float, char *);
 float	ElapsedSeconds();
 void	InitGraphics();
+void	Animate();
 void	InitLists();
 void	InitMenus();
 void	Keyboard(unsigned char, int, int);
@@ -705,18 +713,6 @@ main(int argc, char *argv[])
 	return 0;
 }
 
-void
-Animate()
-{
-	// put animation stuff in here -- change some global variables
-	// for Display( ) to find:
-
-	// force a call to Display( ) next time it is convenient:
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-
 // utility to create an array from 3 separate values:
 float *
 Array3(float a, float b, float c)
@@ -1087,6 +1083,17 @@ MjbSphere(float radius, int slices, int stacks)
 // draw the complete scene:
 
 void
+Animate()
+{
+	if (View == 7)
+		currentFactor += TurnFactor;
+	else
+		currentFactor = 0.;
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
+}
+
+void
 Display()
 {
 	// set which window we want to do the graphics into:
@@ -1162,6 +1169,12 @@ Display()
 		LookAtX = FlagXYZ[0]+3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
+	if (View == 7)
+	{
+		EyePosX = LM_Animate[0]; EyePosY = LM_Animate[1]; EyePosZ = LM_Animate[2];
+		LookAtX = (EarthXYZ[0] * cos(currentFactor) - EarthXYZ[2]*sin(currentFactor)); LookAtY = EarthXYZ[1]; LookAtZ = (EarthXYZ[0] * sin(currentFactor) + EarthXYZ[2]*cos(currentFactor));
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+	}
 
 	// set the eye position, look-at position, and up-vector:
 	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
@@ -1174,7 +1187,6 @@ Display()
 	if (Scale < MINSCALE)
 		Scale = MINSCALE;
 	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -1265,12 +1277,15 @@ Display()
 	// Load in Flag
 	// Real dimensions: 1 inch poles, 3 X 5 foot flag	
 	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, AFlag);
 	glColor3f(1, 1, 1);
 	glTranslatef(FlagXYZ[0], FlagXYZ[1]+.5, FlagXYZ[2]);
 	glRotatef(-90, 1, 0, 0);
 	glScalef(.30, .30, .30);
 	glRotatef(-20, 0, 0, 1);
 	glCallList(FlagList);
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 
 	// Load in Astronaut
@@ -1299,13 +1314,38 @@ Display()
 
 	// Load in the Earth
 	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, TexE);
 	glTranslatef(EarthXYZ[0], EarthXYZ[1], EarthXYZ[2]);
 	glRotatef(90., 1., 0., 0.);
-	glRotatef(-180., 0., 1., 0.);
+	glRotatef(180., 0., 1., 0.);
+	EarthShadeModel->Use();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, DayEarthTex);
+	EarthShadeModel->SetUniformVariable("uImageOne", 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, NightEarthTex);
+	EarthShadeModel->SetUniformVariable("uImageTwo", 1);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, CloudEarthTex);
+	glActiveTexture(GL_TEXTURE0);
+	EarthShadeModel->SetUniformVariable("uImageThree", 2);
+	EarthShadeModel->SetUniformVariable("uLightX",(float) 10000);
+	EarthShadeModel->SetUniformVariable("uLightY", (float) -4000);
+	EarthShadeModel->SetUniformVariable("uLightZ", (float) 8000);
+	EarthShadeModel->SetUniformVariable("uModelX", EarthXYZ[0]);
+	EarthShadeModel->SetUniformVariable("uModelY", EarthXYZ[1]);
+	EarthShadeModel->SetUniformVariable("uModelZ", EarthXYZ[2]);
+	EarthShadeModel->SetUniformVariable("uTol", (float) 0.18);
+	EarthShadeModel->SetUniformVariable("uDb", (float) 2);
+	EarthShadeModel->SetUniformVariable("uDc", (float) 1);
+	EarthShadeModel->SetUniformVariable("uDs", (float) 1);
+	EarthShadeModel->SetUniformVariable("uNb", (float) 1);
+	EarthShadeModel->SetUniformVariable("uNc", (float) 1);
+	EarthShadeModel->SetUniformVariable("uNs", (float) 1);
+	EarthShadeModel->SetUniformVariable("uDCloud", (float) 0.6);
+	EarthShadeModel->SetUniformVariable("uNCloud", (float) .075);
 	MjbSphere(EarthDiameter / 2, 100, 100);
-	glDisable(GL_TEXTURE_2D);
+	EarthShadeModel->Use( 0 );
 	glPopMatrix();
 
 	//Load in the Sun
@@ -1577,7 +1617,7 @@ InitGraphics()
 	glutTabletButtonFunc(NULL);
 	glutMenuStateFunc(NULL);
 	glutTimerFunc(-1, NULL, 0);
-	glutIdleFunc(NULL);
+	glutIdleFunc(Animate);
 
 	// init glew (a window must be open to do this):
 
@@ -1603,10 +1643,33 @@ InitGraphics()
 	glGenTextures(1, &TexS);
 	glGenTextures(1, &TexSt);
 	glGenTextures(1, &AFlag);
+	glGenTextures(1, &DayEarthTex);
+	glGenTextures(1, &NightEarthTex);
+	glGenTextures(1, &CloudEarthTex);
 
-	glBindTexture(GL_TEXTURE_2D, TexE);
-	unsigned char* EarthTexA = BmpToTexture("worldtex.bmp", &width, &height);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, EarthTexA);
+	glBindTexture(GL_TEXTURE_2D, DayEarthTex);
+	unsigned char* EarthDay = BmpToTexture("2k_earth_daymap.bmp", &width, &height);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, EarthDay);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	glBindTexture(GL_TEXTURE_2D, NightEarthTex);
+	unsigned char* EarthNight = BmpToTexture("2k_earth_nightmap.bmp", &width, &height);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, EarthNight);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	glBindTexture(GL_TEXTURE_2D, CloudEarthTex);
+	unsigned char* EarthClouds = BmpToTexture("2k_earth_clouds.bmp", &width, &height);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, EarthClouds);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1649,7 +1712,6 @@ InitGraphics()
 
 	glBindTexture(GL_TEXTURE_2D, AFlag);
 	unsigned char* AmericanFlagTex = BmpToTexture("AFlag.bmp", &width2, &height2);
-	
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, AmericanFlagTex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1707,6 +1769,16 @@ InitGraphics()
 		fprintf(stderr, "GLSL Successfully Initialized\n");
 	}
 
+	EarthShadeModel = new GLSLProgram();
+
+	valid = EarthShadeModel->Create("EarthShadeModel.vert", "EarthShadeModel.frag");
+	if (!valid)
+	{
+		fprintf(stderr, "GLSL Shader error\n");
+	}
+	else {
+		fprintf(stderr, "GLSL Successfully Initialized\n");
+	}
 }
 
 
@@ -1752,8 +1824,6 @@ InitLists()
 	
 	//flag
 	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, AFlag);
 	glBegin(GL_QUADS);
 	
 	glTexCoord2f(0, 0);
@@ -1766,7 +1836,6 @@ InitLists()
 	glVertex3f(5, 0, 4);
 
 	glEnd();
-	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 	glEndList();
 	
@@ -1882,7 +1951,12 @@ Keyboard(unsigned char c, int x, int y)
 		View = 6;
 		loadMoon = 0;
 		break;
-
+	case '7':
+		Xrot = Yrot = 0;
+		Scale = 1.0;
+		View = 7;
+		loadMoon = 0;
+		break;
 	case '-':
 		Scale = Scale - .1;
 		break;
