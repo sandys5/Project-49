@@ -1,0 +1,58 @@
+﻿  Apollo 11.cpp
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(153): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(155): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(157): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(164): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(166): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(168): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(175): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(177): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(179): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(186): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(188): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(190): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(197): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(204): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(211): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\mtl.cpp(218): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(70): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(343): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(346): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(349): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(367): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(370): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(373): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(386): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(390): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(394): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(998): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1003): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1014): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1015): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1121): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1122): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1123): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1134): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1135): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1136): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1137): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1196): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1197): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1198): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1199): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1212): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1213): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1220): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1226): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1227): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1310): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1321): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1323): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1331): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1333): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1343): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1932): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(1934): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(2057): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\project-49\project\apollo 11.cpp(2061): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Apollo 11.vcxproj -> C:\Users\jropp\Documents\Graphics\Apollo 11\Project-49\Project\Debug\Apollo 11.exe
