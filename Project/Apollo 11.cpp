@@ -84,10 +84,10 @@ float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
 float LightXYZ[] = { 220., 5, -220. };
 
 //Animation First Frames 
-float LM_Animate[] = { 20., 17., 15. };
+float LM_Animate[] = { 20., 19., 15. };
 
 //Animate Variables
-const float TurnFactor = (.5 * M_PI) / 180;
+const float TurnFactor = (.75 * M_PI) / 180;
 float currentFactor = 0;
 // Lights
 int Light1On = 1;
@@ -117,7 +117,6 @@ float dotPosZ = 0;
 GLSLProgram *FragmentLight;
 GLSLProgram *EarthShadeModel;
 
-int ShaderEarthTex, ShaderNightTex, ShaderCloudsTex;
 //To load in .obj
 /////////////
 struct Vertex {
@@ -1370,6 +1369,7 @@ Display()
 		glTranslatef(0., 20 / Time, 0.);
 		glRotatef(180, 0, 1, 0);
 		glColor3f(1., 1., 1.);
+		glScalef(.0025, .0025, .0025);
 		glCallList(LunarModule);
 		glPopMatrix();
 	}
@@ -1381,6 +1381,7 @@ Display()
 		glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
 		glRotatef(180, 0, 1, 0);
 		glColor3f(1., 1., 1.);
+		glScalef(.0025, .0025, .0025);
 		glCallList(LunarModule);
 		glPopMatrix();
 	}
@@ -2007,6 +2008,8 @@ InitGraphics()
 	else {
 		fprintf(stderr, "GLSL Successfully Initialized\n");
 	}
+
+
 }
 
 
@@ -2070,7 +2073,7 @@ InitLists()
 
 	SaturnV = glGenLists(1);
 	glNewList(SaturnV, GL_COMPILE);
-	LoadObjFile("SaturnV.obj");
+	LoadObjFile("./Apollo_SpaceCraft/Apollo_Spacecraft.obj");
 	glEndList();
 
 	Astronaut = glGenLists(1);
@@ -2085,7 +2088,7 @@ InitLists()
 
 	LunarModule = glGenLists(1);
 	glNewList(LunarModule, GL_COMPILE);
-	LoadObjFile("LunarModule.obj");
+	LoadObjFile("./ApolloLunarModule/Ap.obj");
 	glEndList();
 
 
@@ -2149,6 +2152,7 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '3':
+		View3 = true;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 3;
@@ -2323,6 +2327,7 @@ Reset()
 	WhichColor = WHITE;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
+	View3 = false;
 }
 
 
