@@ -1139,7 +1139,7 @@ void DrawCurve(struct Curve *curve)
 void
 Animate()
 {
-	if (View == 7)
+	if (View == 8)
 		currentFactor += TurnFactor;
 	else
 		currentFactor = 0.;
@@ -1234,7 +1234,7 @@ Display()
 		LookAtX = FlagXYZ[0]+3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
-	if (View == 7)
+	if (View == 8)
 	{
 		EyePosX = LM_Animate[0]; EyePosY = LM_Animate[1]; EyePosZ = LM_Animate[2];
 		LookAtX = (EarthXYZ[0] * cos(currentFactor) - EarthXYZ[2]*sin(currentFactor)); LookAtY = EarthXYZ[1]; LookAtZ = (EarthXYZ[0] * sin(currentFactor) + EarthXYZ[2]*cos(currentFactor));
@@ -2120,10 +2120,10 @@ Keyboard(unsigned char c, int x, int y)
 		View = 6;
 		loadMoon = 0;
 		break;
-	case '7':
+	case '8':
 		Xrot = Yrot = 0;
 		Scale = 1.0;
-		View = 7;
+		View = 8;
 		loadMoon = 0;
 		break;
 	case '-':
