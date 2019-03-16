@@ -53,7 +53,8 @@ const int GLUIFALSE = { false };
 
 // delimiters for parsing the obj file:
 #define OBJDELIMS		" \t"
-
+//Animation Constant
+#define MS_IN_THE_ANIMATION_CYCLE	10000
 // the escape key:
 #define ESCAPE		0x1b
 
@@ -239,6 +240,9 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
+
+bool	View3; //if this is true, lunar surface will be loaded in its actual position on the moon
+float Time;
 
 
 // function prototypes:
@@ -720,6 +724,23 @@ main(int argc, char *argv[])
 	return 0;
 }
 
+void
+Animate()
+{
+	// put animation stuff in here -- change some global variables
+	// for Display( ) to find
+	int ms = glutGet(GLUT_ELAPSED_TIME);
+	ms %= MS_IN_THE_ANIMATION_CYCLE;
+	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;
+	if (View == 8)
+		currentFactor += TurnFactor;
+	else
+		currentFactor = 0.;
+	// force a call to Display( ) next time it is convenient:
+
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
+}
 // utility to create an array from 3 separate values:
 float *
 Array3(float a, float b, float c)
@@ -1137,17 +1158,6 @@ void DrawCurve(struct Curve *curve)
 
 // draw the complete scene:
 void
-Animate()
-{
-	if (View == 8)
-		currentFactor += TurnFactor;
-	else
-		currentFactor = 0.;
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-
-void
 Display()
 {
 	// set which window we want to do the graphics into:
@@ -1241,6 +1251,13 @@ Display()
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
+	//View of lunar module landing
+	if (View == 7) {
+		EyePosX = 5; EyePosY = 13; EyePosZ = 10;
+		LookAtX = 0; LookAtY = 250; LookAtZ = 0;
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+	}
+
 	// set the eye position, look-at position, and up-vector:
 	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
@@ -1291,40 +1308,82 @@ Display()
 
 	// Load in lunar surface 
 	// (Original model scale is 30X30 Kilometers - https://nasa3d.arc.nasa.gov/detail/Apollo11-Landing)
-	glPushMatrix();
-	glRotatef(-90., 1., 0., 0.);
-	FragmentLight->Use();
-	FragmentLight->SetUniformVariable("uLightX", LightXYZ[0]);
-	FragmentLight->SetUniformVariable("uLightY", LightXYZ[1]);
-	FragmentLight->SetUniformVariable("uLightZ", LightXYZ[2]);
-	FragmentLight->SetUniformVariable("uLunarX", MoonXYZ[0]);
-	FragmentLight->SetUniformVariable("uLunarY", MoonXYZ[1]);
-	FragmentLight->SetUniformVariable("uLunarZ", MoonXYZ[2]);
-	FragmentLight->SetUniformVariable("AmbientR", LunarMat.First->Ka[0]);
-	FragmentLight->SetUniformVariable("AmbientG", LunarMat.First->Ka[1]);
-	FragmentLight->SetUniformVariable("AmbientB", LunarMat.First->Ka[2]);
-	FragmentLight->SetUniformVariable("DiffuseR", LunarMat.First->Kd[0]);
-	FragmentLight->SetUniformVariable("DiffuseG", LunarMat.First->Kd[1]);
-	FragmentLight->SetUniformVariable("DiffuseB", LunarMat.First->Kd[2]);
-	FragmentLight->SetUniformVariable("SpecularR", LunarMat.First->Ks[0]);
-	FragmentLight->SetUniformVariable("SpecularG", LunarMat.First->Ks[1]);
-	FragmentLight->SetUniformVariable("SpecularB", LunarMat.First->Ks[2]);
-	FragmentLight->SetUniformVariable("dissolve", dissolve);
-	FragmentLight->SetUniformVariable("specExp", SpecularExponant);
-	glCallList(LandingSite);
-	FragmentLight->Use( 0 );
-	glPopMatrix();
+	if (loadMoon != 1) {
+		glPushMatrix();
+		glRotatef(-90., 1., 0., 0.);
+		FragmentLight->Use();
+		FragmentLight->SetUniformVariable("uLightX", LightXYZ[0]);
+		FragmentLight->SetUniformVariable("uLightY", LightXYZ[1]);
+		FragmentLight->SetUniformVariable("uLightZ", LightXYZ[2]);
+		FragmentLight->SetUniformVariable("uLunarX", MoonXYZ[0]);
+		FragmentLight->SetUniformVariable("uLunarY", MoonXYZ[1]);
+		FragmentLight->SetUniformVariable("uLunarZ", MoonXYZ[2]);
+		FragmentLight->SetUniformVariable("AmbientR", LunarMat.First->Ka[0]);
+		FragmentLight->SetUniformVariable("AmbientG", LunarMat.First->Ka[1]);
+		FragmentLight->SetUniformVariable("AmbientB", LunarMat.First->Ka[2]);
+		FragmentLight->SetUniformVariable("DiffuseR", LunarMat.First->Kd[0]);
+		FragmentLight->SetUniformVariable("DiffuseG", LunarMat.First->Kd[1]);
+		FragmentLight->SetUniformVariable("DiffuseB", LunarMat.First->Kd[2]);
+		FragmentLight->SetUniformVariable("SpecularR", LunarMat.First->Ks[0]);
+		FragmentLight->SetUniformVariable("SpecularG", LunarMat.First->Ks[1]);
+		FragmentLight->SetUniformVariable("SpecularB", LunarMat.First->Ks[2]);
+		FragmentLight->SetUniformVariable("dissolve", dissolve);
+		FragmentLight->SetUniformVariable("specExp", SpecularExponant);
+		glCallList(LandingSite);
+		FragmentLight->Use(0);
+		glPopMatrix();
+	}
+
+	//load the landing site on top of moon so people can see it when they zoom in
+	else if (View3 == true && Scale >= 1.4) {
+		glPushMatrix();
+		//glEnable(GL_LIGHTING);
+
+		//glEnable(GL_LIGHT4);
+		FragmentLight->Use();
+		FragmentLight->SetUniformVariable("uLightX", 1790);
+		FragmentLight->SetUniformVariable("uLightY", 20);
+		FragmentLight->SetUniformVariable("uLightZ", -1100);
+		FragmentLight->SetUniformVariable("uLunarX", 1765);
+		FragmentLight->SetUniformVariable("uLunarY", 20);
+		FragmentLight->SetUniformVariable("uLunarZ", -1065);
+		glScalef(.1, .1, .1);
+		//glScalef(-1., 1., 1.);
+		glTranslatef(1750., 0., -1050.);
+		glRotatef(-60., 0., 1., 0.);
+		glRotatef(180., 1., 0., 0.);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+		glCallList(LandingSite);
+		FragmentLight->Use(0);
+		glPopMatrix();
 
 
+	}
+	glDisable(GL_BLEND);
+
+	if (View == 7) {
+		glPushMatrix();
+		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
+		glTranslatef(0., 20 / Time, 0.);
+		glRotatef(180, 0, 1, 0);
+		glColor3f(1., 1., 1.);
+		glCallList(LunarModule);
+		glPopMatrix();
+	}
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
-	glPushMatrix();
-	SetMaterial(.4, .7, .8, 1, 1, 1, 4);
-	glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
-	glRotatef(180, 0, 1, 0);
-	glColor3f(1., 1., 1.);
-	glCallList(LunarModule);
-	glPopMatrix();
+	else {
+		glPushMatrix();
+		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
+		glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
+		glRotatef(180, 0, 1, 0);
+		glColor3f(1., 1., 1.);
+		glCallList(LunarModule);
+		glPopMatrix();
+	}
 
 	// Load in Flag
 	// Real dimensions: 1 inch poles, 3 X 5 foot flag	
@@ -2041,10 +2100,6 @@ Keyboard(unsigned char c, int x, int y)
 	switch (c)
 	{
 
-	case 'a':
-	case 'A':
-		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
-		break;
 
 	case 'o':
 	case 'O':
@@ -2119,6 +2174,16 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 6;
 		loadMoon = 0;
+		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
+		break;
+
+	case '7':
+		View3 = false;
+		Xrot = Yrot = 0.;
+		Scale = 1.0;
+		View = 7;
+		loadMoon = 0;
+		PlaySound("landing.wav", NULL, SND_ASYNC | SND_FILENAME);
 		break;
 	case '8':
 		Xrot = Yrot = 0;
