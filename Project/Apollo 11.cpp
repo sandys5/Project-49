@@ -116,7 +116,7 @@ float dotPosZ = 0;
 //Shaders
 GLSLProgram *FragmentLight;
 GLSLProgram *EarthShadeModel;
-
+GLSLProgram *MoonShadeModel;
 //To load in .obj
 /////////////
 struct Vertex {
@@ -1415,10 +1415,23 @@ Display()
 	if (loadMoon == 1) {
 		// Load in the Moon
 		glPushMatrix();
-		SetMaterial(.4, .7, .8, 1, 1, 1, 128);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, TexM);
 		glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TexM);
+		MoonShadeModel->SetUniformVariable("uImageOne", 0);
+		MoonShadeModel->SetUniformVariable("uLightX", (float) -1800);
+		MoonShadeModel->SetUniformVariable("uLightY", (float) 0);
+		MoonShadeModel->SetUniformVariable("uLightZ", (float) -4000);
+		MoonShadeModel->SetUniformVariable("uModelX", MoonXYZ[0]);
+		MoonShadeModel->SetUniformVariable("uModelY", MoonXYZ[1]);
+		MoonShadeModel->SetUniformVariable("uModelZ", MoonXYZ[2]);
+		MoonShadeModel->SetUniformVariable("uTol", (float) 0.18);
+		MoonShadeModel->SetUniformVariable("uDb", (float)1);
+		MoonShadeModel->SetUniformVariable("uDc", (float)1);
+		MoonShadeModel->SetUniformVariable("uDs", (float)1);
+		MoonShadeModel->SetUniformVariable("uNb", (float).15);
+		MoonShadeModel->SetUniformVariable("uNc", (float)1);
+		MoonShadeModel->SetUniformVariable("uNs", (float)1);
 		MjbSphere(MoonDiameter / 2, 100, 100);
 		glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
@@ -1442,8 +1455,8 @@ Display()
 	EarthShadeModel->SetUniformVariable("uImageTwo", 1);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, CloudEarthTex);
-	glActiveTexture(GL_TEXTURE0);
 	EarthShadeModel->SetUniformVariable("uImageThree", 2);
+	glActiveTexture(GL_TEXTURE0);
 	EarthShadeModel->SetUniformVariable("uLightX",(float) 10000);
 	EarthShadeModel->SetUniformVariable("uLightY", (float) -4000);
 	EarthShadeModel->SetUniformVariable("uLightZ", (float) 8000);
@@ -1988,6 +2001,7 @@ InitGraphics()
 	}
 	LunarMat.ReadMtlFile();
 	LunarMat.Close();
+
 	FragmentLight = new GLSLProgram();
 	bool valid = FragmentLight->Create("fragmentlight.vert", "fragmentlight.frag");
 	if (!valid)
@@ -1995,21 +2009,28 @@ InitGraphics()
 		fprintf(stderr, "GLSL Shader error\n");
 	}
 	else {
-		fprintf(stderr, "GLSL Successfully Initialized\n");
+		fprintf(stderr, "GLSL Fragment Lighting Shader Successfully Initialized\n");
 	}
 
 	EarthShadeModel = new GLSLProgram();
-
-	valid = EarthShadeModel->Create("EarthShadeModel.vert", "EarthShadeModel.frag");
+	valid = EarthShadeModel->Create("ShadeModel.vert", "ShadeModel.frag");
 	if (!valid)
 	{
 		fprintf(stderr, "GLSL Shader error\n");
 	}
 	else {
-		fprintf(stderr, "GLSL Successfully Initialized\n");
+		fprintf(stderr, "GLSL Earth Shade Model Shader Successfully Initialized\n");
 	}
 
-
+	MoonShadeModel = new GLSLProgram();	
+	valid = MoonShadeModel->Create("ShadeModel.vert", "ShadeModelMod.frag");
+	if (!valid)
+	{
+		fprintf(stderr, "GLSL Shader error\n");
+	}
+	else {
+		fprintf(stderr, "GLSL Moon Shade Model Shader Successfully Initialized\n");
+	}
 }
 
 

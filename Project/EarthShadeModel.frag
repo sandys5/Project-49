@@ -17,6 +17,7 @@ uniform float uNc;
 uniform float uNs;
 uniform float uDCloud;
 uniform float uNCloud;
+uniform int uDebright;
 in vec3 vNormal;
 in vec2 vMC;
 
@@ -50,7 +51,7 @@ main()
         rgb = mix( Night, Day, d );
         gl_FragColor = vec4( rgb, 1. );
     }
-    if(horizon >= -1 && horizon <= 0. )
+    if( (horizon >= -1 && horizon <= 0.) )
     {
         rgb = mix( Night, Day, d );
         gl_FragColor = vec4( rgb, 1. );
