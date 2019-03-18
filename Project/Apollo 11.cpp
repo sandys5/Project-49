@@ -117,6 +117,7 @@ float dotPosZ = 0;
 GLSLProgram *FragmentLight;
 GLSLProgram *EarthShadeModel;
 
+
 //To load in .obj
 /////////////
 struct Vertex {
@@ -240,7 +241,7 @@ int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 
-bool	View3; //if this is true, lunar surface will be loaded in its actual position on the moon
+//bool	View3; //if this is true, lunar surface will be loaded in its actual position on the moon
 float Time;
 
 
@@ -1257,6 +1258,20 @@ Display()
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
+	//alt view of module landing
+	if (View == 9) {
+		EyePosX = 5; EyePosY = 50; EyePosZ = 10;
+		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+	}
+
+	//alt view of module landing
+	if (View == 0) {
+		EyePosX = 25; EyePosY = 15; EyePosZ = 20;
+		LookAtX = 0; LookAtY = 20; LookAtZ = 0;
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+	}
+
 	// set the eye position, look-at position, and up-vector:
 	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
@@ -1334,18 +1349,30 @@ Display()
 	}
 
 	//load the landing site on top of moon so people can see it when they zoom in
-	else if (View3 == true && Scale >= 1.4) {
+	else if (View == 3 && Scale >= 1.4) {
 		glPushMatrix();
 		//glEnable(GL_LIGHTING);
 
 		//glEnable(GL_LIGHT4);
 		FragmentLight->Use();
-		FragmentLight->SetUniformVariable("uLightX", 1790);
-		FragmentLight->SetUniformVariable("uLightY", 20);
+		FragmentLight->SetUniformVariable("uLightX", 1800);
+		FragmentLight->SetUniformVariable("uLightY", 100);
 		FragmentLight->SetUniformVariable("uLightZ", -1100);
 		FragmentLight->SetUniformVariable("uLunarX", 1765);
 		FragmentLight->SetUniformVariable("uLunarY", 20);
 		FragmentLight->SetUniformVariable("uLunarZ", -1065);
+		FragmentLight->SetUniformVariable("AmbientR", LunarMat.First->Ka[0]);
+		FragmentLight->SetUniformVariable("AmbientG", LunarMat.First->Ka[1]);
+		FragmentLight->SetUniformVariable("AmbientB", LunarMat.First->Ka[2]);
+		FragmentLight->SetUniformVariable("DiffuseR", LunarMat.First->Kd[0]);
+		FragmentLight->SetUniformVariable("DiffuseG", LunarMat.First->Kd[1]);
+		FragmentLight->SetUniformVariable("DiffuseB", LunarMat.First->Kd[2]);
+		FragmentLight->SetUniformVariable("SpecularR", LunarMat.First->Ks[0]);
+		FragmentLight->SetUniformVariable("SpecularG", LunarMat.First->Ks[1]);
+		FragmentLight->SetUniformVariable("SpecularB", LunarMat.First->Ks[2]);
+		FragmentLight->SetUniformVariable("dissolve", dissolve);
+		FragmentLight->SetUniformVariable("specExp", SpecularExponant);
+
 		glScalef(.1, .1, .1);
 		//glScalef(-1., 1., 1.);
 		glTranslatef(1750., 0., -1050.);
@@ -1353,9 +1380,10 @@ Display()
 		glRotatef(180., 1., 0., 0.);
 
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 		glCallList(LandingSite);
+	
 		FragmentLight->Use(0);
 		glPopMatrix();
 
@@ -1373,6 +1401,28 @@ Display()
 		glCallList(LunarModule);
 		glPopMatrix();
 	}
+
+	else if (View == 9) {
+		glPushMatrix();
+		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
+		glTranslatef(0., 15 / Time, 15.);
+		glRotatef(180, 0, 1, 0);
+		glColor3f(1., 1., 1.);
+		glScalef(.001, .001, .001);
+		glCallList(LunarModule);
+		glPopMatrix();
+	}
+
+	else if (View == 0) {
+		glPushMatrix();
+		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
+		glTranslatef(0., 11 / Time, 15.);
+		glRotatef(180, 0, 1, 0);
+		glColor3f(1., 1., 1.);
+		glScalef(.001, .001, .001);
+		glCallList(LunarModule);
+		glPopMatrix();
+	}
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
 	else {
@@ -1386,30 +1436,35 @@ Display()
 		glPopMatrix();
 	}
 
-	// Load in Flag
+	// Load in Flag unless module is landing
 	// Real dimensions: 1 inch poles, 3 X 5 foot flag	
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, AFlag);
-	glColor3f(1, 1, 1);
-	glTranslatef(FlagXYZ[0], FlagXYZ[1]+.5, FlagXYZ[2]);
-	glRotatef(-90, 1, 0, 0);
-	glScalef(.30, .30, .30);
-	glRotatef(-20, 0, 0, 1);
-	glCallList(FlagList);
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
+	if (View != 0 && View != 9) {
+		glPushMatrix();
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, AFlag);
+		glColor3f(1, 1, 1);
+		glTranslatef(FlagXYZ[0], FlagXYZ[1] + .5, FlagXYZ[2]);
+		glRotatef(-90, 1, 0, 0);
+		glScalef(.30, .30, .30);
+		glRotatef(-20, 0, 0, 1);
+		glCallList(FlagList);
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+	}
 
-	// Load in Astronaut
+	// Load in Astronaut unless module is landing
 	// Model loads in about 10 ft, assuming space suit height is ~7 ft
-	glPushMatrix();
-	SetMaterial(.4, .7, .8, 1, 1, 1, 4);
-	glTranslatef(AstroXYZ[0], AstroXYZ[1], AstroXYZ[2]);
-	glScalef(.7, .7, .7);
-	glRotatef(180, 0, 1, 0);
-	glColor3f(1., 1., 1.);
-	glCallList(Astronaut);
-	glPopMatrix();
+
+	if (View != 0 && View != 9) {
+		glPushMatrix();
+		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
+		glTranslatef(AstroXYZ[0], AstroXYZ[1], AstroXYZ[2]);
+		glScalef(.7, .7, .7);
+		glRotatef(180, 0, 1, 0);
+		glColor3f(1., 1., 1.);
+		glCallList(Astronaut);
+		glPopMatrix();
+	}
 
 	//Current moon hotkey - 'M'
 	if (loadMoon == 1) {
@@ -1998,6 +2053,7 @@ InitGraphics()
 		fprintf(stderr, "GLSL Successfully Initialized\n");
 	}
 
+
 	EarthShadeModel = new GLSLProgram();
 
 	valid = EarthShadeModel->Create("EarthShadeModel.vert", "EarthShadeModel.frag");
@@ -2152,7 +2208,6 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '3':
-		View3 = true;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 3;
@@ -2182,7 +2237,6 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '7':
-		View3 = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 7;
@@ -2195,6 +2249,21 @@ Keyboard(unsigned char c, int x, int y)
 		View = 8;
 		loadMoon = 0;
 		break;
+
+	case '9':
+		Xrot = Yrot = 0.;
+		Scale = 1.0;
+		View = 9;
+		loadMoon = 0;
+		break;
+
+	case '0':
+		Xrot = Yrot = 0.;
+		Scale = 1.0;
+		View = 0;
+		loadMoon = 0;
+		break;
+
 	case '-':
 		Scale = Scale - .1;
 		break;
@@ -2327,7 +2396,7 @@ Reset()
 	WhichColor = WHITE;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
-	View3 = false;
+
 }
 
 
