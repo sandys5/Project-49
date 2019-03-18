@@ -1469,9 +1469,6 @@ Display()
 	if (loadMoon == 1) {
 		// Load in the Moon
 		glPushMatrix();
-		SetMaterial(.4, .7, .8, 1, 1, 1, 128);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, TexM);
 		glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TexM);
@@ -1512,8 +1509,8 @@ Display()
 	EarthShadeModel->SetUniformVariable("uImageTwo", 1);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, CloudEarthTex);
-	glActiveTexture(GL_TEXTURE0);
 	EarthShadeModel->SetUniformVariable("uImageThree", 2);
+	glActiveTexture(GL_TEXTURE0);
 	EarthShadeModel->SetUniformVariable("uLightX",(float) 10000);
 	EarthShadeModel->SetUniformVariable("uLightY", (float) -4000);
 	EarthShadeModel->SetUniformVariable("uLightZ", (float) 8000);
