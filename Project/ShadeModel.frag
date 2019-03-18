@@ -45,14 +45,14 @@ main()
     vec3 uLight = normalize( (uLightXYZ - uModelXYZ) );
     float horizon = dot( uLight, vNormal );
     float d = smoothstep( (-uTol), uTol, horizon );
-    if( horizon <= 1. && horizon > 0. )
-    {
-        rgb = mix( Night, Day, d );
-        gl_FragColor = vec4( rgb, 1. );
-    }
-    if(horizon >= -1 && horizon <= 0. )
-    {
-        rgb = mix( Night, Day, d );
-        gl_FragColor = vec4( rgb, 1. );
-    }
+        if( horizon <= 1. && horizon > 0. )
+        {
+            rgb = mix( Night, Day, d );
+            gl_FragColor = vec4( rgb, 1. );
+        }
+        if( (horizon >= -1 && horizon <= 0.) )
+        {
+            rgb = mix( Night, Day, d );
+            gl_FragColor = vec4( rgb, 1. );
+        }
 }
