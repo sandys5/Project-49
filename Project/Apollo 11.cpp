@@ -2139,7 +2139,6 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 7;
 		loadMoon = 0;
-		PlaySound("landing.wav", NULL, SND_ASYNC | SND_FILENAME);
 		break;
 
 	case '8':
@@ -2147,6 +2146,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 8;
 		loadMoon = 0;
+		PlaySound("landing.wav", NULL, SND_ASYNC | SND_FILENAME);
 		break;
 
 	case '9':
