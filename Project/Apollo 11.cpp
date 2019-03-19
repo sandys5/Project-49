@@ -42,12 +42,10 @@ ALenum format;
 ALvoid *data;
 ALboolean loop = AL_FALSE;*/
 
-// title of these windows:
-
+// title of the window:
 const char *WINDOWTITLE = { "Apollo 11 Animation" };
 
 // what the glui package defines as true and false:
-
 const int GLUITRUE = { true };
 const int GLUIFALSE = { false };
 
@@ -84,11 +82,12 @@ float SunXYZ[] = { MoonDiameter * 10 , MoonDiameter * 4,  -MoonDiameter * 10 };
 float LightXYZ[] = { 220., 5, -220. };
 
 //Animation First Frames 
-float LM_Animate[] = { 20., 19., 15. };
+float LM_Animate[] = { 20., 16., 15. };
 
 //Animate Variables
 const float TurnFactor = (.75 * M_PI) / 180;
 float currentFactor = 0;
+
 // Lights
 int Light1On = 1;
 int Light2On = 1;
@@ -117,6 +116,7 @@ float dotPosZ = 0;
 GLSLProgram *FragmentLight;
 GLSLProgram *EarthShadeModel;
 GLSLProgram *MoonShadeModel;
+
 //To load in .obj
 /////////////
 struct Vertex {
@@ -172,9 +172,6 @@ enum ButtonVals
 // window background color (rgba):
 const GLfloat BACKCOLOR[] = { 0., 0., 0., 1. };
 
-// line width for the axes:
-const GLfloat AXES_WIDTH = { 3. };
-
 // the color numbers:
 // this order must match the radio button order
 enum Colors
@@ -226,13 +223,11 @@ const GLfloat FOGEND = { 4. };
 
 // non-constant global variables:
 int		ActiveButton;			// current button that is down
-GLuint	AxesList;				// list to hold the axes
 GLuint	LandingSite;			// list to load in lunar surface obj
 GLuint	LunarModule;			// list to load in lunar module obj
 GLuint	SaturnV;				// list to load Saturn V rocket
 GLuint	Astronaut;				// list to load Astronaut
 GLuint	FlagList;				// list to load Flag
-int		AxesOn;					// != 0 means to draw the axes
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
@@ -243,10 +238,8 @@ float	Xrot, Yrot;				// rotation angles in degrees
 //bool	View3; //if this is true, lunar surface will be loaded in its actual position on the moon
 float Time;
 
-
 // function prototypes:
 void	Display();
-void	DoAxesMenu(int);
 void	DoColorMenu(int);
 void	DoMainMenu(int);
 void	DoProjectMenu(int);
@@ -263,13 +256,11 @@ void	MouseMotion(int, int);
 void	Reset();
 void	Resize(int, int);
 void	Visibility(int);
-void	Axes(float);
 
 ////////////////////////////////////////////////////////////
 //Functions to load in .obj files
 //Credit to Mike Bailey, Oregon State University
 ////////////////////////////////////////////////////////////
-
 
 int
 LoadObjFile(char *name)
@@ -731,7 +722,7 @@ Animate()
 	int ms = glutGet(GLUT_ELAPSED_TIME);
 	ms %= MS_IN_THE_ANIMATION_CYCLE;
 	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;
-	if (View == 8)
+	if (View == 7)
 		currentFactor += TurnFactor;
 	else
 		currentFactor = 0.;
@@ -844,7 +835,6 @@ BmpToTexture(char *filename, int *width, int *height)
 	int nums, numt;
 	unsigned char *tp;
 
-
 	fp = fopen(filename, "rb");
 	if (fp == NULL)
 	{
@@ -854,9 +844,7 @@ BmpToTexture(char *filename, int *width, int *height)
 
 	FileHeader.bfType = ReadShort(fp);
 
-
 	// if bfType is not 0x4d42, the file is not a bmp:
-
 	if (FileHeader.bfType != 0x4d42)
 	{
 		fprintf(stderr, "Wrong type of file: 0x%0x\n", FileHeader.bfType);
@@ -887,10 +875,6 @@ BmpToTexture(char *filename, int *width, int *height)
 	InfoHeader.biClrUsed = ReadInt(fp);
 	InfoHeader.biClrImportant = ReadInt(fp);
 
-
-	// fprintf( stderr, "Image size found: %d x %d\n", ImageWidth, ImageHeight );
-
-
 	texture = new unsigned char[3 * nums * numt];
 	if (texture == NULL)
 	{
@@ -898,22 +882,16 @@ BmpToTexture(char *filename, int *width, int *height)
 		return NULL;
 	}
 
-
 	// extra padding bytes:
-
 	numextra = 4 * (((3 * InfoHeader.biWidth) + 3) / 4) - 3 * InfoHeader.biWidth;
 
-
 	// we do not support compression:
-
 	if (InfoHeader.biCompression != birgb)
 	{
 		fprintf(stderr, "Wrong type of image compression: %d\n", InfoHeader.biCompression);
 		fclose(fp);
 		return NULL;
 	}
-
-
 
 	rewind(fp);
 	fseek(fp, 14 + 40, SEEK_SET);
@@ -1143,7 +1121,7 @@ void DrawCurve(struct Curve *curve)
 	glLineWidth(1);
 
 	glColor3f(1, 1, 1);
-
+	/*
 	// Draw control points
 	glPointSize(5.);
 	glBegin(GL_POINTS);
@@ -1151,7 +1129,7 @@ void DrawCurve(struct Curve *curve)
 	glVertex3f(p1.x, p1.y, p1.z);
 	glVertex3f(p2.x, p2.y, p2.z);
 	glVertex3f(p3.x, p3.y, p3.z);
-	glEnd();
+	glEnd();*/
 }
 
 
@@ -1190,14 +1168,6 @@ Display()
 	SetPointLight(GL_LIGHT1, SunXYZ[0], 5, SunXYZ[2], 1, 1., 1.);
 	glPopMatrix();
 	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
-
-	//Not a good view
-	/*
-	//Default view on Moon
-	EyePosX = -50; EyePosY = 50; EyePosZ = 30;
-	LookAtX = 0; LookAtY = 30; LookAtZ = 0;
-	UpVecX = 0; UpVecY = 1; UpVecZ = 0;
-	*/
 
 	//Flight path
 	if (View == 1) {
@@ -1243,15 +1213,17 @@ Display()
 		LookAtX = FlagXYZ[0]+3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
-	if (View == 8)
+	
+	//Pan of lunar landscape
+	if (View == 7)
 	{
 		EyePosX = LM_Animate[0]; EyePosY = LM_Animate[1]; EyePosZ = LM_Animate[2];
-		LookAtX = (EarthXYZ[0] * cos(currentFactor) - EarthXYZ[2]*sin(currentFactor)); LookAtY = EarthXYZ[1]; LookAtZ = (EarthXYZ[0] * sin(currentFactor) + EarthXYZ[2]*cos(currentFactor));
+		LookAtX = (EarthXYZ[0] * cos(currentFactor) - EarthXYZ[2] * sin(currentFactor)); LookAtY = EarthXYZ[1]; LookAtZ = (EarthXYZ[0] * sin(currentFactor) + EarthXYZ[2] * cos(currentFactor));
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//View of lunar module landing
-	if (View == 7) {
+	if (View == 8) {
 		EyePosX = 5; EyePosY = 13; EyePosZ = 10;
 		LookAtX = 0; LookAtY = 250; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
@@ -1305,14 +1277,6 @@ Display()
 	}
 
 	glEnable(GL_LIGHTING);
-
-
-	// possibly draw the axes:
-	if (AxesOn != 0)
-	{
-		glColor3fv(&Colors[WhichColor][0]);
-		glCallList(AxesList);
-	}
 
 	////////////////////////////////////////////
 	//Set the scene//
@@ -1390,50 +1354,33 @@ Display()
 	}
 	glDisable(GL_BLEND);
 
-	if (View == 7) {
-		glPushMatrix();
-		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
-		glTranslatef(0., 20 / Time, 0.);
-		glRotatef(180, 0, 1, 0);
-		glColor3f(1., 1., 1.);
-		glScalef(.0025, .0025, .0025);
-		glCallList(LunarModule);
-		glPopMatrix();
-	}
 
-	else if (View == 9) {
-		glPushMatrix();
-		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
-		glTranslatef(0., 15 / Time, 15.);
-		glRotatef(180, 0, 1, 0);
-		glColor3f(1., 1., 1.);
-		glScalef(.001, .001, .001);
-		glCallList(LunarModule);
-		glPopMatrix();
-	}
-
-	else if (View == 0) {
-		glPushMatrix();
-		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
-		glTranslatef(0., 11 / Time, 15.);
-		glRotatef(180, 0, 1, 0);
-		glColor3f(1., 1., 1.);
-		glScalef(.001, .001, .001);
-		glCallList(LunarModule);
-		glPopMatrix();
-	}
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
-	else {
-		glPushMatrix();
-		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
-		glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
-		glRotatef(180, 0, 1, 0);
-		glColor3f(1., 1., 1.);
+	glPushMatrix();
+	SetMaterial(.4, .7, .8, 1, 1, 1, 4);
+	if (View == 8) {
+		glTranslatef(0., 20 / Time, 0.);
 		glScalef(.0025, .0025, .0025);
-		glCallList(LunarModule);
-		glPopMatrix();
 	}
+	else if (View == 9) {
+		glTranslatef(0., 15 / Time, 15.);
+		glScalef(.001, .001, .001);
+	}
+	else if (View == 0) {
+		glTranslatef(0., 11 / Time, 15.);
+		glScalef(.001, .001, .001);
+	}
+	else {
+		glTranslatef(LM_XYZ[0], LM_XYZ[1], LM_XYZ[2]);
+		glScalef(.0015, .0015, .0015);
+
+	}
+	glRotatef(180, 0, 1, 0);
+	glColor3f(1., 1., 1.);
+	glCallList(LunarModule);
+	glPopMatrix();
+
 
 	// Load in Flag unless module is landing
 	// Real dimensions: 1 inch poles, 3 X 5 foot flag	
@@ -1551,7 +1498,7 @@ Display()
 		MOrbit = (MoonDiameter / 2) + 250;
 		struct Curve curve;
 		curve.r = 1;
-		curve.g = 0;
+		curve.g = 1;
 		curve.b = 1;
 
 		//Earth
@@ -1680,7 +1627,7 @@ Display()
 		
 		DoRasterString(BaseXYZ[0]+20, BaseXYZ[1]+15, BaseXYZ[2]-15, "Tranquility Base");
 	}
-
+	
 	// draw some gratuitous text that is fixed on the screen:
 	glDisable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
@@ -1689,32 +1636,17 @@ Display()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(1., 1., 1.);
-	DoRasterString(3., 21., 0., "Apollo 11 - Beta - 3/19/19");
-	DoRasterString(3., 17., 0., "A - Play Sound Byte");
-	DoRasterString(3., 13., 0., "L - Toggle Lights");
+	DoRasterString(3., 13., 0., "Apollo 11 - Beta - 3/19/19");
 	//M toggles moon
-	// '.' toggles axes
-	DoRasterString(3., 9., 0., "1-6 - Viewpoints");
+	DoRasterString(3., 9., 0., "0-9 - Viewpoints");
 	DoRasterString(3., 5., 0., "Mouse wheel or +/- - Zoom");
 	DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
-
-
+	
 	// swap the double-buffered framebuffers:
 	glutSwapBuffers();
 
 	// be sure the graphics buffer has been sent:
-	// note: be sure to use glFlush( ) here, not glFinish( ) !
 	glFlush();
-}
-
-
-void
-DoAxesMenu(int id)
-{
-	AxesOn = id;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
 }
 
 
@@ -1826,16 +1758,11 @@ InitMenus()
 		glutAddMenuEntry(ColorNames[i], i);
 	}
 
-	int axesmenu = glutCreateMenu(DoAxesMenu);
-	glutAddMenuEntry("Off", 0);
-	glutAddMenuEntry("On", 1);
-
 	int projmenu = glutCreateMenu(DoProjectMenu);
 	glutAddMenuEntry("Orthographic", ORTHO);
 	glutAddMenuEntry("Perspective", PERSP);
 
 	int mainmenu = glutCreateMenu(DoMainMenu);
-	glutAddSubMenu("Axes", axesmenu);
 	glutAddSubMenu("Colors", colormenu);
 	glutAddSubMenu("Projection", projmenu);
 	glutAddMenuEntry("Reset", RESET);
@@ -2015,38 +1942,6 @@ InitGraphics()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	
-	//initialize audio file info
-	/*alListenerfv(AL_POSITION, listenerPos);
-	alListenerfv(AL_VELOCITY, listenerVel);
-	alListenerfv(AL_ORIENTATION, listenerOri);
-
-	alGetError(); //clear any error messages
-	alGenBuffers(NUM_BUFFERS, buffer); //generate the buffers so sound can happen
-
-	if (alGetError != AL_NO_ERROR) {
-		printf("Error in creating buffer\n");
-		exit(1);
-	}
-
-	alutLoadWAVFile("OneSmallStep.wav", &format, &data, &size, &freq, &loop); //load in the audio file
-	alBufferData(buffer[0], format, data, size, freq);
-	alutUnloadWAV(format, data, size, freq);
-
-	alGetError();
-	alGenSources(NUM_SOURCES, source);
-
-	if (alGetError() != AL_NO_ERROR) {
-		printf("Error creating source\n");
-		exit(2);
-	}
-
-	alSourcef(source[0], AL_PITCH, 1.0f);
-	alSourcef(source[0], AL_GAIN, 1.0f);
-	alSourcefv(source[0], AL_POSITION, sourcePos);
-	alSourcefv(source[0], AL_VELOCITY, sourceVel);
-	alSourcei(source[0], AL_BUFFER, buffer[0]);
-	alSourcei(source[0], AL_LOOPING, AL_FALSE);*/
 
 	//Shader initiliazation
 	if (LunarMat.Open("LandingSite.mtl") != 0)
@@ -2065,7 +1960,6 @@ InitGraphics()
 	else {
 		fprintf(stderr, "GLSL Fragment Lighting Shader Successfully Initialized\n");
 	}
-
 
 	EarthShadeModel = new GLSLProgram();
 	valid = EarthShadeModel->Create("ShadeModel.vert", "ShadeModel.frag");
@@ -2088,7 +1982,6 @@ InitGraphics()
 	}
 }
 
-
 // initialize the display lists that will not change:
 // (a display list is a way to store opengl commands in
 //  memory so that they can be played back efficiently at a later time
@@ -2097,17 +1990,7 @@ InitGraphics()
 void
 InitLists()
 {
-
 	glutSetWindow(MainWindow);
-
-	// create the axes:
-	AxesList = glGenLists(1);
-	glNewList(AxesList, GL_COMPILE);
-	glLineWidth(AXES_WIDTH);
-	Axes(125);
-	glLineWidth(1.);
-	glEndList();
-
 
 	FlagList = glGenLists(1);
 	glNewList(FlagList, GL_COMPILE);
@@ -2146,7 +2029,7 @@ InitLists()
 	glPopMatrix();
 	glEndList();
 	
-
+	//Other objects
 	SaturnV = glGenLists(1);
 	glNewList(SaturnV, GL_COMPILE);
 	LoadObjFile("./Apollo_SpaceCraft/Apollo_Spacecraft.obj");
@@ -2208,11 +2091,6 @@ Keyboard(unsigned char c, int x, int y)
 		loadMoon = !loadMoon;
 		break;
 
-	case '.':
-	case '>':
-		AxesOn = !AxesOn;
-		break;
-
 	case '1':
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
@@ -2263,6 +2141,7 @@ Keyboard(unsigned char c, int x, int y)
 		loadMoon = 0;
 		PlaySound("landing.wav", NULL, SND_ASYNC | SND_FILENAME);
 		break;
+
 	case '8':
 		Xrot = Yrot = 0;
 		Scale = 1.0;
@@ -2411,7 +2290,6 @@ void
 Reset()
 {
 	ActiveButton = 0;
-	AxesOn = 1;
 	Scale = 1.0;
 	WhichColor = WHITE;
 	WhichProjection = PERSP;
@@ -2498,74 +2376,3 @@ const float LENFRAC = 0.10f;
 
 // fraction of length to use as start location of the characters:
 const float BASEFRAC = 1.10f;
-
-//	Draw a set of 3D axes:
-//	(length is the axis length in world coordinates)
-
-void
-Axes(float length)
-{
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(length, 0., 0.);
-	glVertex3f(0., 0., 0.);
-	glVertex3f(0., length, 0.);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(0., 0., 0.);
-	glVertex3f(0., 0., length);
-	glEnd();
-
-
-	float fact = LENFRAC * length;
-	float base = BASEFRAC * length;
-
-	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i < 4; i++)
-	{
-		int j = xorder[i];
-		if (j < 0)
-		{
-
-			glEnd();
-			glBegin(GL_LINE_STRIP);
-			j = -j;
-		}
-		j--;
-		glVertex3f(base + fact * xx[j], fact*xy[j], 0.0);
-	}
-	glEnd();
-
-	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i < 5; i++)
-	{
-		int j = yorder[i];
-		if (j < 0)
-		{
-
-			glEnd();
-			glBegin(GL_LINE_STRIP);
-			j = -j;
-		}
-		j--;
-		glVertex3f(fact*yx[j], base + fact * yy[j], 0.0);
-	}
-	glEnd();
-
-	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i < 6; i++)
-	{
-		int j = zorder[i];
-		if (j < 0)
-		{
-
-			glEnd();
-			glBegin(GL_LINE_STRIP);
-
-			j = -j;
-		}
-		j--;
-		glVertex3f(0.0, fact*zy[j], base + fact * zx[j]);
-	}
-	glEnd();
-
-}
