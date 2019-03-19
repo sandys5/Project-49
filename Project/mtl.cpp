@@ -255,39 +255,39 @@ Mtls
 
 
 
-//int
-//main( int argc, char *argv[ ] )
-//{
-//	char *mtlFilename;
-//
-//	if( argc == 1 )
-//	{
-//		//fprintf( stderr, "Usage: %s mtlFilename.mtl\n", argv[0] );
-//		//return 1;
-//		mtlFilename = (char *)"LunarModule.mtl";
-//	}
-//	else
-//	{
-//		mtlFilename = argv[1];
-//	}
-//
-//	Mtls myMaterials;
-//	if(  myMaterials.Open( mtlFilename ) != 0 )
-//	{
-//		fprintf( stderr, "Could not read the mtl file\n" );
-//		return 1;
-//	}
-//	myMaterials.ReadMtlFile( );
-//	myMaterials.Close( );
-//
-//	fprintf( stderr, "\n\nTesting 'blinn3SG'\n" );
-//	Mtl * blinnMtl = myMaterials.FindMtl( (char *)"blinn3SG" );
-//	if( blinnMtl != (Mtl *)NULLPTR )
-//	{
-//		fprintf( stderr, "Kd = %9.5f, %9.5f, %9.5f\n",
-//			blinnMtl->Kd[0], blinnMtl->Kd[1], blinnMtl->Kd[2] );
-//	}
-//
-//
-//	return 0;
-//}
+int
+main2( int argc, char *argv[ ] )
+{
+	char *mtlFilename;
+
+	if( argc == 1 )
+	{
+		//fprintf( stderr, "Usage: %s mtlFilename.mtl\n", argv[0] );
+		//return 1;
+		mtlFilename = (char *)"LunarModule.mtl";
+	}
+	else
+	{
+		mtlFilename = argv[1];
+	}
+
+	Mtls myMaterials;
+	if(  myMaterials.Open( mtlFilename ) != 0 )
+	{
+		fprintf( stderr, "Could not read the mtl file\n" );
+		return 1;
+	}
+	myMaterials.ReadMtlFile( );
+	myMaterials.Close( );
+
+	fprintf( stderr, "\n\nTesting 'blinn3SG'\n" );
+	Mtl * blinnMtl = myMaterials.FindMtl( (char *)"blinn3SG" );
+	if( blinnMtl != (Mtl *)NULLPTR )
+	{
+		fprintf( stderr, "Kd = %9.5f, %9.5f, %9.5f\n",
+			blinnMtl->Kd[0], blinnMtl->Kd[1], blinnMtl->Kd[2] );
+	}
+
+
+	return 0;
+}
