@@ -2,6 +2,8 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{setspace}
+\usepackage{indentfirst}
+
 
 \usepackage{geometry}
 \geometry{textheight=9.5in, textwidth=7in}
@@ -40,7 +42,7 @@
     \begin{singlespace}
         \hfill 
         % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
-        \includegraphics[height=4cm]{OSU_horizontal_2C_O_over_B.eps}   
+        \includegraphics[height=2cm]{OSU_horizontal_2C_O_over_B.eps}   
         \par\vspace{.2in}
         \centering
         \scshape{
@@ -138,5 +140,10 @@ Since this document was first drafted, the requirements for our project have cha
 Our team will also include a default animation that can be paused and restarted whenever the audience wishes to change viewpoints. The video will be from the perspective of an astronaut as he leaves the lunar module, travels the lunar surface, plants the American flag, and finally board the lunar module for lunar launch. Changing viewpoints during the default video will pause the animation and the user will be able to press a key on the keyboard to continue the video.
 
 Our goal for the length of the animation is now 10-15 minutes long instead of the original 25 minutes. This change was made because each planetarium show is 25 minutes long and our team wanted to allow the audience time to ask any questions about the Apollo 11 mission during the show.
+
+\subsection*{Appendix B}
+Our team traveled to OMSI again on March 22nd to meet with Jim Todd. We presented our project beta to Jim and he was happy with how the project is coming together. Once finishing touches are done for our program, our last task will be to implement a version that will work in the planetarium. We discussed different options of how to do this, but we settled on our initial plan of creating a Dark-Matter script that can be used with the projectors. Jim provided us with many example scripts and Mike Bailey is still in contact with SkySkan for assistance making the script. 
+
+The script will consist of a beginning, middle, and end. The beginning and end will be a pre-determined set of views depicting launch and the return trip of Apollo 11. The middle will be made of different buttons that the operator can press that will switch between views that we have accounted for. To set up these views, we will use our OpenGL program to find correct positioning of objects and viewing angles. Once we have a script ready to test, we will be able to send it to Jim and he can test it on their planetarium software, then report back on how it functioned. 
 
 \end{document}
