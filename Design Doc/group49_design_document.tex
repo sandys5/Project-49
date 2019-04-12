@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{setspace}
+\usepackage{indentfirst}
 
 \usepackage{geometry}
 \geometry{textheight=9.5in, textwidth=7in}
@@ -15,7 +16,6 @@
 \def \CapstoneProjectName{		Apollo 11 3D Animation}
 \def \CapstoneSponsorCompany{	OMSI}
 \def \CapstoneSponsorPersona{	Jim Todd}
-\def \CapstoneSponsorPersonb{	Mike Bailey}
 
 % 2. Uncomment the appropriate line below so that the document type works
 \def \DocType{		
@@ -31,7 +31,7 @@
 \par\vspace{-12pt} \textit{\tiny\noindent
 \makebox[2.75in]{} \hfil		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
 % 3. If the document is not to be signed, uncomment the RENEWcommand below
-\renewcommand{\NameSigPair}[1]{#1}
+%\renewcommand{\NameSigPair}[1]{#1}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -40,7 +40,7 @@
     \begin{singlespace}
         \hfill 
         % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
-        \includegraphics[height=4cm]{OSU_horizontal_2C_O_over_B.eps}   
+        \includegraphics[height=2cm]{OSU_horizontal_2C_O_over_B.eps}   
         \par\vspace{.2in}
         \centering
         \scshape{
@@ -53,7 +53,6 @@
             \Huge \CapstoneSponsorCompany\par
             \vspace{5pt}
             {\Large\NameSigPair{\CapstoneSponsorPersona}\par}
-            {\Large\NameSigPair{\CapstoneSponsorPersonb}\par}
             {\large Prepared by }\par
             Group\CapstoneTeamNumber\par
             % 5. comment out the line below this one if you do not wish to name your team
@@ -69,7 +68,7 @@
         \begin{abstract}
         % 6. Fill in your abstract   
     
-The Summer of 2019 will be the 50th anniversary of the Apollo 11 moon landing and our group, `The Apolloers', is working to create a 25 minute 3D animation of the mission. This animation is being made for Jim Todd at OMSI so the animation can be displayed as part of their 50th anniversary exhibit. This document will show how we have organized the project and offer different design viewpoints so that stakeholders can see how the project has been structured. 
+The Summer of 2019 will be the 50th anniversary of the Apollo 11 moon landing and our group, `The Apolloers', is working to create a 3D animation of the mission. This animation is being made for Jim Todd at OMSI so the animation can be displayed as part of their 50th anniversary exhibit. This document will show how we have organized the project and offer different design viewpoints so that stakeholders can see how the project has been structured. 
 
         \end{abstract}     
     \end{singlespace}
@@ -103,21 +102,20 @@ Term & definition \\ \hline
 API & An Application Programming Interface is a set of protocols and tools that are used to build a software application. Essentially the `building blocks' that a programmer uses to build an application.  \\ \hline
 Apollo 11 Mission & A spaceflight operated by NASA to land the first humans on the Moon, launched July 16th, 1969.  \\ \hline
 Graphics Pipeline & A conceptual model that describes the steps that a graphics system needs to perform in order to render a 3D scene. \\ \hline
-High Poly & When a 3D model is created using many polygons, resulting in the model to have many fine details \\ \hline
-Low Poly & When a 3D model is created using few polygons, resulting in the model to have little detail \\ \hline
+High/Low Poly & The amount of polygons used to make a 3D model, impacting performance.\\ \hline
 NASA & The National Aeronautics and Space Administration is a federal agency that focuses on research and development related to air and space.	\\ \hline
 OMSI & The Oregon Museum of Science and Industry, located in Portland, Oregon	\\ \hline
-OpenAL & An open-source audio library API that is based off of OpenGL so that audio can be implemented into a 3D render in a similar fashion to OpenGL. \\ \hline
 OpenGL & An open-source graphics library API that is used to interact with graphics hardware to design 3D renderings.	\\ \hline
 SDK & A Software Development Kit is a set of tools that program developers use to write programs for an application. \\ \hline
 Polygon Count & Refers to the number of polygons in a scene. The more polygons in the scene, the more time it takes for the scene to be executed, often resulting in lag. \\ \hline
+SkySkan & A company that provides planetarium software and equipment to OMSI. \\ \hline
 
 \end{tabular}
 
 \section{Design Description}
 
     \subsection{Design Stakeholders}
-    The stakeholders for our project are OMSI as well as the audiences who will be viewing our video. The educational and technical quality of our video will reflect on OMSI. Our group will also be using a storyboard created by some of OMSI's staff to base the video's narrative off of, so OMSI will also have influence over how this video is created. The planetarium audiences will also be affected by the technical and educational quality of our video. If the video is more entertaining than educational, then the audience will not understand the impact and ambition of the Apollo 11 mission. If the video is more educational than entertaining, then the audience will be bored and less likely to pay attention to the content of the video.
+    The stakeholders for our project are OMSI, as well as the audiences who will be viewing our video. The educational and technical quality of our video will reflect on OMSI. The planetarium audiences will also be affected by the technical and educational quality of our video. If the video is more entertaining than educational, then the audience will not understand the impact and ambition of the Apollo 11 mission. If the video is more educational than entertaining, then the audience will be bored and less likely to pay attention to the content of the video.
     
 \subsection{Design Views}
     The Apollo 11 animation project can be broken into different views that can all be used to describe the animation. This document will look at the design of the animation through the different viewpoints listed below, and will explain those viewpoints in detail in Section 4. 
@@ -134,69 +132,64 @@ Polygon Count & Refers to the number of polygons in a scene. The more polygons i
     \end{enumerate}
     
     \subsection{Design Elements}
-    There are many elements of a 3D animation that all need to work with the other elements to produce a quality project. Programming platforms such as OpenAL and OpenGL will be used for managing the other elements relating to 3D graphics and audio respectively. OpenAL will be used to work with audio files from the transmissions from the mission, as well as various sound effects that will be included to immerse the audience. 
+    There are many elements of a 3D animation that all need to work with the other elements to produce a quality project. The programming platform OpenGL will be used for managing the elements relating to 3D graphics. Since we are building for a Windows platform, we will also make use of Windows system calls as needed.
     
-    The programming in OpenGL will dictate what 3D objects are in the project, where they are in the scene, and how they look. Many 3D objects in our project will come from an online repository, which we may need to add textures to, which would also be found online. Once the 3D object is in the scene, different lighting features will be programmed in to account for the Sun and that light reflecting off of the other objects. Animating the objects will require use of real physics and orbital mechanics applied to the objects to provide realistic movement. 
+    The programming in OpenGL will dictate what 3D objects are in the project, where they are in the scene, and how they look. Many 3D objects in our project will come from an online repository, which we may need to add textures to, which would also be found online. Since the source for each object will likely be different, proper scaling will need to be applied to keep the size realistic. Once a 3D object is in the scene, different lighting features will be programmed in to account for the Sun and that light reflecting off of the other objects. Then to make objects move, key-frame animation will be used to interpolate the path between a start and goal point. 
 
-    \subsection{Design Overlays} %Any additional information on certain viewpoints.
+    \subsection{Design Overlays}
 	
 	\subsubsection{Textures and 3D Models}
 	Textures will be needed for some of our 3D objects, such as the Earth and Moon. Most of these textures will come from the NASA websites, which are readily available for public use. It is notable that these textures have been created with great detail, meaning that the textures may slow the program, or look out of place if near a lower quality texture. 
 	
-	The 3D model of the spacecrafts, such as the Saturn 5 rocket, will likely be obtained from a model sharing site. If we cannot find a low-poly 3D model of the Saturn 5, we must settle for a high-poly model or make one ourselves. If we are left with a high-poly 3D model, we must separate the more fine details from the model in attempt to reduce our polygon budget. Our last choice is to make it ourselves, in this case the project will take more time due to more allocation of time to finish the 3D models.
+	The 3D model of objects such as the Lunar Module will likely be obtained from a model sharing site. We will attempt to find low-poly objects for our initial program so that the playback is not slowed down. High-poly objects may look better, but take many more resources to load. When our program is implemented at OMSI, Jim Todd should have industry quality models that can be used in the planetarium with less concern for polygon count. 
 	
 	\subsubsection{The Flight Path}
-	In terms of the flight path, optimally we would want a dataset of the whole flight and back. Converting flight data into a virtual path is relatively simple compared to calculating and predicting the path through the use of initial and final variables. If we are unable to acquire a dataset for the flight, we will then calculate the flight path ourselves, requiring additional time to research orbital mechanics. 
+	Ideally we would want a dataset of the whole flight and back. Using that data set, paths can be interpolated from between the sets of points, resulting in a realistic flight path. While this would be straight-forward to implement, it is unlikely that we will have access to such a resource. Instead, we will need to calculate our own flight pat. This will still be done by using data points, but we must calculate each one, so there will be far less data points, meaning a less accurate flight path.
 	
 	\subsubsection{Planetarium SDK}
-	One of our biggest stretch goals is to integrate our animation into the OMSI planetarium. We suspect that their planetariums use an SDK to interpolate subsections of the projection, but we currently do not have access to that SDK. The SDK is likely managed by the company that built the planetarium for OMSI, meaning that our group may need to negotiate with that company to be allowed to make use of their SDK. 
+	One of our biggest stretch goals is to integrate our animation into the OMSI planetarium. We suspect that their planetarium use an SDK to interpolate subsections of the projection, but we currently do not have access to that SDK. Our contact here at OSU, Mike Bailey, has been in touch with SkySkan to determine how to best go about the process to implement an animation. It appears that there is a unique scripting language that is used for the planetarium. If the animation will go to the planetarium, we will use sample scripts to develop a prototype script resembling our animation for Jim Todd to test and finalize. 
     
     \subsection{Design Rationale}
 	The basic rationale of our project is that setting the scene correctly is the most important factor in making this animation high quality. The Earth, Moon, and Sun need to be in the right position and the view port needs to be in the right position to reflect that. The lighting from the sun needs to be accurate as it reflects and refracts off the lunar capsule, Moon, and Earth. The small details matter the most, such as the Earth having its iridescent glow that is given off by its atmosphere, or both planetoids having a dark and a light side. With all of this combined, our goal is to make the audience feel as if they are watching the Apollo 11 mission live.
 	
     \subsection{Design Languages}
-	C++ is going to be our design language solely because of our choice to use OpenGL as our API. OpenGL makes use of graphics libraries that are written in C++, meaning that we must also utilize that same language. C++ gives the programmer great control over what they want to do, but because of that control, this allows the programmer to make a lot of mistakes. C++ is fast and efficient like its predecessor language, C, and has more back-end libraries that can help the programmer achieve what he is trying to do. Even though these extra libraries can slow down an application, the effect is minimal for a project with a scope as large as ours. Lastly, our group will need to be cautious with memory usage because C++ does not automatically clean up memory such as some other languages, so we will need to be sure to free any memory that we allocate. 
+	C++ is going to be our design language solely because of our choice to use OpenGL as our API. OpenGL makes use of graphics libraries that are written in C++, meaning that we must also utilize that same language. C++ gives the programmer great control over what they implement, but because of that control, this allows the programmer to make a lot of mistakes. C++ is fast and efficient like its predecessor language, C, and has more back-end libraries that can help the programmer achieve what he is trying to do. Even though these extra libraries can slow down an application, the effect is minimal for a project with a scope as large as ours. Lastly, our group will need to be cautious with memory usage because C++ does not automatically clean up memory such as some other languages, so we will need to be sure to free any memory that we allocate. 
 
 
 \section{Design Viewpoints}
 
     \subsection{Context Viewpoint}
-    %careful about overlap with Interface viewpoint
     
     This animation will be viewed primarily by OMSI visitors. This audience can range from young school children on field trips, to very technical industry leaders. We will want the user of this program to be able to change the viewpoint of the scene, regardless of if the user is a visitor or a staff member running the program.  
     
     \subsection{Composition Viewpoint}
-    %How the project is split into different parts (Audio, modeling, textures, objects, etc.)
     
-    Our project will consist of eleven main scenes of the Apollo 11 mission: launch, to orbit, to trans-lunar injection, to moon, to lunar orbit, to landing, to re-launch, to lunar orbit, to trans-Earth injection, to Earth, to splashdown. Then, within each of these scenes, there will be many different parts that make the scene: 3D objects, animation, audio, textures, lighting, orbital mechanics acting on objects, and possibly captioning for the audience. While there are not direct relationships between all these parts, they all add to the overall detail and quality of the animation. 
+    Our project will consist of a beginning, middle, and end. The beginning and end will consist of historic video related to the Apollo 11 mission to educate and provide context. The middle will allow the operator to take control of what viewpoint to see and be able to look around that view with the mouse. 3D objects, animation, audio, textures, lighting, shaders and more will all come together to create the scene. While there are not direct relationships between all these parts, they all add to the overall detail and quality of the animation. 
     
     \subsection{Logical Viewpoint}
 
-    Most of our logic will be based on how far along the mission we are in the animation. We will have a flight path and as we make progress along that path, different actions will happen at different points, such as turning rockets on/off, dropping booster rockets, and starting to land. The flight path will be based on the actual flight path of the Apollo 11 and our group will use orbital mechanics in our video to recreate it. Trigger points will be placed along the flight path to signal that a change in the scene should be made. For example, when our model of the Apollo 11 lands on the moon, it will reach a trigger event that will trigger the audio of Neil Armstrong's first words on the moon. 
-    %What is the flight path? An array of vertices? A function?
+    Our logic will be determined by how far into the animation the operator is. The beginning and end of the animation will be shown in a sequential fashion with little to no variation. When a certain action completes and/or a time is reached, new actions will take place. Conversely, during the middle of the animation, our program will allow changes in viewpoints. The simple logic will result from different keyboard buttons being pushed. These presses will not only change the view, but reset the previous and new scenes, this way the operator will always know what to expect when they press those keys. A stretch goal would be to allow some animations to be returned to the point in time when the last view was changed. This would be useful for a longer animation that the operator may want to pause and come back to later. 
     
     \subsection{Dependency Viewpoint}
 
-    Some texturing will need to change depending on where the viewpoint is. A main example is that we don't want to use incredibly detailed textures for the Moon when the rocket has barely left Earth, and vice versa. We can have the textures change depending on distance, but this change should not be noticeable to the viewer.
+    Different parts of the animation will not need to be loaded for certain viewpoints. For example, the lunar surface with an astronaut does not need to be loaded if the view is from the Earth. Each object will be given a 'flag' of sorts that we can set depending on what each view needs loaded. This will help with performance and prevent objects appearing out of place. Along these same lines, certain audio clips will be played when a view is chosen or when a certain time is reached. 
     
-    Our audio triggers will be dependant on what point in the mission the video is at. For example, the audio for the Saturn 5 rockets will be triggered during the launch phase of the mission. The volume of the audio will also depend on what viewpoint is currently being used. If the viewpoint is outside of the Apollo 11, the conversations between Tranquility Base and the Apollo 11 will be at a lower volume than if the viewpoint was inside of the Apollo 11.
+    Other than when to load objects, our program will not contain many actions that are dependent on others. With a graphics project such as this, all assets are loaded into memory at the beginning of running the animation so that each asset can quickly be retrieved for display to the screen. The program mainly determines when and how to display data from the computer's memory. 
     
-    \subsection{Information Viewpoint}
-    %The physics, math, numbers, etc.
-    For our project, the information we will need includes the flight path of the Apollo 11 as well as orbital mechanics for the Apollo 11 and solar system. The moon and Apollo 11 will follow orbital mechanics because it is integral to the flight path of the Apollo 11. Our group needs to accurately recreate the flight path in order to make our video as realistic as possible. If the flight path were incorrect, audience members would be wrongly informed about the Apollo 11 mission.
+    \subsection{Information Viewpoint }
+
+    General knowledge of the Apollo 11 mission is needed to create an accurate representation in an animation. The sequence of events and a timeline are necessary, but also details such as the true size of all objects in the scene and the positioning of those objects. Because of our audience, extra care must be taken to make the animation as realistic as possible since there may be members of the audience that are quite knowledgeable about Apollo 11. When possible, all information will be acquired from an official NASA source and if that is not possible, other reliable sources will be used, such as news outlets and scientific journals. 
 
     \subsection{Interface Viewpoint}
-       
-       The 3D animation will be compiled into an executable file (.exe) so that the user can open the whole animation from one file. Then, the user will be able to start and stop the animation using a keyboard, and change their viewpoint by clicking and dragging their mouse, or choose set viewpoints using the keyboard. If the user does not want to change the viewpoint, the viewpoint will be set to default viewing positions that our group has chosen. The user will be able to view the video from outside of the spacecraft, inside the spacecraft, on the moon, and on Earth. As the animation progresses, there will be functionality for the user to step back or forward through the animation, and possibly jump to pre-defined points in the flight path.
     
-    \subsection{Resources Viewpoint}
-    To obtain the audio of the transmissions between the Apollo 11 crew and Tranquility Base, we will use NASA's archive of audio files from the Apollo 11 mission. Using OpenAL, these files will be played approximately at the same stage of the mission as they were recorded in. Our group will not be implementing every audio file in the Apollo 11 audio archive. We will be including audio files that are entertaining and not filled with jargon, so the audience can understand and enjoy the conversations between Tranquility Base and the Apollo 11.
-    
-    To obtain the audio for the sound effects in our project, our group will download audio files from free online sound effects libraries. We will only need two audio files for sound effects, one for the splash of the splashdown and another for the roar of the Saturn 5 rockets. Like the audio files obtained from NASA's archive, the audio will be implemented in a 3D space using OpenAL. 
+   The 3D animation will be compiled into an executable file (.exe) so that the user can open the whole animation from one file. Then, the user will be able to start and stop the animation using a keyboard, and change their viewpoint by clicking and dragging their mouse, or choose set viewpoints using the keyboard. If the user does not want to change the viewpoint, the viewpoint will be set to default viewing positions that our group has chosen. The user will be able to view the video from outside of the spacecraft, inside the spacecraft, on the moon, and on Earth. 
 
-    Similarly to audio, our group will also need to obtain 3D models and textures from online repositories. Models will include the Saturn 5 rocket, Command Module Columbia, and Lunar Module Eagle. Multiple textures will be needed for the Earth and the Moon at different levels of detail, depending on how close the view port is during the animation. Finally, the background will need an accurate star-map to emphasize the vastness of space. 
+    \subsection{Resources Viewpoint}
+    To obtain the audio of the transmissions between the Apollo 11 crew and Tranquility Base, we will use NASA's archive of audio files from the Apollo 11 mission. Using Windows system calls, these files will be played approximately at the same stage of the mission as they were recorded in. Our group will not be implementing every audio file in the Apollo 11 audio archive, but instead we will aim to enhance the animation. The audio clips will need to be educational, but not include too much jargon for the audience. 
+
+    Similarly to audio, our group will also need to obtain 3D models and textures from online repositories. Models will include the Command Module Columbia, and Lunar Module Eagle, an astronaut, and more. Multiple textures will be needed for the Earth and the Moon at different levels of detail, depending on how close the view port is during the animation. Finally, the background will need an accurate star-map to emphasize the vastness of space. Although, the star map needs to toggle because the stars cannot be seen from the surface of the Moon. 
     
 \section{Conclusion}
-A 3D animation consists of many different elements that all need to work together based on the implementation in a given API. We will be using OpenGL as our primary API that will manage the main graphical elements of our group's Apollo 11 3D animation. The animation will include all parts of the mission from takeoff to splashdown on Earth with full functioning elements such as 3D objects, texturing on those objects, lighting for the scene, etc. With a completed animation, direct users of the animation will be able to use a mouse and keyboard to navigate through the animation and view the scene through arbitrary viewpoints. Lastly, the main goal of this Apollo 11 animation is to engage audiences at OMSI and encourage curiosity in regards to the vastness of space. 
+A 3D animation consists of many different elements that all need to work together based on the implementation in a given API. We will be using OpenGL as our primary API that will manage the main graphical elements of our group's Apollo 11 3D animation. The animation will include historical context of the mission and what the mission was like on the Moon with full functioning elements such as 3D objects, texturing on those objects, lighting for the scene, etc. With a completed animation, direct users of the animation will be able to use a mouse and keyboard to navigate through the animation and view the scene through arbitrary viewpoints. Lastly, the main goal of this Apollo 11 animation is to engage audiences at OMSI and encourage curiosity in regards to the vastness of space. 
 
 \end{document}
