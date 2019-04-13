@@ -17,6 +17,7 @@
 #include "glut.h"
 #include "glslprogram.cpp"
 #include "mtl.cpp"
+#include "Keyframe.cpp"
 
 
 // title of the window:
@@ -94,7 +95,18 @@ float dotPosZ = 0;
 GLSLProgram *FragmentLight;
 GLSLProgram *EarthShadeModel;
 GLSLProgram *MoonShadeModel;
-
+//Animation objects
+Keyframe Test = Keyframe(5.);
+//Animation Parameters
+float test[][7] = {
+	{0, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2] - 5, 0., 0., 0.},
+	{150, AstroXYZ[0], AstroXYZ[1] + 5, AstroXYZ[2] - 5, 0., 0., 0.},
+	{300, AstroXYZ[0], AstroXYZ[1] + 5, AstroXYZ[2], 0., 0., 0.},
+	{450, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2], 0., 0., 0.},
+	{600, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2] - 5, 0., 0., 0.},
+	{-1}
+};
+//Test 
 //To load in .obj
 /////////////
 struct Vertex {
@@ -112,6 +124,7 @@ struct TextureCoord {
 struct face {
 	int v, n, t;
 };
+
 
 void	Cross(float[3], float[3], float[3]);
 char *	ReadRestOfLine(FILE *);
@@ -235,11 +248,18 @@ void	MouseMotion(int, int);
 void	Reset();
 void	Resize(int, int);
 void	Visibility(int);
+void	freeMem();
 
 ////////////////////////////////////////////////////////////
 //Functions to load in .obj files
 //Credit to Mike Bailey, Oregon State University
 ////////////////////////////////////////////////////////////
+
+void freeMem() {
+	delete FragmentLight;
+	delete EarthShadeModel;
+	delete MoonShadeModel;
+}
 
 int
 LoadObjFile(char *name)
@@ -690,6 +710,8 @@ main(int argc, char *argv[])
 	glutMainLoop();
 
 	// this is here to make the compiler happy:
+	//Deallocate memory so no memory leaks happen.
+	freeMem();
 	return 0;
 }
 
@@ -706,7 +728,31 @@ Animate()
 	else
 		currentFactor = 0.;
 	// force a call to Display( ) next time it is convenient:
+	if (View == 10)
+	{
+		/* Always set your points this way
+		float SomeVariable[][7] = {
+		{Frame #, X, Y, Z, AngleX, AngleY,AngleZ},
+		...
+		{Frame #, ...},
+		{-1] Ending Frame
+		};
 
+		Also, set Keyframe object like so:
+		Keyframe SomeVariableName = Keyframe(TotalTime);
+
+		At the end of the program, free the mem of any allocated memory using new operator:
+		void freeMem(){
+			delete SomeVariableName;
+		}
+		*/
+		//Call this whenever we need to update XYZ
+		Test.Update();
+	}
+	if (View != 10) {
+		//This resets it back to original frame.
+		Test.Reset();
+	}
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
 }
@@ -1221,7 +1267,12 @@ Display()
 		LookAtX = 0; LookAtY = 20; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
+	if (View == 10) {
+		EyePosX = 20; EyePosY = 20; EyePosZ = -10;
+		LookAtX = LM_XYZ[0]; LookAtY = LM_XYZ[1]; LookAtZ = LM_XYZ[2];
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 
+	}
 	// set the eye position, look-at position, and up-vector:
 	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
@@ -1345,6 +1396,13 @@ Display()
 
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
+	if (View == 10) {
+		glPushMatrix();
+		glTranslatef(Test.X, Test.Y,Test.Z);
+		glColor3f(1.,.25, 0.);
+		MjbSphere(1, 50, 50);
+		glPopMatrix();
+	}
 	if (View != 1) {
 		glPushMatrix();
 		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
@@ -1961,6 +2019,8 @@ InitGraphics()
 	else {
 		fprintf(stderr, "GLSL Moon Shade Model Shader Successfully Initialized\n");
 	}
+	//Initializing keyframe animation objects.
+	Test.keyframeData(test, 5);
 }
 
 // initialize the display lists that will not change:
@@ -2141,7 +2201,12 @@ Keyboard(unsigned char c, int x, int y)
 		View = 0;
 		loadMoon = 0;
 		break;
-
+	case 'e':
+		Xrot = Yrot = 0.;
+		Scale = 1.0;
+		View = 10;
+		loadMoon = 0;
+		break;
 	case '-':
 		Scale = Scale - .1;
 		break;

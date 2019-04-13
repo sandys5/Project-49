@@ -19,7 +19,6 @@
 #include <GL/glu.h>
 #include "glut.h"
 #endif
-struct keyframe{};
 class Keyframe
 {
 public:
@@ -27,10 +26,11 @@ public:
 	float X, Y, Z;
 	float Ax, Ay, Az;
 	int BaseTime;
-	int TimerOn;
-	Keyframe();
+	Keyframe(float);
 	~Keyframe();
-	void keyframeData(int**);
+	void keyframeData(float[][7],int);
+	void Update();
+	void Reset();
 private:
 	float dx0dt, dy0dt, dz0dt; // slopes for the first point
 	float dax0dt, day0dt, daz0dt; //slopes for the first angle
@@ -42,7 +42,13 @@ private:
 	float aax, bax, cax, dax; //x  angle coefficients
 	float aay, bay, cay, day; //y angle coefficients
 	float aaz, baz, caz, daz; //z angle coefficients
+	float t;
+	int init;
+	int first;
+	int currentTime;
 	int maxframes; //number of frames
-	void insertkeyframeData(int*);
-	int NowFrame;
+	void initializeKeyframeData(int);
+	float NowFrame;
+	bool finished;
+	int NowKeyFrame;
 };
