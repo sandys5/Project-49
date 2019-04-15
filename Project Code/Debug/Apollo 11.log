@@ -73,8 +73,12 @@ c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code
 c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(1466): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(1468): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(1476): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2170): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2172): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2321): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2325): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(1589): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(1590): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(1591): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(1706): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2171): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2173): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2319): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\jropp\documents\graphics\apollo 11\dean animate\project-49\project code\apollo 11.cpp(2323): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   Apollo 11.vcxproj -> C:\Users\jropp\Documents\Graphics\Apollo 11\Dean animate\Project-49\Project Code\Debug\Apollo 11.exe

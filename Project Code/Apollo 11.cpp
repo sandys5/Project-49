@@ -1586,9 +1586,9 @@ Display()
 			XMove = -3400; //This is to center everything around origin
 		}
 		struct Curve curve;
-		curve.r = 1;
-		curve.g = 1;
-		curve.b = 1;
+		curve.r = .8;
+		curve.g = .8;
+		curve.b = .8;
 
 		//Earth
 		//Launch to orbit 'right'
@@ -1627,7 +1627,6 @@ Display()
 		curve.p2 = { 6800 - EOrbit + XMove, 0, -EOrbit / 2 - 150 };
 		curve.p3 = { 6800 - EOrbit + XMove, 0, 0 };
 		DrawCurve(&curve);
-
 
 		//2nd orbit
 		//'right' to 'top'
@@ -1704,7 +1703,7 @@ Display()
 		DrawCurve(&curve);
 
 		//Takeoff from Moon, travel to Earth
-		curve.r = 1;
+		curve.r = .8;
 		curve.g = 0;
 		curve.b = 0;
 
@@ -1717,8 +1716,8 @@ Display()
 		
 		//'left' to 'top'/2 
 		curve.p0 = { MoonT[0] + MOrbit*.6 + XMove, MoonT[1] + 10, MoonT[2] };
-		curve.p1 = { MoonT[0] + MOrbit*.5 + XMove, MoonT[1], MoonT[2] + MOrbit*.45 };
-		curve.p2 = { MoonT[0] + MOrbit*.4 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.5 };
+		curve.p1 = { MoonT[0] + MOrbit*.6 + XMove, MoonT[1], MoonT[2] + MOrbit*.3 };
+		curve.p2 = { MoonT[0] + MOrbit*.45 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.5 };
 		curve.p3 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.6 };
 		DrawCurve(&curve);
 
@@ -1726,13 +1725,13 @@ Display()
 		//'top' to 'right'
 		curve.p0 = { MoonT[0] + XMove, MoonT[1] + 10,  MoonT[2] + MOrbit*.6 };
 		curve.p1 = { MoonT[0] - MOrbit / 1.75 + 100 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.6 };
-		curve.p2 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit / 1.25 - 100 };
+		curve.p2 = { MoonT[0] - MOrbit/1.5 +25 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.5 };
 		curve.p3 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] };
 		DrawCurve(&curve);
 		//'right' to 'bot'
 		curve.p0 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] };
-		curve.p1 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit / 1.25 + 100 };
-		curve.p2 = { MoonT[0] - MOrbit / 1.5 + 100 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*.75 };
+		curve.p1 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit / 1.25 + 125 };
+		curve.p2 = { MoonT[0] - MOrbit / 1.5 + 125 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*.75 };
 		curve.p3 = { MoonT[0] + XMove + 100, MoonT[1] + 10, MoonT[2] - MOrbit * .8 };
 		DrawCurve(&curve);
 		// 'bot' to 'left'
@@ -1751,14 +1750,14 @@ Display()
 		//2nd orbit
 		//'top' to 'right'
 		curve.p0 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] + MOrbit };
-		curve.p1 = { MoonT[0] - MOrbit / 1.25 + 100 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit };
-		curve.p2 = { MoonT[0] - MOrbit*1.1 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit / 1.25 - 100 };
-		curve.p3 = { MoonT[0] - MOrbit*1 + XMove, MoonT[1] + 10, MoonT[2] };
+		curve.p1 = { MoonT[0] - MOrbit / 1.25 + 50 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit };
+		curve.p2 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] + MOrbit / 1.25 - 100 };
+		curve.p3 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] };
 		DrawCurve(&curve);
 		//'right' to 'bot'
-		curve.p0 = { MoonT[0] - MOrbit*1 + XMove, MoonT[1] + 10, MoonT[2] };
-		curve.p1 = { MoonT[0] - MOrbit*1.1 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit / 1.25 + 125 };
-		curve.p2 = { MoonT[0] - MOrbit / 1.25 + 100 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*1.2 };
+		curve.p0 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] };
+		curve.p1 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] - MOrbit / 1.25 + 125 };
+		curve.p2 = { MoonT[0] - MOrbit / 1.25 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*1.1 };
 		curve.p3 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*1.2 };
 		DrawCurve(&curve);
 
@@ -1783,7 +1782,6 @@ Display()
 		curve.p2 = { 6800 + EOrbit / 2.25 + XMove, 10, -EOrbit / 2 -50 };
 		curve.p3 = { 6800 + EarthDiameter/2 + XMove, 10, 0 };
 		DrawCurve(&curve);
-
 	}
 
 	//Marker for the landing site
