@@ -97,6 +97,8 @@ float dotPosZ = 0;
 GLSLProgram *FragmentLight;
 GLSLProgram *EarthShadeModel;
 GLSLProgram *MoonShadeModel;
+GLSLProgram *LunarMask;
+
 //Animation objects
 Keyframe Test = Keyframe(5.);
 //Animation Parameters
@@ -261,6 +263,7 @@ void freeMem() {
 	delete FragmentLight;
 	delete EarthShadeModel;
 	delete MoonShadeModel;
+	delete LunarMask;
 }
 
 int
@@ -725,6 +728,7 @@ Animate()
 	int ms = glutGet(GLUT_ELAPSED_TIME);
 	ms %= MS_IN_THE_ANIMATION_CYCLE;
 	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;
+
 	rAngle = Time * 360;
 	if (View == 7)
 		currentFactor += TurnFactor;
@@ -1252,8 +1256,8 @@ Display()
 
 	//View of lunar module landing
 	if (View == 8) {
-		EyePosX = 5; EyePosY = 13; EyePosZ = 10;
-		LookAtX = 0; LookAtY = 250; LookAtZ = 0;
+		EyePosX = 20; EyePosY = 13; EyePosZ = 15;
+		LookAtX = 7; LookAtY = 250; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
@@ -1267,7 +1271,7 @@ Display()
 	//alt view of module landing
 	if (View == 0) {
 		EyePosX = 25; EyePosY = 15; EyePosZ = 20;
-		LookAtX = 0; LookAtY = 20; LookAtZ = 0;
+		LookAtX = 10; LookAtY = 25; LookAtZ = 10;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 	if (View == 10) {
@@ -1357,10 +1361,10 @@ Display()
 	//load the landing site on top of moon so people can see it when they zoom in
 	else if (View == 3 && Scale >= 1.4) {
 		glPushMatrix();
-		//glEnable(GL_LIGHTING);
+		float Alp = .3;
+		float Rad = .32;
 
-		//glEnable(GL_LIGHT4);
-		FragmentLight->Use();
+		/*FragmentLight->Use();
 		FragmentLight->SetUniformVariable("uLightX", 1800);
 		FragmentLight->SetUniformVariable("uLightY", 100);
 		FragmentLight->SetUniformVariable("uLightZ", -1100);
@@ -1377,20 +1381,31 @@ Display()
 		FragmentLight->SetUniformVariable("SpecularG", LunarMat.First->Ks[1]);
 		FragmentLight->SetUniformVariable("SpecularB", LunarMat.First->Ks[2]);
 		FragmentLight->SetUniformVariable("dissolve", dissolve);
-		FragmentLight->SetUniformVariable("specExp", SpecularExponant);
+		FragmentLight->SetUniformVariable("specExp", SpecularExponant);*/
+
+		LunarMask->Use();
+
+		LunarMask->SetUniformVariable("uAlpha", Alp);
+		//int loc = LunarMask->GetUniformLocation("uAlpha");
+		//printf("******* %d",loc);
+		LunarMask->SetUniformVariable("uRadius", Rad);
+		//int loc2 = LunarMask->GetUniformLocation("uRadius");
+		//printf("****** %d",loc2);
 
 		glScalef(.1, .1, .1);
-		//glScalef(-1., 1., 1.);
 		glTranslatef(1750., 0., -1050.);
 		glRotatef(-60., 0., 1., 0.);
 		glRotatef(180., 1., 0., 0.);
 
+
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glCallList(LandingSite);
-	
-		FragmentLight->Use(0);
+
+		glDisable(GL_BLEND);
+		//FragmentLight->Use(0);
+		LunarMask->Use(0);
 		glPopMatrix();
 
 	}
@@ -1410,15 +1425,15 @@ Display()
 		glPushMatrix();
 		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
 		if (View == 8) {
-			glTranslatef(0., 20 / Time, 0.);
+			glTranslatef(20/(Time), 15/Time, 15);
 			glScalef(.0025, .0025, .0025);
 		}
 		else if (View == 9) {
-			glTranslatef(0., 15 / Time, 15.);
+			glTranslatef(5 / Time, 15 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else if (View == 0) {
-			glTranslatef(0., 11 / Time, 15.);
+			glTranslatef(13/Time, 14 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else {
@@ -2101,6 +2116,16 @@ InitGraphics()
 	}
 	else {
 		fprintf(stderr, "GLSL Fragment Lighting Shader Successfully Initialized\n");
+	}
+
+	LunarMask = new GLSLProgram();
+	valid = LunarMask->Create("lunarSurfaceMask.vert", "lunarSurfaceMask.frag");
+	if (!valid)
+	{
+		fprintf(stderr, "GLSL shader error\n");
+	}
+	else {
+		fprintf(stderr, "GLSL lunar mask shader is all good\n");
 	}
 
 	EarthShadeModel = new GLSLProgram();
