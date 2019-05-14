@@ -228,8 +228,9 @@ int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
-int		Xmouse, Ymouse;			// mouse values
+int		Xmouse, Ymouse;			// mouse valuesl
 float	Xrot, Yrot;				// rotation angles in degrees
+bool	Zoom;
 
 //bool	View3; //if this is true, lunar surface will be loaded in its actual position on the moon
 float Time;
@@ -1220,9 +1221,18 @@ Display()
 
 	//View from above moon base
 	if (View == 3) {
-		EyePosX = 250; EyePosY = 0; EyePosZ = -250;
-		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
-		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+
+		if (Zoom) { //if this is the animation
+			EyePosX = 250; EyePosY = 0; EyePosZ = -250/(Time/2);
+			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+		}
+
+		else {
+			EyePosX = 250; EyePosY = 0; EyePosZ = -250;
+			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+		}
 	}
 
 	//viewpoint from lunar module
@@ -1270,8 +1280,8 @@ Display()
 
 	//alt view of module landing
 	if (View == 0) {
-		EyePosX = 25; EyePosY = 15; EyePosZ = 20;
-		LookAtX = 10; LookAtY = 25; LookAtZ = 10;
+		EyePosX = 10; EyePosY = 15; EyePosZ = 5;
+		LookAtX = -40; LookAtY = 30; LookAtZ = 30;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 	if (View == 10) {
@@ -1358,10 +1368,56 @@ Display()
 		glPopMatrix();
 	}
 
-	//load the landing site on top of moon so people can see it when they zoom in
-	else if (View == 3 && Scale >= 1.4) {
+	//Temp Moon positioning for flightpath
+	float rotPos = (((180 - rAngle) / 180) * .15);
+	float MoonT[] = { MoonXYZ[0], MoonXYZ[1], MoonXYZ[2] };
+
+	//Only rotate if view 1
+	if (View == 1) {
+		MoonT[0] = MoonXYZ[0] + 6400 - (6400 * cos(rotPos));
+		MoonT[1] = MoonXYZ[1];
+		MoonT[2] = MoonXYZ[2] + (6400 * sin(rotPos));
+	}
+
+
+	//Current moon hotkey - 'M'
+	if (loadMoon == 1) {
+		// Load in the Moon
 		glPushMatrix();
-		float Alp = .3;
+		if (View == 1) {
+
+			glTranslatef(MoonT[0], MoonT[1], MoonT[2]);
+			glTranslatef(-3400, 0, 0);
+		}
+		else {
+			glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
+		}
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TexM);
+		MoonShadeModel->SetUniformVariable("uImageOne", 0);
+		MoonShadeModel->SetUniformVariable("uLightX", (float)-1800);
+		MoonShadeModel->SetUniformVariable("uLightY", (float)0);
+		MoonShadeModel->SetUniformVariable("uLightZ", (float)-4000);
+		MoonShadeModel->SetUniformVariable("uModelX", MoonXYZ[0]);
+		MoonShadeModel->SetUniformVariable("uModelY", MoonXYZ[1]);
+		MoonShadeModel->SetUniformVariable("uModelZ", MoonXYZ[2]);
+		MoonShadeModel->SetUniformVariable("uTol", (float) 0.18);
+		MoonShadeModel->SetUniformVariable("uDb", (float)1);
+		MoonShadeModel->SetUniformVariable("uDc", (float)1);
+		MoonShadeModel->SetUniformVariable("uDs", (float)1);
+		MoonShadeModel->SetUniformVariable("uNb", (float).15);
+		MoonShadeModel->SetUniformVariable("uNc", (float)1);
+		MoonShadeModel->SetUniformVariable("uNs", (float)1);
+		MjbSphere(MoonDiameter / 2, 100, 100);
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+	}
+
+
+	//load the landing site on top of moon so people can see it when they zoom in
+	if (View == 3 && Scale >= 1.4) {
+		glPushMatrix();
+		float Alp = .36;
 		float Rad = .32;
 
 		/*FragmentLight->Use();
@@ -1393,6 +1449,7 @@ Display()
 		//printf("****** %d",loc2);
 
 		glScalef(.1, .1, .1);
+
 		glTranslatef(1750., 0., -1050.);
 		glRotatef(-60., 0., 1., 0.);
 		glRotatef(180., 1., 0., 0.);
@@ -1407,6 +1464,7 @@ Display()
 		//FragmentLight->Use(0);
 		LunarMask->Use(0);
 		glPopMatrix();
+
 
 	}
 	glDisable(GL_BLEND);
@@ -1433,7 +1491,7 @@ Display()
 			glScalef(.001, .001, .001);
 		}
 		else if (View == 0) {
-			glTranslatef(13/Time, 14 / Time, 15.);
+			glTranslatef(11/Time, 13 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else {
@@ -1487,50 +1545,7 @@ Display()
 		glPopMatrix();
 	}
 
-	//Temp Moon positioning for flightpath
-	float rotPos = (((180 - rAngle) / 180) * .15);
-	float MoonT[] = { MoonXYZ[0], MoonXYZ[1], MoonXYZ[2] };
 
-	//Only rotate if view 1
-	if (View == 1) {
-		MoonT[0] = MoonXYZ[0] + 6400 - (6400 * cos(rotPos));
-		MoonT[1] = MoonXYZ[1];
-		MoonT[2] = MoonXYZ[2] + (6400 * sin(rotPos));
-	}
-
-
-	//Current moon hotkey - 'M'
-	if (loadMoon == 1) {
-		// Load in the Moon
-		glPushMatrix();
-		if (View == 1) {
-
-			glTranslatef(MoonT[0], MoonT[1], MoonT[2]);
-			glTranslatef(-3400, 0, 0);
-		}
-		else {
-			glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
-		}
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, TexM);
-		MoonShadeModel->SetUniformVariable("uImageOne", 0);
-		MoonShadeModel->SetUniformVariable("uLightX", (float) -1800);
-		MoonShadeModel->SetUniformVariable("uLightY", (float) 0);
-		MoonShadeModel->SetUniformVariable("uLightZ", (float) -4000);
-		MoonShadeModel->SetUniformVariable("uModelX", MoonXYZ[0]);
-		MoonShadeModel->SetUniformVariable("uModelY", MoonXYZ[1]);
-		MoonShadeModel->SetUniformVariable("uModelZ", MoonXYZ[2]);
-		MoonShadeModel->SetUniformVariable("uTol", (float) 0.18);
-		MoonShadeModel->SetUniformVariable("uDb", (float)1);
-		MoonShadeModel->SetUniformVariable("uDc", (float)1);
-		MoonShadeModel->SetUniformVariable("uDs", (float)1);
-		MoonShadeModel->SetUniformVariable("uNb", (float).15);
-		MoonShadeModel->SetUniformVariable("uNc", (float)1);
-		MoonShadeModel->SetUniformVariable("uNs", (float)1);
-		MjbSphere(MoonDiameter / 2, 100, 100);
-		glDisable(GL_TEXTURE_2D);
-		glPopMatrix();
-	}
 
 	// Load in the Earth
 	glPushMatrix();
@@ -2264,41 +2279,52 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '1':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 1;
 		loadMoon = 1;
+		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
 		break;
 
 	case '2':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 2;
 		loadMoon = 1;
+		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
 		break;
 
 	case '3':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 3;
 		loadMoon = 1;
+		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
 		break;
 
 	case '4':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 4;
 		loadMoon = 0;
+		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
 		break;
 
 	case '5':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 5;
 		loadMoon = 0;
+		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
 		break;
 
 	case '6':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 6;
@@ -2307,13 +2333,16 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '7':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 7;
 		loadMoon = 0;
+		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
 		break;
 
 	case '8':
+		Zoom = false;
 		Xrot = Yrot = 0;
 		Scale = 1.0;
 		View = 8;
@@ -2322,6 +2351,7 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '9':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 9;
@@ -2329,16 +2359,26 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '0':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 0;
 		loadMoon = 0;
 		break;
 	case 'e':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 10;
 		loadMoon = 0;
+		//PlaySound("landing.wav", NULL, SND_APPLICATION);
+		break;
+	case 'z':
+		Zoom = true;
+		Xrot = Yrot = 0.;
+		Scale = 1.;
+		View = 3;
+		loadMoon = 1;
 		break;
 	case '-':
 		Scale = Scale - .1;
