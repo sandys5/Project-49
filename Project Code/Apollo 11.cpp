@@ -30,7 +30,7 @@ const int GLUIFALSE = { false };
 // delimiters for parsing the obj file:
 #define OBJDELIMS		" \t"
 //Animation Constant
-#define MS_IN_THE_ANIMATION_CYCLE	10000
+#define MS_IN_THE_ANIMATION_CYCLE	15000
 // the escape key:
 #define ESCAPE		0x1b
 
@@ -1223,7 +1223,7 @@ Display()
 	if (View == 3) {
 
 		if (Zoom) { //if this is the animation
-			EyePosX = 250; EyePosY = 0; EyePosZ = -250/(Time/2);
+			EyePosX = 250; EyePosY = 0; EyePosZ = -250/(2*Time);
 			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 		}
@@ -1273,15 +1273,15 @@ Display()
 
 	//alt view of module landing
 	if (View == 9) {
-		EyePosX = 5; EyePosY = 50; EyePosZ = 10;
+		EyePosX = 0; EyePosY = 50; EyePosZ = 10;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//alt view of module landing
 	if (View == 0) {
-		EyePosX = 10; EyePosY = 15; EyePosZ = 5;
-		LookAtX = -40; LookAtY = 30; LookAtZ = 30;
+		EyePosX = 0; EyePosY = 15; EyePosZ = -10;
+		LookAtX = 40; LookAtY = 35; LookAtZ = 30;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 	if (View == 10) {
@@ -1415,12 +1415,12 @@ Display()
 
 
 	//load the landing site on top of moon so people can see it when they zoom in
-	if (View == 3 && Scale >= 1.4) {
+	if (View == 3 && (Scale >= 1.4 || Zoom)) {
 		glPushMatrix();
 		float Alp = .36;
-		float Rad = .32;
+		float Rad = .22;
 
-		/*FragmentLight->Use();
+		FragmentLight->Use();
 		FragmentLight->SetUniformVariable("uLightX", 1800);
 		FragmentLight->SetUniformVariable("uLightY", 100);
 		FragmentLight->SetUniformVariable("uLightZ", -1100);
@@ -1437,7 +1437,7 @@ Display()
 		FragmentLight->SetUniformVariable("SpecularG", LunarMat.First->Ks[1]);
 		FragmentLight->SetUniformVariable("SpecularB", LunarMat.First->Ks[2]);
 		FragmentLight->SetUniformVariable("dissolve", dissolve);
-		FragmentLight->SetUniformVariable("specExp", SpecularExponant);*/
+		FragmentLight->SetUniformVariable("specExp", SpecularExponant);
 
 		LunarMask->Use();
 
@@ -1450,7 +1450,7 @@ Display()
 
 		glScalef(.1, .1, .1);
 
-		glTranslatef(1750., 0., -1050.);
+		glTranslatef(1800., 0., -925.);
 		glRotatef(-60., 0., 1., 0.);
 		glRotatef(180., 1., 0., 0.);
 
@@ -1487,11 +1487,11 @@ Display()
 			glScalef(.0025, .0025, .0025);
 		}
 		else if (View == 9) {
-			glTranslatef(5 / Time, 15 / Time, 15.);
+			glTranslatef(3 / Time, 15 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else if (View == 0) {
-			glTranslatef(11/Time, 13 / Time, 15.);
+			glTranslatef(8/(Time*2), 13 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else {
@@ -1822,7 +1822,9 @@ Display()
 		MjbSphere(5, 50, 50);
 		glPopMatrix();
 
-		DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 15, "Tranquility Base");
+		if (!Zoom) {//dont display during zoom animation
+			DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 15, "Tranquility Base");
+		}
 	}
 	
 	// draw some gratuitous text that is fixed on the screen:

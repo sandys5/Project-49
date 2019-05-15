@@ -12,7 +12,7 @@ main( )
 
 
 	float area = PI*uRadius*uRadius;
-	vec3 newcolor = vec3(.7,.7,.7);
+	vec3 newcolor = vec3(.5,.5,.5);
 
 	float s = (vXY.x +127.75)/255.5;
 
