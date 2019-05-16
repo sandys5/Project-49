@@ -2155,6 +2155,7 @@ InitGraphics()
 	glutMenuStateFunc(NULL);
 	glutTimerFunc(-1, NULL, 0);
 	glutIdleFunc(Animate);
+	glutFullScreen();
 
 	// init glew (a window must be open to do this):
 
