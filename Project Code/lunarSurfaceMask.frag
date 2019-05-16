@@ -24,11 +24,18 @@ main( )
 	float varS = Scenter*Scenter;
 	float varT = Tcenter*Tcenter;
 
-	if(varS+varT <= uRadius*uRadius){
-		gl_FragColor = vec4(newcolor, 1.);
-	}
-	else{
-		gl_FragColor = vec4(newcolor, uAlpha-(varS+varT));
+	gl_FragColor = vec4(newcolor, uAlpha-((varS+varT)*1.5));
+	//if(varS+varT <= uRadius*uRadius){
+		//gl_FragColor = vec4(newcolor, 1.);
+	//}
 
-	}	
+	//	else{
+		//gl_FragColor = vec4(newcolor, uAlpha-((varS+varT)*1.5));
+
+	//}	
+	
+	//if(s == 0 || s == 1 || t == 0 || t ==1){
+		//gl_FragColor = vec4(newcolor, uAlpha-((varS+varT)*1.5));
+	//}
+
 }
