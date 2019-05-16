@@ -67,6 +67,7 @@ const float TurnFactor = (.75 * M_PI) / 180;
 float currentFactor = 0;
 float rAngle = 0;
 int FPath = 1;
+int text = 1;
 
 // Lights
 int Light1On = 1;
@@ -1949,37 +1950,38 @@ Display()
 		//DrawCurve(&curve);
 		storePoints(&curve);
 		DrawCurve();
-
 	}
 
-	//Marker for the landing site
-	if (View == 3) {
-		glPushMatrix();
-		glColor3f(1, 0, 0);
-		glTranslatef(BaseXYZ[0], BaseXYZ[1], BaseXYZ[2]);
-		MjbSphere(5, 50, 50);
-		glPopMatrix();
-
-		if (!Zoom) {//dont display during zoom animation
+	if (text) {
+		if (!Zoom && View == 3) {//dont display during zoom animation
+			glColor3f(1, 0, 0);
 			DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 15, "Tranquility Base");
 		}
+		//Marker for the landing site
+		if (View == 3) {
+			glPushMatrix();
+			glColor3f(1, 0, 0);
+			glTranslatef(BaseXYZ[0], BaseXYZ[1], BaseXYZ[2]);
+			MjbSphere(5, 50, 50);
+			glPopMatrix();
+		}
+		// draw some gratuitous text that is fixed on the screen:
+		glDisable(GL_DEPTH_TEST);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluOrtho2D(0., 100., 0., 100.);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glColor3f(1., 1., 1.);
+		DoRasterString(3., 29., 0., "Apollo 11 - Engr Expo - 5/17/19");
+		DoRasterString(3., 25., 0., "0-9 - Viewpoints");
+		DoRasterString(3., 21., 0., "F - Toggle Flight Path");
+		DoRasterString(3., 17., 0., "S - Toggle Star Map");
+		DoRasterString(3., 13., 0., "M - Toggle Text");
+		DoRasterString(3., 9., 0., "Z - Zoom animation");
+		DoRasterString(3., 5., 0., "Mouse wheel or +/- - Zoom");
+		DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
 	}
-	
-	// draw some gratuitous text that is fixed on the screen:
-	glDisable(GL_DEPTH_TEST);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0., 100., 0., 100.);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glColor3f(1., 1., 1.);
-	DoRasterString(3., 21., 0., "Apollo 11 - Code Freeze - 4/15/19");
-	DoRasterString(3., 17., 0., "0-9 - Viewpoints");
-	DoRasterString(3., 13., 0., "F - Toggle Flight Path");
-	DoRasterString(3., 9., 0., "S - Toggle Star Map");
-	DoRasterString(3., 5., 0., "Mouse wheel or +/- - Zoom");
-	DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
-	
 	// swap the double-buffered framebuffers:
 	glutSwapBuffers();
 
@@ -2417,6 +2419,11 @@ Keyboard(unsigned char c, int x, int y)
 	case 's':
 	case 'S':
 		stars = !stars;
+		break;	
+	
+	case 'm':
+	case 'M':
+		text = !text;
 		break;
 
 	case '1':
