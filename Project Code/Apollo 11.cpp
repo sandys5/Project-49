@@ -11,6 +11,7 @@
 #pragma warning(disable:4996)
 #include "glew.h"
 #endif
+
 #include "newloadobjfile.h"
 #include "newloadobjfile.cpp"
 #include <GL/gl.h>
@@ -19,8 +20,8 @@
 #include "glslprogram.cpp"
 //#include "mtl.cpp"
 #include "Keyframe.cpp"
+//#include "bmptotexture.cpp"
 
-#include "bmptotexture.cpp"
 
 // title of the window:
 const char *WINDOWTITLE = { "Apollo 11 Animation" };
@@ -53,7 +54,7 @@ float BaseXYZ[] = { 175, 3, -88 };
 float LaunchXYZ[] = { 6710, 385, -705 };
 float LM_XYZ[] = { 20., 11.5, 15 };
 float SaturnXYZ[] = { 900, 0, -100 };
-float AstroXYZ[] = {14 , 12, 9 };
+float AstroXYZ[] = { 14 , 12, 9 };
 float FlagXYZ[] = { 15, 11, 11 };
 float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
@@ -77,7 +78,7 @@ int Light2On = 1;
 int Light3On = 1;
 
 //Materials
-Mtls LunarMat; 
+Mtls LunarMat;
 
 //Default Materials
 float dissolve = 1.;
@@ -103,7 +104,7 @@ GLSLProgram *MoonShadeModel;
 GLSLProgram *LunarMask;
 
 //Animation objects
-Keyframe Test = Keyframe(5.); 
+Keyframe Test = Keyframe(5.);
 Keyframe Flight = Keyframe(30.);
 
 // Moon positioning for flightpath
@@ -164,7 +165,7 @@ float path[][7] = {
 	{560, MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit, 0, 0, 0},
 	{580, MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1] + 10, MoonXYZ[2], 0, 0, 0},
 	{600, MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit, 0, 0, 0},
-	{610, MoonXYZ[0] +200 + XMove , MoonXYZ[1] + 10, MoonXYZ[2]-MOrbit+100, 0, 0, 0},
+	{610, MoonXYZ[0] + 200 + XMove , MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit + 100, 0, 0, 0},
 
 	//Path to Earth, 'bot' of Moon to 'top' of Earth
 	{675, 6800 + XMove, 0, EOrbit, 0, 0, 0},
@@ -179,7 +180,8 @@ float path[][7] = {
 //Test 
 //To load in .obj
 /////////////
-/*struct Vertex {
+/*
+struct Vertex {
 	float x, y, z;
 };
 
@@ -194,7 +196,6 @@ struct TextureCoord {
 struct face {
 	int v, n, t;
 };*/
-
 
 void	Cross(float[3], float[3], float[3]);
 char *	ReadRestOfLine(FILE *);
@@ -622,8 +623,8 @@ LoadObjFileO(char *name)
 	return 0;
 }
 
-/*
 
+/*
 void
 Cross(float v1[3], float v2[3], float vout[3])
 {
@@ -837,6 +838,7 @@ Animate()
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
 }
+
 /*// utility to create an array from 3 separate values:
 float *
 Array3(float a, float b, float c)
@@ -903,7 +905,7 @@ struct point {
 int	ReadInt(FILE *);
 short	ReadShort(FILE *);
 
-/*struct bmfh
+struct bmfh
 {
 	short bfType;
 	int bfSize;
@@ -1046,7 +1048,8 @@ ReadShort(FILE *fp)
 	b1 = fgetc(fp);
 	return (b1 << 8) | b0;
 }
-*/
+
+
 static int		NumLngs, NumLats;
 static struct point *	Pts;
 
@@ -1206,14 +1209,11 @@ struct Curve
 void DrawCurve()
 {
 	//Jonathan Ropp's
-	int temp = (pathPoints.size()) / 2;
 	glLineWidth(3.);
-	glColor3f(1, 1, 1);
+
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < pathPoints.size(); i++) {
-		if (i > temp) {
-			glColor3f (0, 1, 0);
-		}
+		glColor3f(1, 1, 1);
 		glVertex3f(pathPoints[i][0], pathPoints[i][1], pathPoints[i][2]);
 	}
 	glEnd();
@@ -1333,13 +1333,13 @@ Display()
 	if (View == 3) {
 
 		if (Zoom) { //if this is the animation
-			EyePosX = 250; EyePosY = 0; EyePosZ = -250/(2*Time);
+			EyePosX = 250; EyePosY = 0; EyePosZ = -250 / (2 * Time);
 			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 		}
 
 		else {
-			EyePosX = 250; EyePosY = 0; EyePosZ = -250;
+			EyePosX = 275; EyePosY = 0; EyePosZ = -150;
 			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 		}
@@ -1361,11 +1361,11 @@ Display()
 
 	//View point Lander/Neil
 	if (View == 6) {
-		EyePosX = LM_XYZ[0]+2; EyePosY = LM_XYZ[1] + 3; EyePosZ = LM_XYZ[2] -7;
-		LookAtX = FlagXYZ[0]+3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
+		EyePosX = LM_XYZ[0] + 2; EyePosY = LM_XYZ[1] + 3; EyePosZ = LM_XYZ[2] - 7;
+		LookAtX = FlagXYZ[0] + 3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
-	
+
 	//Pan of lunar landscape
 	if (View == 7)
 	{
@@ -1512,10 +1512,10 @@ Display()
 
 
 	//load the landing site on top of moon so people can see it when they zoom in
-	if (View == 3 && (Scale >= 1.4 || Zoom)) {
+	if (View == 3) {
 		glPushMatrix();
 		float Alp = .36;
-		float Rad = .22;
+		float Rad = .1;
 
 		FragmentLight->Use();
 		FragmentLight->SetUniformVariable("uLightX", 1800);
@@ -1571,8 +1571,8 @@ Display()
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
 	if (View == 10) {
 		glPushMatrix();
-		glTranslatef(Test.X, Test.Y,Test.Z);
-		glColor3f(1.,.25, 0.);
+		glTranslatef(Test.X, Test.Y, Test.Z);
+		glColor3f(1., .25, 0.);
 		MjbSphere(1, 50, 50);
 		glPopMatrix();
 	}
@@ -1580,7 +1580,7 @@ Display()
 		glPushMatrix();
 		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
 		if (View == 8) {
-			glTranslatef(20/(Time), 15/Time, 15);
+			glTranslatef(20 / (Time), 15 / Time, 15);
 			glScalef(.0025, .0025, .0025);
 		}
 		else if (View == 9) {
@@ -1588,7 +1588,7 @@ Display()
 			glScalef(.001, .001, .001);
 		}
 		else if (View == 0) {
-			glTranslatef(8/(Time*2), 13 / Time, 15.);
+			glTranslatef(8 / (Time * 2), 13 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else {
@@ -1642,7 +1642,15 @@ Display()
 		glPopMatrix();
 	}
 
-
+	//Load the Star Map
+	if (stars == 1) {
+		glPushMatrix();
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, TexSt);
+		MjbSphere(9000., 200, 200);
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+	}
 
 	// Load in the Earth
 	glPushMatrix();
@@ -1665,34 +1673,24 @@ Display()
 	glBindTexture(GL_TEXTURE_2D, CloudEarthTex);
 	EarthShadeModel->SetUniformVariable("uImageThree", 2);
 	glActiveTexture(GL_TEXTURE0);
-	EarthShadeModel->SetUniformVariable("uLightX",(float) 10000);
-	EarthShadeModel->SetUniformVariable("uLightY", (float) -4000);
-	EarthShadeModel->SetUniformVariable("uLightZ", (float) 8000);
+	EarthShadeModel->SetUniformVariable("uLightX", (float)10000);
+	EarthShadeModel->SetUniformVariable("uLightY", (float)-4000);
+	EarthShadeModel->SetUniformVariable("uLightZ", (float)8000);
 	EarthShadeModel->SetUniformVariable("uModelX", EarthXYZ[0]);
 	EarthShadeModel->SetUniformVariable("uModelY", EarthXYZ[1]);
 	EarthShadeModel->SetUniformVariable("uModelZ", EarthXYZ[2]);
 	EarthShadeModel->SetUniformVariable("uTol", (float) 0.18);
-	EarthShadeModel->SetUniformVariable("uDb", (float) 2);
-	EarthShadeModel->SetUniformVariable("uDc", (float) 1);
-	EarthShadeModel->SetUniformVariable("uDs", (float) 1);
-	EarthShadeModel->SetUniformVariable("uNb", (float) 1);
-	EarthShadeModel->SetUniformVariable("uNc", (float) 1);
-	EarthShadeModel->SetUniformVariable("uNs", (float) 1);
+	EarthShadeModel->SetUniformVariable("uDb", (float)2);
+	EarthShadeModel->SetUniformVariable("uDc", (float)1);
+	EarthShadeModel->SetUniformVariable("uDs", (float)1);
+	EarthShadeModel->SetUniformVariable("uNb", (float)1);
+	EarthShadeModel->SetUniformVariable("uNc", (float)1);
+	EarthShadeModel->SetUniformVariable("uNs", (float)1);
 	EarthShadeModel->SetUniformVariable("uDCloud", (float) 0.6);
 	EarthShadeModel->SetUniformVariable("uNCloud", (float) .075);
 	MjbSphere(EarthDiameter / 2, 100, 100);
-	EarthShadeModel->Use( 0 );
+	EarthShadeModel->Use(0);
 	glPopMatrix();
-
-	//Load the Star Map
-	if (stars == 1) {
-		glPushMatrix();
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, TexSt);
-		MjbSphere(9000., 200, 200);
-		glDisable(GL_TEXTURE_2D);
-		glPopMatrix();
-	}
 
 	//Objects before this will be lit
 	glDisable(GL_LIGHTING);
@@ -1720,7 +1718,7 @@ Display()
 	if (View == 1 && FPath == 0) {
 		glPushMatrix();
 		glTranslatef(Flight.X, Flight.Y, Flight.Z);
-		glColor3f(1, 1, 1);
+		glColor3f(.75, .75, .75);
 		MjbSphere(40, 50, 50);
 		glPopMatrix();
 	}
@@ -1960,7 +1958,7 @@ Display()
 	if (text) {
 		if (!Zoom && View == 3) {//dont display during zoom animation
 			glColor3f(1, 0, 0);
-			DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 15, "Tranquility Base");
+			DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 5, "Tranquility Base");
 		}
 		//Marker for the landing site
 		if (View == 3) {
@@ -2175,9 +2173,6 @@ InitGraphics()
 	fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
 
-
-
-
 	//Texture initialization
 	int width = 1024;
 	int height = 512;
@@ -2252,7 +2247,7 @@ InitGraphics()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	
+
 	int width2 = 1200;
 	int height2 = 632;
 
@@ -2304,7 +2299,7 @@ InitGraphics()
 		fprintf(stderr, "GLSL Earth Shade Model Shader Successfully Initialized\n");
 	}
 
-	MoonShadeModel = new GLSLProgram();	
+	MoonShadeModel = new GLSLProgram();
 	valid = MoonShadeModel->Create("ShadeModel.vert", "ShadeModelMod.frag");
 	if (!valid)
 	{
@@ -2330,7 +2325,7 @@ InitLists()
 
 	FlagPoleList = glGenLists(1);
 	glNewList(FlagPoleList, GL_COMPILE);
-	
+
 	//vertical cylinder
 	glPushMatrix();
 	glColor3f(1, 1, 1);
@@ -2349,14 +2344,14 @@ InitLists()
 	gluCylinder(quad2, .04, .04, 5 + .04, 10, 100);
 	glPopMatrix();
 	glEndList();
-	
+
 	FlagList = glGenLists(1);
 	glNewList(FlagList, GL_COMPILE);
 
 	//flag
 	glPushMatrix();
 	glBegin(GL_QUADS);
-	
+
 	glTexCoord2f(0, 0);
 	glVertex3f(0, 0, 4);
 	glTexCoord2f(0, 1);
@@ -2369,7 +2364,7 @@ InitLists()
 	glEnd();
 	glPopMatrix();
 	glEndList();
-	
+
 	//Other objects
 	SaturnV = glGenLists(1);
 	glNewList(SaturnV, GL_COMPILE);
@@ -2388,7 +2383,7 @@ InitLists()
 
 	LunarModule = glGenLists(1);
 	glNewList(LunarModule, GL_COMPILE);
-	LunarModule = LoadObjFile("ApolloLunarModule/Ap.obj");
+	LunarModule = LoadObjFile("./ApolloLunarModule/Ap.obj");
 	glEndList();
 
 }
@@ -2428,8 +2423,8 @@ Keyboard(unsigned char c, int x, int y)
 	case 's':
 	case 'S':
 		stars = !stars;
-		break;	
-	
+		break;
+
 	case 'm':
 	case 'M':
 		text = !text;
@@ -2442,7 +2437,7 @@ Keyboard(unsigned char c, int x, int y)
 		View = 1;
 		loadMoon = 1;
 		Flight.Reset();
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '2':
@@ -2451,7 +2446,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 2;
 		loadMoon = 1;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '3':
@@ -2460,7 +2455,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 3;
 		loadMoon = 1;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '4':
@@ -2469,7 +2464,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 4;
 		loadMoon = 0;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '5':
@@ -2478,7 +2473,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 5;
 		loadMoon = 0;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '6':
@@ -2487,7 +2482,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 6;
 		loadMoon = 0;
-		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
+		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC);
 		break;
 
 	case '7':
@@ -2496,7 +2491,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 7;
 		loadMoon = 0;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '8':
@@ -2505,7 +2500,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 8;
 		loadMoon = 0;
-		PlaySound("landing.wav", NULL, SND_ASYNC | SND_FILENAME);
+		PlaySound("landing.wav", NULL, SND_ASYNC);
 		break;
 
 	case '9':
@@ -2529,7 +2524,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 10;
 		loadMoon = 0;
-		//PlaySound("landing.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 	case 'z':
 		Zoom = true;
@@ -2537,6 +2532,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.;
 		View = 3;
 		loadMoon = 1;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 	case '-':
 		Scale = Scale - .1;
@@ -2546,31 +2542,31 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = Scale + .1;
 		break;
 
-	/*case '0':
-		dotPosX = dotPosX + 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '9':
-		dotPosY = dotPosY + 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '8':
-		dotPosZ = dotPosZ + 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case ')':
-		dotPosX = dotPosX - 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '(':
-		dotPosY = dotPosY - 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '*':
-		dotPosZ = dotPosZ - 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-		*/
+		/*case '0':
+			dotPosX = dotPosX + 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '9':
+			dotPosY = dotPosY + 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '8':
+			dotPosZ = dotPosZ + 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case ')':
+			dotPosX = dotPosX - 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '(':
+			dotPosY = dotPosY - 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '*':
+			dotPosZ = dotPosZ - 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+			*/
 	default:
 		fprintf(stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c);
 	}

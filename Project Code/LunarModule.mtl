@@ -18,7 +18,8 @@ Ke 0 0 0
 d 1
 Ns 59
 illum 2
-map_Kd TEXTURE_.TIF
+#map_Kd TEXTURE_.TIF
+map_Kd TEXTURE_.bmp
 
 newmtl blinn1SG
 Kd 0.768627 0.529412 0.0588235
@@ -64,7 +65,8 @@ Ke 0 0 0
 d 1
 Ns 59
 illum 2
-map_Kd BOOSTER3.TIF
+#map_Kd BOOSTER3.TIF
+map_Kd BOOSTER3.bmp
 
 newmtl blinn6SG
 Kd 0.0470588 0.0470588 0.0470588
@@ -92,7 +94,8 @@ Ke 0 0 0
 d 1
 Ns 59
 illum 2
-map_Kd TEXTUREA.TIF
+#map_Kd TEXTUREA.TIF
+map_Kd TEXTUREA.bmp
 
 newmtl blinn9SG
 Kd 0.639216 0.317647 0.0196078
