@@ -11,14 +11,16 @@
 #pragma warning(disable:4996)
 #include "glew.h"
 #endif
-
+#include "newloadobjfile.h"
+#include "newloadobjfile.cpp"
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
 #include "glslprogram.cpp"
-#include "mtl.cpp"
+//#include "mtl.cpp"
 #include "Keyframe.cpp"
 
+#include "bmptotexture.cpp"
 
 // title of the window:
 const char *WINDOWTITLE = { "Apollo 11 Animation" };
@@ -177,7 +179,7 @@ float path[][7] = {
 //Test 
 //To load in .obj
 /////////////
-struct Vertex {
+/*struct Vertex {
 	float x, y, z;
 };
 
@@ -191,7 +193,7 @@ struct TextureCoord {
 
 struct face {
 	int v, n, t;
-};
+};*/
 
 
 void	Cross(float[3], float[3], float[3]);
@@ -332,7 +334,7 @@ void freeMem() {
 }
 
 int
-LoadObjFile(char *name)
+LoadObjFileO(char *name)
 {
 	char *cmd;		// the command string
 	char *str;		// argument string
@@ -620,7 +622,7 @@ LoadObjFile(char *name)
 	return 0;
 }
 
-
+/*
 
 void
 Cross(float v1[3], float v2[3], float vout[3])
@@ -749,7 +751,7 @@ ReadObjVTN(char *str, int *v, int *t, int *n)
 		}
 	}
 }
-
+*/
 /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 
@@ -835,7 +837,7 @@ Animate()
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
 }
-// utility to create an array from 3 separate values:
+/*// utility to create an array from 3 separate values:
 float *
 Array3(float a, float b, float c)
 {
@@ -845,7 +847,7 @@ Array3(float a, float b, float c)
 	array[2] = c;
 	array[3] = 0; //Sets all lights to infinity for sun. Need to change if we add more lights
 	return array;
-}
+}*/
 
 // utility to create an array from a multiplier and an array:
 float *
@@ -901,7 +903,7 @@ struct point {
 int	ReadInt(FILE *);
 short	ReadShort(FILE *);
 
-struct bmfh
+/*struct bmfh
 {
 	short bfType;
 	int bfSize;
@@ -1044,7 +1046,7 @@ ReadShort(FILE *fp)
 	b1 = fgetc(fp);
 	return (b1 << 8) | b0;
 }
-
+*/
 static int		NumLngs, NumLats;
 static struct point *	Pts;
 
@@ -1204,11 +1206,14 @@ struct Curve
 void DrawCurve()
 {
 	//Jonathan Ropp's
+	int temp = (pathPoints.size()) / 2;
 	glLineWidth(3.);
-
+	glColor3f(1, 1, 1);
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < pathPoints.size(); i++) {
-		glColor3f(1, 1, 1);
+		if (i > temp) {
+			glColor3f (0, 1, 0);
+		}
 		glVertex3f(pathPoints[i][0], pathPoints[i][1], pathPoints[i][2]);
 	}
 	glEnd();
@@ -1715,7 +1720,7 @@ Display()
 	if (View == 1 && FPath == 0) {
 		glPushMatrix();
 		glTranslatef(Flight.X, Flight.Y, Flight.Z);
-		glColor3f(.75, .75, .75);
+		glColor3f(1, 1, 1);
 		MjbSphere(40, 50, 50);
 		glPopMatrix();
 	}
@@ -2170,6 +2175,9 @@ InitGraphics()
 	fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
 
+
+
+
 	//Texture initialization
 	int width = 1024;
 	int height = 512;
@@ -2365,22 +2373,22 @@ InitLists()
 	//Other objects
 	SaturnV = glGenLists(1);
 	glNewList(SaturnV, GL_COMPILE);
-	LoadObjFile("./Apollo_SpaceCraft/Apollo_Spacecraft.obj");
+	LoadObjFileO("./Apollo_SpaceCraft/Apollo_Spacecraft.obj");
 	glEndList();
 
 	Astronaut = glGenLists(1);
 	glNewList(Astronaut, GL_COMPILE);
-	LoadObjFile("Astronaut_.obj");
+	LoadObjFileO("Astronaut_.obj");
 	glEndList();
 
 	LandingSite = glGenLists(1);
 	glNewList(LandingSite, GL_COMPILE);
-	LoadObjFile("LandingSite.obj");
+	LoadObjFileO("LandingSite.obj");
 	glEndList();
 
 	LunarModule = glGenLists(1);
 	glNewList(LunarModule, GL_COMPILE);
-	LoadObjFile("./ApolloLunarModule/Ap.obj");
+	LunarModule = LoadObjFile("ApolloLunarModule/Ap.obj");
 	glEndList();
 
 }
