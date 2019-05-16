@@ -1334,7 +1334,7 @@ Display()
 		}
 
 		else {
-			EyePosX = 250; EyePosY = 0; EyePosZ = -250;
+			EyePosX = 275; EyePosY = 0; EyePosZ = -150;
 			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 		}
@@ -1507,10 +1507,10 @@ Display()
 
 
 	//load the landing site on top of moon so people can see it when they zoom in
-	if (View == 3 && (Scale >= 1.4 || Zoom)) {
+	if (View == 3) {
 		glPushMatrix();
 		float Alp = .36;
-		float Rad = .22;
+		float Rad = .1;
 
 		FragmentLight->Use();
 		FragmentLight->SetUniformVariable("uLightX", 1800);
@@ -1955,7 +1955,7 @@ Display()
 	if (text) {
 		if (!Zoom && View == 3) {//dont display during zoom animation
 			glColor3f(1, 0, 0);
-			DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 15, "Tranquility Base");
+			DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 5, "Tranquility Base");
 		}
 		//Marker for the landing site
 		if (View == 3) {
@@ -2434,7 +2434,7 @@ Keyboard(unsigned char c, int x, int y)
 		View = 1;
 		loadMoon = 1;
 		Flight.Reset();
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '2':
@@ -2443,7 +2443,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 2;
 		loadMoon = 1;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '3':
@@ -2452,7 +2452,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 3;
 		loadMoon = 1;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '4':
@@ -2461,7 +2461,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 4;
 		loadMoon = 0;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '5':
@@ -2470,7 +2470,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 5;
 		loadMoon = 0;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '6':
@@ -2479,7 +2479,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 6;
 		loadMoon = 0;
-		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
+		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC);
 		break;
 
 	case '7':
@@ -2488,7 +2488,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 7;
 		loadMoon = 0;
-		//PlaySound("OneSmallStep.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '8':
@@ -2497,7 +2497,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 8;
 		loadMoon = 0;
-		PlaySound("landing.wav", NULL, SND_ASYNC | SND_FILENAME);
+		PlaySound("landing.wav", NULL, SND_ASYNC);
 		break;
 
 	case '9':
@@ -2521,7 +2521,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.0;
 		View = 10;
 		loadMoon = 0;
-		//PlaySound("landing.wav", NULL, SND_APPLICATION);
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 	case 'z':
 		Zoom = true;
@@ -2529,6 +2529,7 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = 1.;
 		View = 3;
 		loadMoon = 1;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 	case '-':
 		Scale = Scale - .1;
