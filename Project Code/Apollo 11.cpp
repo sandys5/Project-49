@@ -17,6 +17,7 @@
 #include "glut.h"
 #include "glslprogram.cpp"
 #include "mtl.cpp"
+//#include "newloadobjfile.cpp"
 #include "Keyframe.cpp"
 
 
@@ -75,7 +76,6 @@ int Light3On = 1;
 
 //Materials
 Mtls LunarMat; 
-
 //Default Materials
 float dissolve = 1.;
 float SpecularExponant = 0;
@@ -99,15 +99,26 @@ GLSLProgram *EarthShadeModel;
 GLSLProgram *MoonShadeModel;
 //Animation objects
 Keyframe Test = Keyframe(5.);
+Keyframe EarthWalk = Keyframe(5.);
 //Animation Parameters
 float test[][7] = {
 	{0, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2] - 5, 0., 0., 0.},
 	{150, AstroXYZ[0], AstroXYZ[1] + 5, AstroXYZ[2] - 5, 0., 0., 0.},
 	{300, AstroXYZ[0], AstroXYZ[1] + 5, AstroXYZ[2], 0., 0., 0.},
 	{450, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2], 0., 0., 0.},
-	{600, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2] - 5, 0., 0., 0.},
-	{-1}
+	{600, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2] - 5, 0., 0., 0.}
 };
+
+float EyeEarth[][7] = {
+	{0, LM_XYZ[0] + 5, LM_XYZ[1]+3, LM_XYZ[2], 0, 0, 0},
+	{60, LM_XYZ[0] + 5, LM_XYZ[1]+3, LM_XYZ[2], 180, 0, 0}
+};
+
+//LookAt Point
+//{Starting X, Starting Y, Starting Z, Original X, Original Y, Original Z}
+//Note that Starting XYZ are the parameters that will change as the eye position changes, the original
+//position is to help with this process.
+float LookAtAnimEarth[6] = {EarthXYZ[0],EarthXYZ[1],EarthXYZ[2],EarthXYZ[0],EarthXYZ[1],EarthXYZ[2]};
 //Test 
 //To load in .obj
 /////////////
@@ -214,6 +225,7 @@ const GLfloat FOGDENSITY = { 0.30f };
 const GLfloat FOGSTART = { 1.5 };
 const GLfloat FOGEND = { 4. };
 
+
 // non-constant global variables:
 int		ActiveButton;			// current button that is down
 GLuint	LandingSite;			// list to load in lunar surface obj
@@ -251,6 +263,8 @@ void	Reset();
 void	Resize(int, int);
 void	Visibility(int);
 void	freeMem();
+void	LookAtRot(float *,float *,float *);
+void	MulMatrices(float [4][4], float [4][1]);
 
 ////////////////////////////////////////////////////////////
 //Functions to load in .obj files
@@ -750,11 +764,12 @@ Animate()
 		}
 		*/
 		//Call this whenever we need to update XYZ
-		Test.Update();
+		EarthWalk.Update();
+		//printf("X: %f, Y: %f, Z: %f\n", EarthWalk.X, EarthWalk.Y, EarthWalk.Z);
 	}
 	if (View != 10) {
 		//This resets it back to original frame.
-		Test.Reset();
+		EarthWalk.Reset();
 	}
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
@@ -772,6 +787,22 @@ Array3(float a, float b, float c)
 }
 
 // utility to create an array from a multiplier and an array:
+void MulMatrices(float A[4][4], float B[4][1]) {
+	float C[4][1];
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 1; j++)
+		{
+			C[i][j] = 0.;
+			for (int k = 0; k < 4; k++)
+			{
+				C[i][j] += A[i][k] * B[k][j];
+				B[i][j] = C[i][j];
+			}
+		}
+	}
+}
+
 float *
 MulArray3(float factor, float array0[3])
 {
@@ -990,6 +1021,34 @@ DrawPoint(struct point *p)
 	glVertex3f(p->x, p->y, p->z);
 }
 
+void LookAtRot(float *Lx, float *Ly, float *Lz) {
+	//We must first do two series of rotations, one horizontal, and one vertical. 
+	float xyz[4][1] = {
+		{*(Lx)},
+		{*(Ly)},
+		{*(Lz)},
+		{1}
+	};
+	float Yrotate[4][4] = {
+		{cos((EarthWalk.Ax*M_PI) / 180), 0, sin((EarthWalk.Ax*M_PI) / 180), 0 },
+		{0, 1, 0, 0},
+		{-sin((EarthWalk.Ax*M_PI) / 180), 0, cos((EarthWalk.Ax*M_PI) / 180)},
+		{0, 0, 0, 1}
+	};
+	float Zrotate[4][4] = {
+		{cos((EarthWalk.Az * M_PI) / 180), -sin((EarthWalk.Az * M_PI) / 180), 0, 0},
+		{sin((EarthWalk.Az * M_PI) / 180), cos((EarthWalk.Az * M_PI) / 180), 0, 0},
+		{0, 0, 1, 0},
+		{0, 0, 0, 1}
+	};
+	//!!!!!!!!!IT IS IMPORTANT HOW YOU PASS IN THE MATRICES!!!!!!!!
+	MulMatrices(Yrotate, xyz);
+	//printf("xyz[0][0]: %f, xyz[1][0]: %f, xyz[2][0]: %f\n", xyz[0][0], xyz[1][0], xyz[2][0]);
+	*(Lx) = xyz[0][0];
+	*(Ly) = xyz[1][0];
+	*(Lz) = xyz[2][0];
+}
+
 void
 MjbSphere(float radius, int slices, int stacks)
 {
@@ -1195,49 +1254,49 @@ Display()
 	glPushMatrix();
 	SetPointLight(GL_LIGHT1, SunXYZ[0], 5, SunXYZ[2], 1, 1., 1.);
 	glPopMatrix();
-	int EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
+	float EyeEarthPosX, EyeEarthPosY, EyeEarthPosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ;
 
 	//Flight path
 	if (View == 1) {
 		//Default view of flight path
-		EyePosX = 0; EyePosY = 5500; EyePosZ = 0;
+		EyeEarthPosX = 0; EyeEarthPosY = 5500; EyeEarthPosZ = 0;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
 	}
 
 	//View from Earth
 	if (View == 2) {
-		EyePosX = EarthXYZ[0] - (EarthDiameter / 2) + 650;
-		EyePosY = EarthXYZ[1] - (EarthDiameter / 2) - 50;
-		EyePosZ = EarthXYZ[2] - (EarthDiameter / 2) - 50;
+		EyeEarthPosX = EarthXYZ[0] - (EarthDiameter / 2) + 650;
+		EyeEarthPosY = EarthXYZ[1] - (EarthDiameter / 2) - 50;
+		EyeEarthPosZ = EarthXYZ[2] - (EarthDiameter / 2) - 50;
 		LookAtX = BaseXYZ[0]; LookAtY = BaseXYZ[1]; LookAtZ = BaseXYZ[2];
 		UpVecX = 0; UpVecY = 0; UpVecZ = 1;
 	}
 
 	//View from above moon base
 	if (View == 3) {
-		EyePosX = 250; EyePosY = 0; EyePosZ = -250;
+		EyeEarthPosX = 250; EyeEarthPosY = 0; EyeEarthPosZ = -250;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//viewpoint from lunar module
 	if (View == 4) {
-		EyePosX = LM_XYZ[0]; EyePosY = LM_XYZ[1] + 5; EyePosZ = LM_XYZ[2] + 2;
+		EyeEarthPosX = LM_XYZ[0]; EyeEarthPosY = LM_XYZ[1] + 5; EyeEarthPosZ = LM_XYZ[2] + 2;
 		LookAtX = EarthXYZ[0]; LookAtY = EarthXYZ[1]; LookAtZ = EarthXYZ[2];
 		UpVecX = 0;	UpVecY = 1;	UpVecZ = 0;
 	}
 
 	//Other view of landing site
 	if (View == 5) {
-		EyePosX = 20; EyePosY = 20; EyePosZ = -10;
+		EyeEarthPosX = 20; EyeEarthPosY = 20; EyeEarthPosZ = -10;
 		LookAtX = LM_XYZ[0]; LookAtY = LM_XYZ[1]; LookAtZ = LM_XYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//View point Lander/Neil
 	if (View == 6) {
-		EyePosX = LM_XYZ[0]+2; EyePosY = LM_XYZ[1] + 3; EyePosZ = LM_XYZ[2] -7;
+		EyeEarthPosX = LM_XYZ[0]+2; EyeEarthPosY = LM_XYZ[1] + 3; EyeEarthPosZ = LM_XYZ[2] -7;
 		LookAtX = FlagXYZ[0]+3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
@@ -1245,39 +1304,43 @@ Display()
 	//Pan of lunar landscape
 	if (View == 7)
 	{
-		EyePosX = LM_Animate[0]; EyePosY = LM_Animate[1]; EyePosZ = LM_Animate[2];
+		EyeEarthPosX = LM_Animate[0]; EyeEarthPosY = LM_Animate[1]; EyeEarthPosZ = LM_Animate[2];
 		LookAtX = (EarthXYZ[0] * cos(currentFactor) - EarthXYZ[2] * sin(currentFactor)); LookAtY = EarthXYZ[1]; LookAtZ = (EarthXYZ[0] * sin(currentFactor) + EarthXYZ[2] * cos(currentFactor));
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//View of lunar module landing
 	if (View == 8) {
-		EyePosX = 5; EyePosY = 13; EyePosZ = 10;
+		EyeEarthPosX = 5; EyeEarthPosY = 13; EyeEarthPosZ = 10;
 		LookAtX = 0; LookAtY = 250; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//alt view of module landing
 	if (View == 9) {
-		EyePosX = 5; EyePosY = 50; EyePosZ = 10;
+		EyeEarthPosX = 5; EyeEarthPosY = 50; EyeEarthPosZ = 10;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//alt view of module landing
 	if (View == 0) {
-		EyePosX = 25; EyePosY = 15; EyePosZ = 20;
+		EyeEarthPosX = 25; EyeEarthPosY = 15; EyeEarthPosZ = 20;
 		LookAtX = 0; LookAtY = 20; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 	if (View == 10) {
-		EyePosX = 20; EyePosY = 20; EyePosZ = -10;
-		LookAtX = LM_XYZ[0]; LookAtY = LM_XYZ[1]; LookAtZ = LM_XYZ[2];
+		LookAtAnimEarth[0] = LookAtAnimEarth[3] + (EarthWalk.X - EarthWalk.Frames[0].x);
+		LookAtAnimEarth[1] = LookAtAnimEarth[4] + ((EarthWalk.Y - EarthWalk.Frames[0].y));
+		LookAtAnimEarth[2] = LookAtAnimEarth[5] + ((EarthWalk.Z - EarthWalk.Frames[0].z));
+		glRotatef(EarthWalk.Ax, 0, 1., 0);
+		EyeEarthPosX = EarthWalk.X; EyeEarthPosY = EarthWalk.Y; EyeEarthPosZ = EarthWalk.Z;
+		LookAtX = LookAtAnimEarth[0]; LookAtY = LookAtAnimEarth[1]; LookAtZ = LookAtAnimEarth[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 
 	}
-	// set the eye position, look-at position, and up-vector:
-	gluLookAt(EyePosX, EyePosY, EyePosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
+	// set the EyeEarth position, look-at position, and up-vector:
+	gluLookAt(EyeEarthPosX, EyeEarthPosY, EyeEarthPosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
 
 	// rotate the scene based on each view:
 	if (View == 1) {
@@ -1400,11 +1463,7 @@ Display()
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
 	if (View == 10) {
-		glPushMatrix();
-		glTranslatef(Test.X, Test.Y,Test.Z);
-		glColor3f(1.,.25, 0.);
-		MjbSphere(1, 50, 50);
-		glPopMatrix();
+
 	}
 	if (View != 1) {
 		glPushMatrix();
@@ -2086,10 +2145,21 @@ InitGraphics()
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	//Shader initiliazation
-	if (LunarMat.Open("LandingSite.mtl") != 0)
+	//if (LunarMat.Open("LandingSite.mtl") != 0)
+	//{
+	//	fprintf(stderr, "Could not read file name.\n");
+	//}
+	//LunarMat.ReadMtlFile();
+	//LunarMat.Close();
+	char * mtlFilename = (char *)("./LandingSite.mtl");
+
+	if (LunarMat.Open(mtlFilename) != 0)
 	{
-		fprintf(stderr, "Could not read file name.\n");
+		fprintf(stderr, "Could not read the mtl file\n");
+		return;
 	}
+	else
+		fprintf(stderr, "READING ./LandSite.mtl");
 	LunarMat.ReadMtlFile();
 	LunarMat.Close();
 
@@ -2123,7 +2193,8 @@ InitGraphics()
 		fprintf(stderr, "GLSL Moon Shade Model Shader Successfully Initialized\n");
 	}
 	//Initializing keyframe animation objects.
-	Test.keyframeData(test, 5);
+	Test.keyframeData(test, 4);
+	EarthWalk.keyframeData(EyeEarth, 2);
 }
 
 // initialize the display lists that will not change:
@@ -2188,11 +2259,12 @@ InitLists()
 	glNewList(Astronaut, GL_COMPILE);
 	LoadObjFile("Astronaut_.obj");
 	glEndList();
-
+	
 	LandingSite = glGenLists(1);
 	glNewList(LandingSite, GL_COMPILE);
 	LoadObjFile("LandingSite.obj");
 	glEndList();
+
 
 	LunarModule = glGenLists(1);
 	glNewList(LunarModule, GL_COMPILE);
