@@ -16,6 +16,7 @@ Keyframe::Keyframe(float Base)
 	Frames = NULL;
 	first = 1;
 	currentTime = 0;
+	Repeat = 1;
 }
 
 void Keyframe::keyframeData(float listData[][7],int size) {
@@ -84,6 +85,9 @@ void Keyframe::Update(){
 		}
 		else {
 			NowFrame = NowFrame + ((maxframes - NowFrame)*.9);
+			if (Repeat) {
+				Reset();
+			}
 		}
 		if (Frames[NowKeyFrame].f <= NowFrame && NowFrame <= Frames[NowKeyFrame + 1].f)
 		{

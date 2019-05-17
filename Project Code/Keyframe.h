@@ -25,6 +25,7 @@ public:
 	struct keyframe* Frames;
 	float X, Y, Z;
 	float Ax, Ay, Az;
+	int Repeat;
 	int BaseTime;
 	Keyframe(float);
 	~Keyframe();

@@ -106,8 +106,9 @@ GLSLProgram *LunarMask;
 
 //Animation objects
 Keyframe Test = Keyframe(5.);
-Keyframe EarthWalk = Keyframe(5.);
+Keyframe EarthWalk = Keyframe(27);
 Keyframe Flight = Keyframe(30.);
+Keyframe LMFirstStep = Keyframe(36.);
 
 // Moon positioning for flightpath
 float rotPos;
@@ -126,8 +127,72 @@ float test[][7] = {
 };
 
 float EyeEarth[][7] = {
-	{0, LM_XYZ[0] + 5, LM_XYZ[1]+3, LM_XYZ[2], 0, 0, 0},
-	{60, LM_XYZ[0] + 5, LM_XYZ[1]+3, LM_XYZ[2], 180, 0, 0}
+	{0, LM_XYZ[0] + 5, LM_XYZ[1]+1.5, LM_XYZ[2], 0, 0, 0},
+	{30, LM_XYZ[0] + 5, LM_XYZ[1] + 1.5, LM_XYZ[2],90, 12, 0},
+	{60, LM_XYZ[0] + 5, LM_XYZ[1]+1.5, LM_XYZ[2], 160, 0, 0},
+	{240, LM_XYZ[0] + 5, LM_XYZ[1] + 1.5, LM_XYZ[2], 160, 0, 0},
+	{270, LM_XYZ[0] + 5, LM_XYZ[1] + 1.5, LM_XYZ[2],90, 12, 0},
+	{300, LM_XYZ[0] + 5, LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{315, LM_XYZ[0] + 6.25, LM_XYZ[1] + 1.6, LM_XYZ[2], 0, 0, 0},
+	{330, LM_XYZ[0] + 7.5, LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{430, LM_XYZ[0] + 7.5, LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{445, LM_XYZ[0] + 8.75, LM_XYZ[1] + 1.6, LM_XYZ[2], 0, 0, 0},
+	{460, LM_XYZ[0] + 10., LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{560, LM_XYZ[0] + 10., LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{575, LM_XYZ[0] + 11.25, LM_XYZ[1] + 1.6, LM_XYZ[2], 0, 0, 0},
+	{590, LM_XYZ[0] + 12.5, LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{690, LM_XYZ[0] + 12.5, LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{705, LM_XYZ[0] + 13.75, LM_XYZ[1] + 1.6, LM_XYZ[2], 0, 0, 0},
+	{720, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0},
+	{750, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 45, 0, 0},
+	{850, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 45, 0, 0},
+	{880, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 55, -25, 0},
+	{980, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 55, -25, 0},
+	{1020, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 35, -25, 0},
+	{1120, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 35, -25, 0},
+	{1150, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], -20, 0, 0},
+	{1250, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], -20, 0, 0},
+	{1280, LM_XYZ[0] + 15, LM_XYZ[1] + 1.5, LM_XYZ[2], 0, 0, 0}
+};
+
+float SmallStepForMan[][7] = {
+	{0, 20, 14, 13.5, 0, 0, 0},
+	{600, 20, 14, 13.25, 0, 45, 0},
+	{900, 20, 14, 13.25, 0, 45, 0},
+	{1500, 20, 14, 13.25, 180, 0, 0},
+	{1800, 20, 13.885, 13., 180, 0, 0},
+	{2100, 20, 13.885, 13., 180, 0, 0},
+	{2400, 20, 13.77, 12.9, 180, 0, 0},
+	{2700, 20, 13.77, 12.9, 180, 0, 0},
+	{3000, 20, 13.655, 12.8, 180, 0, 0},
+	{3300, 20, 13.655, 12.8, 180, 0, 0},
+	{3600, 20, 13.54, 12.7, 180, 0, 0},
+	{3900, 20, 13.54, 12.7, 180, 0, 0},
+	{4200, 20, 13.425, 12.6, 180, 0, 0},
+	{4500, 20, 13.425, 12.6, 180, 0, 0},
+	{4800, 20, 13.31, 12.5, 180, 0, 0},
+	{5200, 20, 13.31, 12.5, 180, 0, 0},
+	{5500, 20, 12.5, 12.5, 0, 0, 0},
+	{5800, 20, 12.5, 12.0, 0, 0, 0},
+	{5950, 20, 12.5, 12.0, 0, 0, 0},
+	{6100, 20, 12.5, 11.5, 0, 0, 0},
+	{6250, 20, 12.5, 11.5, 0., 0., 0.},
+	{6350, 20, 12.5, 11.0, 20., 0., 0.},
+	{6650, 20, 12.5, 11.0, 20., 0., 0.},
+	{6850, 20, 12.5, 11.0, -20., 0., 0.},
+	{7150, 20, 12.5, 11.0, -20., 0., 0.},
+	{7250, 20, 12.5, 11.0, 0., 0., 0.},
+	{9050, 20, 12.5, 11.0, 0., 0., 0.},
+	{9150, 20, 12.5, 10.5, 0., 0., 0.},
+	{9250, 20, 12.5, 10.5, 0., 0., 0.},
+	{9350, 20, 12.5, 10.0, 0., 0., 0.},
+	{9450, 20, 12.5, 10.0, 0., 0., 0.},
+	{9550, 20, 12.5, 9.5, 0., 0., 0.},
+	{9650, 20, 12.5, 9.5, 0., 0., 0.},
+	{9750, 20, 12.5, 9.0, 0., 0., 0.},
+	{9950, 20, 12.5, 9.0, 0., 0., 0.},
+	{11000, 20, 12.5, 9.0, 180., 0., 0.},
+	{13000, 20, 12.5, 9.0, 180., 0., 0.}
 };
 
 //LookAt Point
@@ -135,6 +200,7 @@ float EyeEarth[][7] = {
 //Note that Starting XYZ are the parameters that will change as the eye position changes, the original
 //position is to help with this process.
 float LookAtAnimEarth[6] = {EarthXYZ[0],EarthXYZ[1],EarthXYZ[2],EarthXYZ[0],EarthXYZ[1],EarthXYZ[2]};
+float LookAtAnimSSFM[6] = {LM_XYZ[0], 14, LM_XYZ[2]-7, LM_XYZ[0], 14, LM_XYZ[2]-7 };
 float path[][7] = {
 
 	//Launch and first orbit around Earth
@@ -188,7 +254,6 @@ float path[][7] = {
 	{-1}
 };
 
->>>>>>> 97a82ec5281e3e527dac893839a1eeaf68f689f3
 //Test 
 //To load in .obj
 /////////////
@@ -850,7 +915,12 @@ Animate()
 		//This resets it back to original frame.
 		EarthWalk.Reset();
 	}
-
+	if (View == 11) {
+		LMFirstStep.Update();
+	}
+	if (View != 11) {
+		LMFirstStep.Reset();
+	}
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
 }
@@ -1461,10 +1531,21 @@ Display()
 		LookAtAnimEarth[1] = LookAtAnimEarth[4] + ((EarthWalk.Y - EarthWalk.Frames[0].y));
 		LookAtAnimEarth[2] = LookAtAnimEarth[5] + ((EarthWalk.Z - EarthWalk.Frames[0].z));
 		glRotatef(EarthWalk.Ax, 0, 1., 0);
+		glRotatef(EarthWalk.Ay, 1, 0, 0);
 		EyeEarthPosX = EarthWalk.X; EyeEarthPosY = EarthWalk.Y; EyeEarthPosZ = EarthWalk.Z;
 		LookAtX = LookAtAnimEarth[0]; LookAtY = LookAtAnimEarth[1]; LookAtZ = LookAtAnimEarth[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 
+	}
+	if (View == 11) {
+		LookAtAnimSSFM[0] = LookAtAnimSSFM[3] + (LMFirstStep.X - LMFirstStep.Frames[0].x);
+		LookAtAnimSSFM[1] = LookAtAnimSSFM[4] + ((LMFirstStep.Y - LMFirstStep.Frames[0].y));
+		LookAtAnimSSFM[2] = LookAtAnimSSFM[5] + ((LMFirstStep.Z - LMFirstStep.Frames[0].z));
+		glRotatef(LMFirstStep.Ax, 0, 1., 0);
+		glRotatef(LMFirstStep.Ay, 1, 0, 0);
+		EyeEarthPosX = LMFirstStep.X; EyeEarthPosY = LMFirstStep.Y; EyeEarthPosZ = LMFirstStep.Z;
+		LookAtX = LookAtAnimSSFM[0]; LookAtY = LookAtAnimSSFM[1]; LookAtZ = LookAtAnimSSFM[2];
+		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 	// set the EyeEarth position, look-at position, and up-vector:
 	gluLookAt(EyeEarthPosX, EyeEarthPosY, EyeEarthPosZ, LookAtX, LookAtY, LookAtZ, UpVecX, UpVecY, UpVecZ);
@@ -1635,9 +1716,6 @@ Display()
 
 	// Load in lunar module
 	// (Real Lunar lander is about 31 ft wide and 23 ft tall - http://georgetyson.com/files/apollostatistics.pdf Page 17)
-	if (View == 10) {
-
-	}
 	if (View != 1) {
 		glPushMatrix();
 		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
@@ -2039,8 +2117,8 @@ Display()
 		glLoadIdentity();
 		glColor3f(1., 1., 1.);
 		DoRasterString(3., 29., 0., "Apollo 11 - Engr Expo - 5/17/19");
-		DoRasterString(3., 25., 0., "0-9 - Viewpoints");
-		DoRasterString(3., 21., 0., "F - Toggle Flight Path");
+		DoRasterString(3., 25., 0., "0-9, e, w - Viewpoints");
+		DoRasterString(3., 21., 0., "F - Toggle Flight Path, r/R - Toggle Repeat");
 		DoRasterString(3., 17., 0., "S - Toggle Star Map");
 		DoRasterString(3., 13., 0., "M - Toggle Text");
 		DoRasterString(3., 9., 0., "Z - Zoom animation");
@@ -2382,9 +2460,10 @@ InitGraphics()
 		fprintf(stderr, "GLSL Moon Shade Model Shader Successfully Initialized\n");
 	}
 	//Initializing keyframe animation objects.
-	EarthWalk.keyframeData(EyeEarth, 2);
+	EarthWalk.keyframeData(EyeEarth,26);
 	Test.keyframeData(test, 5);
 	Flight.keyframeData(path, 35);
+	LMFirstStep.keyframeData(SmallStepForMan, 37);
 }
 
 // initialize the display lists that will not change:
@@ -2600,6 +2679,19 @@ Keyboard(unsigned char c, int x, int y)
 		View = 10;
 		loadMoon = 0;
 		PlaySound(NULL, NULL, SND_APPLICATION);
+		break;
+	case 'w':
+		Zoom = false;
+		Xrot = Yrot = 0.;
+		Scale = 1.;
+		View = 11;
+		loadMoon = 0;
+		break;
+	case 'r':
+	case 'R':
+		EarthWalk.Repeat = !EarthWalk.Repeat;
+		Flight.Repeat = !Flight.Repeat;
+		LMFirstStep.Repeat = !LMFirstStep.Repeat;
 		break;
 	case 'z':
 		Zoom = true;
