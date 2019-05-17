@@ -1,0 +1,249 @@
+newmtl Copper_lags
+	Ns 44.5000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.0471 0.0118 0.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_bump -bm 0.3000  ApolloLunarModule/Map__49_VRayNormalMap.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Material__22
+	Ns 50.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.3608 0.3608 0.3608
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/Blackprotectivecovers_COLOR.bmp
+	map_Kd ApolloLunarModule/Blackprotectivecovers_COLOR.bmp
+	map_bump  ApolloLunarModule/Map__172_VRayNormalMap.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Stainless_Steel_brushed
+	Ns 38.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.1176 0.1176 0.1373
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_bump -bm 0.1200  ApolloLunarModule/Map__0_Noise.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Gold_box
+	Ns 44.5000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.0392 0.0118 0.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_bump -bm 0.3000  ApolloLunarModule/Map__160_VRayNormalMap.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl vray_19___Default
+	Ns 23.3112
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5882 0.5882 0.5882
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/p77.bmp
+	map_Kd ApolloLunarModule/p77.bmp
+	map_bump -bm 0.2000  ApolloLunarModule/Map__60_VRayNormalMap.bmp
+
+newmtl FromUSA
+	Ns 37.5000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5882 0.5882 0.5882
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/bllebl_01_COLOR.bmp
+	map_Kd ApolloLunarModule/bllebl_01_COLOR.bmp
+	map_bump -bm 0.1000  ApolloLunarModule/Map__141_VRayNormalMap.bmp
+	map_refl Mask_Mask.bmp
+
+newmtl vray_15___Default
+	Ns 28.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.0118 0.0118 0.0118
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/Map__58_Falloff.bmp
+	map_Kd ApolloLunarModule/Map__58_Falloff.bmp
+	map_bump -bm 0.1000  ApolloLunarModule/Map__57_Noise.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl RRR
+	Ns 28.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5569 0.3725 0.1725
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/RR_Falloff.bmp
+	map_Kd ApolloLunarModule/RR_Falloff.bmp
+	map_bump -bm 0.1000  ApolloLunarModule/Map__57_Noise.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Material__2
+	Ns 50.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.1843 0.1843 0.1843
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/Blackcoatingofthelowermodule.bmp
+	map_Kd ApolloLunarModule/Blackcoatingofthelowermodule.bmp
+	map_bump -bm 0.3000  ApolloLunarModule/Map__182_VRayNormalMap.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Material__8
+	Ns 39.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.1922 0.1922 0.1922
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl 556
+	Ns 50.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.0078 0.0078 0.0078
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Glass
+	Ns 44.0000
+	Ni 1.5000
+	d 0.9200
+	Tr 0.0800
+	Tf 0.9200 0.9200 0.9200 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_bump -bm 0.0150  ApolloLunarModule/Map__2_Noise.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Black_protective_coating
+	Ns 50.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.0196 0.0196 0.0196
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_bump -bm 0.5000  ApolloLunarModule/Map__161_VRayNormalMap.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl Chrome_foil
+	Ns 49.5000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.0392 0.0392 0.0392
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_bump -bm 0.3000  ApolloLunarModule/Map__146_VRayNormalMap.bmp
+	map_refl Raytrace_Raytrace.bmp
+
+newmtl vray_05___Default
+	Ns 23.3112
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5882 0.5882 0.5882
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/USA.bmp
+	map_Kd ApolloLunarModule/USA.bmp
+	map_bump -bm 0.6600  ApolloLunarModule/Map__122_VRayNormalMap.bmp
+
+newmtl platform
+	Ns 50.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.4902 0.4863 0.4667
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/Map__186_Falloff.bmp
+	map_Kd ApolloLunarModule/Map__186_Falloff.bmp
+	map_bump -bm 0.3000  ApolloLunarModule/Map__185_Noise.bmp
+
+newmtl vray_04___Default
+	Ns 23.3112
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5882 0.5882 0.5882
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka ApolloLunarModule/USAFLAG.bmp
+	map_Kd ApolloLunarModule/USAFLAG.bmp
+	map_bump -bm 1.3300  ApolloLunarModule/Map__120_VRayNormalMap.bmp

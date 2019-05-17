@@ -12,13 +12,16 @@
 #include "glew.h"
 #endif
 
+#include "newloadobjfile.h"
+#include "newloadobjfile.cpp"
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
 #include "glslprogram.cpp"
-#include "mtl.cpp"
 //#include "newloadobjfile.cpp"
+//#include "mtl.cpp"
 #include "Keyframe.cpp"
+//#include "bmptotexture.cpp"
 
 
 // title of the window:
@@ -31,7 +34,7 @@ const int GLUIFALSE = { false };
 // delimiters for parsing the obj file:
 #define OBJDELIMS		" \t"
 //Animation Constant
-#define MS_IN_THE_ANIMATION_CYCLE	10000
+#define MS_IN_THE_ANIMATION_CYCLE	15000
 // the escape key:
 #define ESCAPE		0x1b
 
@@ -52,7 +55,7 @@ float BaseXYZ[] = { 175, 3, -88 };
 float LaunchXYZ[] = { 6710, 385, -705 };
 float LM_XYZ[] = { 20., 11.5, 15 };
 float SaturnXYZ[] = { 900, 0, -100 };
-float AstroXYZ[] = {14 , 12, 9 };
+float AstroXYZ[] = { 14 , 12, 9 };
 float FlagXYZ[] = { 15, 11, 11 };
 float MoonXYZ[] = { 0, 0, 0 };
 float StarMapAnchor[] = { 0., 0., 0. };
@@ -68,6 +71,7 @@ const float TurnFactor = (.75 * M_PI) / 180;
 float currentFactor = 0;
 float rAngle = 0;
 int FPath = 1;
+int text = 1;
 
 // Lights
 int Light1On = 1;
@@ -76,6 +80,7 @@ int Light3On = 1;
 
 //Materials
 Mtls LunarMat; 
+
 //Default Materials
 float dissolve = 1.;
 float SpecularExponant = 0;
@@ -97,9 +102,20 @@ float dotPosZ = 0;
 GLSLProgram *FragmentLight;
 GLSLProgram *EarthShadeModel;
 GLSLProgram *MoonShadeModel;
+GLSLProgram *LunarMask;
+
 //Animation objects
 Keyframe Test = Keyframe(5.);
 Keyframe EarthWalk = Keyframe(5.);
+Keyframe Flight = Keyframe(30.);
+
+// Moon positioning for flightpath
+float rotPos;
+float MOrbit = (MoonDiameter / 2) + 100;
+float EOrbit = (EarthDiameter / 2) + 150;
+float XMove = -3400;
+std::vector<std::vector<float> > pathPoints;
+
 //Animation Parameters
 float test[][7] = {
 	{0, AstroXYZ[0], AstroXYZ[1], AstroXYZ[2] - 5, 0., 0., 0.},
@@ -119,9 +135,64 @@ float EyeEarth[][7] = {
 //Note that Starting XYZ are the parameters that will change as the eye position changes, the original
 //position is to help with this process.
 float LookAtAnimEarth[6] = {EarthXYZ[0],EarthXYZ[1],EarthXYZ[2],EarthXYZ[0],EarthXYZ[1],EarthXYZ[2]};
+float path[][7] = {
+
+	//Launch and first orbit around Earth
+	{0, LaunchXYZ[0] + XMove, LaunchXYZ[1], LaunchXYZ[2], 0., 0., 0.},
+	{40, LaunchXYZ[0] - 250 + XMove, LaunchXYZ[1], LaunchXYZ[2] + 10, 0., 0., 0.},
+	{60, 6800 - EOrbit + XMove, 0, 0, 0., 0., 0.},
+	{80, 6800 + XMove, 0, EOrbit, 0., 0., 0.},
+	{100, 6800 + EOrbit + XMove, 0, 0, 0., 0.},
+	{120, 6800 + XMove, 0, -EOrbit, 0., 0., 0.},
+	{140, 6800 - EOrbit + XMove, 0, 0 , 0, 0, 0},
+	//Second orbit around Earth
+	{160, 6800 + XMove, 0, EOrbit, 0., 0., 0.},
+	{180, 6800 + EOrbit + XMove, 0, 0, 0., 0.},
+	{200, 6800 + XMove, 0, -EOrbit, 0., 0., 0.},
+	//To the Moon
+	{235, MoonXYZ[0] + XMove + 250, MoonXYZ[1],  MoonXYZ[2] + MOrbit, 0., 0., 0.},
+	//First Moon Orbit
+	{260, MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2], 0., 0., 0.},
+	{280, MoonXYZ[0] + XMove, MoonXYZ[1],  MoonXYZ[2] - MOrbit, 0., 0., 0.},
+	{300, MoonXYZ[0] + MOrbit + XMove, MoonXYZ[1], MoonXYZ[2], 0, 0., 0.},
+	//Second Moon Orbit to landing
+	{320, MoonXYZ[0] + XMove, MoonXYZ[1],  MoonXYZ[2] + MOrbit, 0., 0., 0.},
+	{340, MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2], 0., 0., 0.},
+	{360, MoonXYZ[0] + XMove, MoonXYZ[1],  MoonXYZ[2] - MOrbit, 0., 0., 0.},
+	{375, MoonXYZ[0] + BaseXYZ[0] + XMove, MoonXYZ[1] + BaseXYZ[1], MoonXYZ[2] + BaseXYZ[2], 0, 0, 0},
+	{377, MoonXYZ[0] + BaseXYZ[0] + XMove, MoonXYZ[1] + BaseXYZ[1], MoonXYZ[2] + BaseXYZ[2], 0, 0, 0},
+	{380, MoonXYZ[0] + BaseXYZ[0] + XMove, MoonXYZ[1] + BaseXYZ[1], MoonXYZ[2] + BaseXYZ[2], 0, 0, 0},
+	//////////
+	//Second half//
+	//////////
+	//Takeoff to first Moon orbit
+	{440, MoonXYZ[0] + BaseXYZ[0] + XMove, MoonXYZ[1] + BaseXYZ[1], MoonXYZ[2] + BaseXYZ[2], 0, 0, 0},
+	{460, MoonXYZ[0] + MOrbit * .7 + XMove, MoonXYZ[1] + 10, MoonXYZ[2], 0, 0, 0},
+	{480, MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit * .8, 0, 0, 0},
+	{500, MoonXYZ[0] - MOrbit * .8 + XMove, MoonXYZ[1] + 10, MoonXYZ[2], 0, 0, 0},
+	//Second Moon orbit
+	{520, MoonXYZ[0] + XMove + 100, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit * .8, 0, 0, 0},
+	{540, MoonXYZ[0] + MOrbit + XMove - 10, MoonXYZ[1] + 10, MoonXYZ[2], 0, 0, 0},
+	{560, MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit, 0, 0, 0},
+	{580, MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1] + 10, MoonXYZ[2], 0, 0, 0},
+	{600, MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit, 0, 0, 0},
+	{610, MoonXYZ[0] + 200 + XMove , MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit + 100, 0, 0, 0},
+
+	//Path to Earth, 'bot' of Moon to 'top' of Earth
+	{675, 6800 + XMove, 0, EOrbit, 0, 0, 0},
+	//Earth orbit to splashdown
+	{690, 6800 + EOrbit * .7 + XMove, 10, 0, 0, 0, 0},
+	{710, 6800 + EarthDiameter / 2 + XMove, 10, 0, 0, 0, 0},
+	{715, 6800 + EarthDiameter / 2 + XMove, 10, 0, 0, 0, 0},
+	{720, 6800 + EarthDiameter / 2 + XMove, 10, 0, 0, 0, 0},
+	{-1}
+};
+
+>>>>>>> 97a82ec5281e3e527dac893839a1eeaf68f689f3
 //Test 
 //To load in .obj
 /////////////
+/*
 struct Vertex {
 	float x, y, z;
 };
@@ -136,8 +207,7 @@ struct TextureCoord {
 
 struct face {
 	int v, n, t;
-};
-
+};*/
 
 void	Cross(float[3], float[3], float[3]);
 char *	ReadRestOfLine(FILE *);
@@ -238,8 +308,9 @@ int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
-int		Xmouse, Ymouse;			// mouse values
+int		Xmouse, Ymouse;			// mouse valuesl
 float	Xrot, Yrot;				// rotation angles in degrees
+bool	Zoom;
 
 //bool	View3; //if this is true, lunar surface will be loaded in its actual position on the moon
 float Time;
@@ -275,10 +346,11 @@ void freeMem() {
 	delete FragmentLight;
 	delete EarthShadeModel;
 	delete MoonShadeModel;
+	delete LunarMask;
 }
 
 int
-LoadObjFile(char *name)
+LoadObjFileO(char *name)
 {
 	char *cmd;		// the command string
 	char *str;		// argument string
@@ -567,7 +639,7 @@ LoadObjFile(char *name)
 }
 
 
-
+/*
 void
 Cross(float v1[3], float v2[3], float vout[3])
 {
@@ -695,7 +767,7 @@ ReadObjVTN(char *str, int *v, int *t, int *n)
 		}
 	}
 }
-
+*/
 /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 
@@ -740,6 +812,10 @@ Animate()
 	ms %= MS_IN_THE_ANIMATION_CYCLE;
 	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;
 	rAngle = Time * 360;
+	rotPos = (((180 - rAngle) / 180) * .154);
+	if (View == 1) {
+		Flight.Update();
+	}
 	if (View == 7)
 		currentFactor += TurnFactor;
 	else
@@ -767,14 +843,19 @@ Animate()
 		EarthWalk.Update();
 		//printf("X: %f, Y: %f, Z: %f\n", EarthWalk.X, EarthWalk.Y, EarthWalk.Z);
 	}
+	if (View != 1) {
+		Flight.Reset();
+	}
 	if (View != 10) {
 		//This resets it back to original frame.
 		EarthWalk.Reset();
 	}
+
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
 }
-// utility to create an array from 3 separate values:
+
+/*// utility to create an array from 3 separate values:
 float *
 Array3(float a, float b, float c)
 {
@@ -784,7 +865,7 @@ Array3(float a, float b, float c)
 	array[2] = c;
 	array[3] = 0; //Sets all lights to infinity for sun. Need to change if we add more lights
 	return array;
-}
+}*/
 
 // utility to create an array from a multiplier and an array:
 void MulMatrices(float A[4][4], float B[4][1]) {
@@ -1000,6 +1081,7 @@ ReadShort(FILE *fp)
 	return (b1 << 8) | b0;
 }
 
+
 static int		NumLngs, NumLats;
 static struct point *	Pts;
 
@@ -1184,8 +1266,24 @@ struct Curve
 	Point p0, p1, p2, p3;
 };
 
-void DrawCurve(struct Curve *curve)
+void DrawCurve()
 {
+	//Jonathan Ropp's
+	glLineWidth(3.);
+
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < pathPoints.size(); i++) {
+		glColor3f(1, 1, 1);
+		glVertex3f(pathPoints[i][0], pathPoints[i][1], pathPoints[i][2]);
+	}
+	glEnd();
+	glLineWidth(1);
+}
+
+/*
+void DrawCurve(struct Curve *curve)
+	{
+	//Mike Bailey's
 	glLineWidth(3.);
 	glColor3f(curve->r, curve->g, curve->b);
 
@@ -1208,17 +1306,35 @@ void DrawCurve(struct Curve *curve)
 	glLineWidth(1);
 
 	glColor3f(1, 1, 1);
-	/*
+
 	// Draw control points
-	glPointSize(5.);
+	/*glPointSize(5.);
 	glBegin(GL_POINTS);
 	glVertex3f(p0.x, p0.y, p0.z);
 	glVertex3f(p1.x, p1.y, p1.z);
 	glVertex3f(p2.x, p2.y, p2.z);
 	glVertex3f(p3.x, p3.y, p3.z);
-	glEnd();*/
-}
+	glEnd();
 
+}*/
+
+void storePoints(struct Curve *curve) {
+	struct Point p0 = curve->p0;
+	struct Point p1 = curve->p1;
+	struct Point p2 = curve->p2;
+	struct Point p3 = curve->p3;
+
+	for (int it = 0; it <= numPoints; it++)
+	{
+		float t = (float)it / (float)numPoints;
+		float omt = 1.f - t;
+		float x = omt * omt*omt*p0.x + 3.f*t*omt*omt*p1.x + 3.f*t*t*omt*p2.x + t * t*t*p3.x;
+		float y = omt * omt*omt*p0.y + 3.f*t*omt*omt*p1.y + 3.f*t*t*omt*p2.y + t * t*t*p3.y;
+		float z = omt * omt*omt*p0.z + 3.f*t*omt*omt*p1.z + 3.f*t*t*omt*p2.z + t * t*t*p3.z;
+		pathPoints.push_back({ x, y, z });
+		it++; //We dont need a lot of accuracy
+	}
+}
 
 // draw the complete scene:
 void
@@ -1278,6 +1394,17 @@ Display()
 		EyeEarthPosX = 250; EyeEarthPosY = 0; EyeEarthPosZ = -250;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+		if (Zoom) { //if this is the animation
+			EyeEarthPosX = 250; EyeEarthPosY = 0; EyeEarthPosZ = -250 / (2 * Time);
+			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+		}
+
+		else {
+			EyeEarthPosX = 275; EyeEarthPosY = 0; EyeEarthPosZ = -150;
+			LookAtX = 0; LookAtY = 0; LookAtZ = 0;
+			UpVecX = 0; UpVecY = 1; UpVecZ = 0;
+		}
 	}
 
 	//viewpoint from lunar module
@@ -1296,11 +1423,11 @@ Display()
 
 	//View point Lander/Neil
 	if (View == 6) {
-		EyeEarthPosX = LM_XYZ[0]+2; EyeEarthPosY = LM_XYZ[1] + 3; EyeEarthPosZ = LM_XYZ[2] -7;
-		LookAtX = FlagXYZ[0]+3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
+		EyeEarthPosX = LM_XYZ[0] + 2; EyeEarthPosY = LM_XYZ[1] + 3; EyeEarthPosZ = LM_XYZ[2] - 7;
+		LookAtX = FlagXYZ[0] + 3; LookAtY = FlagXYZ[1]; LookAtZ = FlagXYZ[2];
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
-	
+
 	//Pan of lunar landscape
 	if (View == 7)
 	{
@@ -1311,22 +1438,22 @@ Display()
 
 	//View of lunar module landing
 	if (View == 8) {
-		EyeEarthPosX = 5; EyeEarthPosY = 13; EyeEarthPosZ = 10;
-		LookAtX = 0; LookAtY = 250; LookAtZ = 0;
+		EyeEarthPosX = 20; EyeEarthPosY = 13; EyeEarthPosZ = 15;
+		LookAtX = 7; LookAtY = 250; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//alt view of module landing
 	if (View == 9) {
-		EyeEarthPosX = 5; EyeEarthPosY = 50; EyeEarthPosZ = 10;
+		EyeEarthPosX = 0; EyeEarthPosY = 50; EyeEarthPosZ = 10;
 		LookAtX = 0; LookAtY = 0; LookAtZ = 0;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 
 	//alt view of module landing
 	if (View == 0) {
-		EyeEarthPosX = 25; EyeEarthPosY = 15; EyeEarthPosZ = 20;
-		LookAtX = 0; LookAtY = 20; LookAtZ = 0;
+		EyeEarthPosX = 0; EyeEarthPosY = 15; EyeEarthPosZ = -10;
+		LookAtX = 40; LookAtY = 35; LookAtZ = 30;
 		UpVecX = 0; UpVecY = 1; UpVecZ = 0;
 	}
 	if (View == 10) {
@@ -1417,12 +1544,45 @@ Display()
 		glPopMatrix();
 	}
 
-	//load the landing site on top of moon so people can see it when they zoom in
-	else if (View == 3 && Scale >= 1.4) {
-		glPushMatrix();
-		//glEnable(GL_LIGHTING);
 
-		//glEnable(GL_LIGHT4);
+	//Current moon hotkey - 'M'
+	if (loadMoon == 1) {
+		// Load in the Moon, center if needed
+		glPushMatrix();
+		if (View == 1) {
+			glTranslatef(-3400, 0, 0);
+		}
+		else {
+			glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
+		}
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TexM);
+		MoonShadeModel->SetUniformVariable("uImageOne", 0);
+		MoonShadeModel->SetUniformVariable("uLightX", (float)-1800);
+		MoonShadeModel->SetUniformVariable("uLightY", (float)0);
+		MoonShadeModel->SetUniformVariable("uLightZ", (float)-4000);
+		MoonShadeModel->SetUniformVariable("uModelX", MoonXYZ[0]);
+		MoonShadeModel->SetUniformVariable("uModelY", MoonXYZ[1]);
+		MoonShadeModel->SetUniformVariable("uModelZ", MoonXYZ[2]);
+		MoonShadeModel->SetUniformVariable("uTol", (float) 0.18);
+		MoonShadeModel->SetUniformVariable("uDb", (float)1);
+		MoonShadeModel->SetUniformVariable("uDc", (float)1);
+		MoonShadeModel->SetUniformVariable("uDs", (float)1);
+		MoonShadeModel->SetUniformVariable("uNb", (float).15);
+		MoonShadeModel->SetUniformVariable("uNc", (float)1);
+		MoonShadeModel->SetUniformVariable("uNs", (float)1);
+		MjbSphere(MoonDiameter / 2, 100, 100);
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+	}
+
+
+	//load the landing site on top of moon so people can see it when they zoom in
+	if (View == 3) {
+		glPushMatrix();
+		float Alp = .36;
+		float Rad = .1;
+
 		FragmentLight->Use();
 		FragmentLight->SetUniformVariable("uLightX", 1800);
 		FragmentLight->SetUniformVariable("uLightY", 100);
@@ -1442,19 +1602,32 @@ Display()
 		FragmentLight->SetUniformVariable("dissolve", dissolve);
 		FragmentLight->SetUniformVariable("specExp", SpecularExponant);
 
+		LunarMask->Use();
+
+		LunarMask->SetUniformVariable("uAlpha", Alp);
+		//int loc = LunarMask->GetUniformLocation("uAlpha");
+		//printf("******* %d",loc);
+		LunarMask->SetUniformVariable("uRadius", Rad);
+		//int loc2 = LunarMask->GetUniformLocation("uRadius");
+		//printf("****** %d",loc2);
+
 		glScalef(.1, .1, .1);
-		//glScalef(-1., 1., 1.);
-		glTranslatef(1750., 0., -1050.);
+
+		glTranslatef(1800., 0., -925.);
 		glRotatef(-60., 0., 1., 0.);
 		glRotatef(180., 1., 0., 0.);
 
+
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glCallList(LandingSite);
-	
-		FragmentLight->Use(0);
+
+		glDisable(GL_BLEND);
+		//FragmentLight->Use(0);
+		LunarMask->Use(0);
 		glPopMatrix();
+
 
 	}
 	glDisable(GL_BLEND);
@@ -1469,15 +1642,15 @@ Display()
 		glPushMatrix();
 		SetMaterial(.4, .7, .8, 1, 1, 1, 4);
 		if (View == 8) {
-			glTranslatef(0., 20 / Time, 0.);
+			glTranslatef(20 / (Time), 15 / Time, 15);
 			glScalef(.0025, .0025, .0025);
 		}
 		else if (View == 9) {
-			glTranslatef(0., 15 / Time, 15.);
+			glTranslatef(3 / Time, 15 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else if (View == 0) {
-			glTranslatef(0., 11 / Time, 15.);
+			glTranslatef(8 / (Time * 2), 13 / Time, 15.);
 			glScalef(.001, .001, .001);
 		}
 		else {
@@ -1531,47 +1704,12 @@ Display()
 		glPopMatrix();
 	}
 
-	//Temp Moon positioning for flightpath
-	float rotPos = (((180 - rAngle) / 180) * .15);
-	float MoonT[] = { MoonXYZ[0], MoonXYZ[1], MoonXYZ[2] };
-
-	//Only rotate if view 1
-	if (View == 1) {
-		MoonT[0] = MoonXYZ[0] + 6400 - (6400 * cos(rotPos));
-		MoonT[1] = MoonXYZ[1];
-		MoonT[2] = MoonXYZ[2] + (6400 * sin(rotPos));
-	}
-
-
-	//Current moon hotkey - 'M'
-	if (loadMoon == 1) {
-		// Load in the Moon
+	//Load the Star Map
+	if (stars == 1) {
 		glPushMatrix();
-		if (View == 1) {
-
-			glTranslatef(MoonT[0], MoonT[1], MoonT[2]);
-			glTranslatef(-3400, 0, 0);
-		}
-		else {
-			glTranslatef(MoonXYZ[0], MoonXYZ[1], MoonXYZ[2]);
-		}
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, TexM);
-		MoonShadeModel->SetUniformVariable("uImageOne", 0);
-		MoonShadeModel->SetUniformVariable("uLightX", (float) -1800);
-		MoonShadeModel->SetUniformVariable("uLightY", (float) 0);
-		MoonShadeModel->SetUniformVariable("uLightZ", (float) -4000);
-		MoonShadeModel->SetUniformVariable("uModelX", MoonXYZ[0]);
-		MoonShadeModel->SetUniformVariable("uModelY", MoonXYZ[1]);
-		MoonShadeModel->SetUniformVariable("uModelZ", MoonXYZ[2]);
-		MoonShadeModel->SetUniformVariable("uTol", (float) 0.18);
-		MoonShadeModel->SetUniformVariable("uDb", (float)1);
-		MoonShadeModel->SetUniformVariable("uDc", (float)1);
-		MoonShadeModel->SetUniformVariable("uDs", (float)1);
-		MoonShadeModel->SetUniformVariable("uNb", (float).15);
-		MoonShadeModel->SetUniformVariable("uNc", (float)1);
-		MoonShadeModel->SetUniformVariable("uNs", (float)1);
-		MjbSphere(MoonDiameter / 2, 100, 100);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, TexSt);
+		MjbSphere(9000., 200, 200);
 		glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
 	}
@@ -1597,34 +1735,24 @@ Display()
 	glBindTexture(GL_TEXTURE_2D, CloudEarthTex);
 	EarthShadeModel->SetUniformVariable("uImageThree", 2);
 	glActiveTexture(GL_TEXTURE0);
-	EarthShadeModel->SetUniformVariable("uLightX",(float) 10000);
-	EarthShadeModel->SetUniformVariable("uLightY", (float) -4000);
-	EarthShadeModel->SetUniformVariable("uLightZ", (float) 8000);
+	EarthShadeModel->SetUniformVariable("uLightX", (float)10000);
+	EarthShadeModel->SetUniformVariable("uLightY", (float)-4000);
+	EarthShadeModel->SetUniformVariable("uLightZ", (float)8000);
 	EarthShadeModel->SetUniformVariable("uModelX", EarthXYZ[0]);
 	EarthShadeModel->SetUniformVariable("uModelY", EarthXYZ[1]);
 	EarthShadeModel->SetUniformVariable("uModelZ", EarthXYZ[2]);
 	EarthShadeModel->SetUniformVariable("uTol", (float) 0.18);
-	EarthShadeModel->SetUniformVariable("uDb", (float) 2);
-	EarthShadeModel->SetUniformVariable("uDc", (float) 1);
-	EarthShadeModel->SetUniformVariable("uDs", (float) 1);
-	EarthShadeModel->SetUniformVariable("uNb", (float) 1);
-	EarthShadeModel->SetUniformVariable("uNc", (float) 1);
-	EarthShadeModel->SetUniformVariable("uNs", (float) 1);
+	EarthShadeModel->SetUniformVariable("uDb", (float)2);
+	EarthShadeModel->SetUniformVariable("uDc", (float)1);
+	EarthShadeModel->SetUniformVariable("uDs", (float)1);
+	EarthShadeModel->SetUniformVariable("uNb", (float)1);
+	EarthShadeModel->SetUniformVariable("uNc", (float)1);
+	EarthShadeModel->SetUniformVariable("uNs", (float)1);
 	EarthShadeModel->SetUniformVariable("uDCloud", (float) 0.6);
 	EarthShadeModel->SetUniformVariable("uNCloud", (float) .075);
 	MjbSphere(EarthDiameter / 2, 100, 100);
-	EarthShadeModel->Use( 0 );
+	EarthShadeModel->Use(0);
 	glPopMatrix();
-
-	//Load the Star Map
-	if (stars == 1) {
-		glPushMatrix();
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, TexSt);
-		MjbSphere(9000., 200, 200);
-		glDisable(GL_TEXTURE_2D);
-		glPopMatrix();
-	}
 
 	//Objects before this will be lit
 	glDisable(GL_LIGHTING);
@@ -1632,18 +1760,32 @@ Display()
 
 	// Flight Path
 	// https://airandspace.si.edu/sites/default/files/images/5317h.jpg
+	//	Launch: 00:00
+		//	Moon at +15.4 degrees
+	//	Leave earth orbit: 1:35
+	//	Enter moon orbit: 63:23
+		//	Moon around +5.66 degrees
+	//	Landing: 70:37
+	//	Liftoff: 105:19
+	//	Exit moon orbit: 112:12
+		//	Moon around -1.866 degrees
+	//	about earth orbit: 200:16
+	//	Splashdown: 200:41
+		//	Moon at -15.4 degrees
+
 	if (View > 3) {
 		FPath = 0;
 	}
-	if (FPath == 1) {
+	//flying sphere
+	if (View == 1 && FPath == 0) {
+		glPushMatrix();
+		glTranslatef(Flight.X, Flight.Y, Flight.Z);
+		glColor3f(.75, .75, .75);
+		MjbSphere(40, 50, 50);
+		glPopMatrix();
+	}
+	if (View == 1 && FPath == 1) {
 
-		float MOrbit, EOrbit;
-		EOrbit = (EarthDiameter / 2) + 300;
-		MOrbit = (MoonDiameter / 2) + 200;
-		double XMove = 0;
-		if (View == 1) {
-			XMove = -3400; //This is to center everything around origin
-		}
 		struct Curve curve;
 		curve.r = .8;
 		curve.g = .8;
@@ -1659,7 +1801,8 @@ Display()
 		curve.p1 = p1;
 		curve.p2 = p2;
 		curve.p3 = p3;
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//1st orbit
 		//'right' to 'top'
@@ -1667,25 +1810,29 @@ Display()
 		curve.p1 = { 6800 - EOrbit + XMove, 0, EOrbit / 2 + 150 };
 		curve.p2 = { 6800 - EOrbit / 2 + 150 + XMove, 0, EOrbit };
 		curve.p3 = { 6800 + XMove, 0, EOrbit };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'top' to 'left'
 		curve.p0 = { 6800 + XMove, 0, EOrbit };
 		curve.p1 = { 6800 + EOrbit / 2 + 150 + XMove, 0, EOrbit };
 		curve.p2 = { 6800 + EOrbit + XMove, 0, EOrbit / 2 + 150 };
 		curve.p3 = { 6800 + EOrbit + 75 + XMove, 0, 0 };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'left' to 'bot'
 		curve.p0 = { 6800 + EOrbit + 75 + XMove, 0, 0 };
 		curve.p1 = { 6800 + EOrbit + XMove, 0, -EOrbit / 2 - 150 };
 		curve.p2 = { 6800 + EOrbit / 2 + 150 + XMove, 0, -EOrbit };
 		curve.p3 = { 6800 + XMove, 0, -EOrbit - 50 };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'bot' to 'right'
 		curve.p0 = { 6800 + XMove, 0, -EOrbit - 50 };
 		curve.p1 = { 6800 - EOrbit / 2 - 150 + XMove, 0, -EOrbit };
 		curve.p2 = { 6800 - EOrbit + XMove, 0, -EOrbit / 2 - 150 };
 		curve.p3 = { 6800 - EOrbit + XMove, 0, 0 };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//2nd orbit
 		//'right' to 'top'
@@ -1693,73 +1840,87 @@ Display()
 		curve.p1 = { 6800 - EOrbit + XMove, 0, EOrbit / 2 + 150 };
 		curve.p2 = { 6800 - EOrbit / 2 + 150 + XMove, 0, EOrbit };
 		curve.p3 = { 6800 + XMove, 0, EOrbit };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'top' to 'left'
 		curve.p0 = { 6800 + XMove, 0, EOrbit };
 		curve.p1 = { 6800 + EOrbit / 2 + 150 + XMove, 0, EOrbit };
 		curve.p2 = { 6800 + EOrbit + XMove, 0, EOrbit / 2 + 150 };
 		curve.p3 = { 6800 + EOrbit + 75 + XMove, 0, 0 };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'left' to 'bot'
 		curve.p0 = { 6800 + EOrbit + 75 + XMove, 0, 0 };
 		curve.p1 = { 6800 + EOrbit + XMove, 0, -EOrbit / 2 - 150 };
 		curve.p2 = { 6800 + EOrbit / 2 + 150 + XMove, 0, -EOrbit };
 		curve.p3 = { 6800 + XMove, 0, -EOrbit - 50 };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
+		//Not dependent on objects!!!
 		//Travel to Moon
 		//'bot' of Earth to 'top' of Moon
 		curve.p0 = { 6800 + XMove, 0, -EOrbit - 50 };
 		curve.p1 = { 6800 - EOrbit / 2 + 250 + XMove, 0, -EOrbit - 150 };
-		curve.p2 = { MoonT[0] + MOrbit + XMove, MoonT[1], MoonT[2] + MOrbit };
-		curve.p3 = { MoonT[0] + XMove, MoonT[1],  MoonT[2] + MOrbit };
-		DrawCurve(&curve);
+		curve.p2 = { 10.25 + MOrbit + XMove, 0, 362.05 + MOrbit };
+		curve.p3 = { MoonXYZ[0] + XMove, MoonXYZ[0],  MoonXYZ[3] + MOrbit };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//Moon 1st orbit
 		//'top' to 'right'
-		curve.p0 = { MoonT[0] + XMove, MoonT[1],  MoonT[2] + MOrbit };
-		curve.p1 = { MoonT[0] - MOrbit / 1.25 + 100 + XMove, MoonT[1], MoonT[2] + MOrbit };
-		curve.p2 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] + MOrbit / 1.25 - 100 };
-		curve.p3 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + XMove, MoonXYZ[1],  MoonXYZ[2] + MOrbit };
+		curve.p1 = { MoonXYZ[0] - MOrbit / 1.25 + 100 + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit };
+		curve.p2 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit / 1.25 - 100 };
+		curve.p3 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'right' to 'bot'
-		curve.p0 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] };
-		curve.p1 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] - MOrbit / 1.25 + 100 };
-		curve.p2 = { MoonT[0] - MOrbit / 1.25 + 100 + XMove, MoonT[1], MoonT[2] - MOrbit };
-		curve.p3 = { MoonT[0] + XMove, MoonT[1], MoonT[2] - MOrbit };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] };
+		curve.p1 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit / 1.25 + 100 };
+		curve.p2 = { MoonXYZ[0] - MOrbit / 1.25 + 100 + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit };
+		curve.p3 = { MoonXYZ[0] + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		// 'bot' to 'left'
-		curve.p0 = { MoonT[0] + XMove, MoonT[1],  MoonT[2] - MOrbit };
-		curve.p1 = { MoonT[0] + MOrbit / 1.25 - 100 + XMove, MoonT[1], MoonT[2] - MOrbit };
-		curve.p2 = { MoonT[0] + MOrbit + XMove, MoonT[1], MoonT[2] - MOrbit / 1.25 + 100 };
-		curve.p3 = { MoonT[0] + MOrbit + XMove, MoonT[1], MoonT[2] };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + XMove, MoonXYZ[1],  MoonXYZ[2] - MOrbit };
+		curve.p1 = { MoonXYZ[0] + MOrbit / 1.25 - 100 + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit };
+		curve.p2 = { MoonXYZ[0] + MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit / 1.25 + 100 };
+		curve.p3 = { MoonXYZ[0] + MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'left' to 'top'
-		curve.p0 = { MoonT[0] + MOrbit + XMove, MoonT[1], MoonT[2] };
-		curve.p1 = { MoonT[0] + MOrbit + XMove, MoonT[1], MoonT[2] + MOrbit / 1.25 - 100 };
-		curve.p2 = { MoonT[0] + MOrbit / 1.25 - 100 + XMove, MoonT[1], MoonT[2] + MOrbit };
-		curve.p3 = { MoonT[0] + XMove, MoonT[1], MoonT[2] + MOrbit };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] };
+		curve.p1 = { MoonXYZ[0] + MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit / 1.25 - 100 };
+		curve.p2 = { MoonXYZ[0] + MOrbit / 1.25 - 100 + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit };
+		curve.p3 = { MoonXYZ[0] + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//2nd orbit
 		//'top' to 'right'
-		curve.p0 = { MoonT[0] + XMove, MoonT[1], MoonT[2] + MOrbit };
-		curve.p1 = { MoonT[0] - MOrbit / 1.25 + 100 + XMove, MoonT[1], MoonT[2] + MOrbit };
-		curve.p2 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] + MOrbit / 1.25 - 100 };
-		curve.p3 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit };
+		curve.p1 = { MoonXYZ[0] - MOrbit / 1.25 + 100 + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit };
+		curve.p2 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit / 1.25 - 100 };
+		curve.p3 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'right' to 'bot'
-		curve.p0 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] };
-		curve.p1 = { MoonT[0] - MOrbit + XMove, MoonT[1], MoonT[2] - MOrbit / 1.25 + 125 };
-		curve.p2 = { MoonT[0] - MOrbit / 1.25 + 100 + XMove, MoonT[1], MoonT[2] - MOrbit };
-		curve.p3 = { MoonT[0] + XMove, MoonT[1], MoonT[2] - MOrbit };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] };
+		curve.p1 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit / 1.25 + 125 };
+		curve.p2 = { MoonXYZ[0] - MOrbit / 1.25 + 100 + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit };
+		curve.p3 = { MoonXYZ[0] + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'bot' to base
-		curve.p0 = { MoonT[0] + XMove, MoonT[1], MoonT[2] - MOrbit };
-		curve.p1 = { MoonT[0] + 100 + XMove, MoonT[1], MoonT[2] - MOrbit };
-		curve.p2 = { MoonT[0] + MOrbit / 1.5 + XMove, MoonT[1], MoonT[2] - MOrbit / 1.5 };
-		curve.p3 = { MoonT[0] + BaseXYZ[0] + XMove, MoonT[1] + BaseXYZ[1], MoonT[2] + BaseXYZ[2] };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit };
+		curve.p1 = { MoonXYZ[0] + 100 + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit };
+		curve.p2 = { MoonXYZ[0] + MOrbit / 1.5 + XMove, MoonXYZ[1], MoonXYZ[2] - MOrbit / 1.5 };
+		curve.p3 = { MoonXYZ[0] + BaseXYZ[0] + XMove, MoonXYZ[1] + BaseXYZ[1], MoonXYZ[2] + BaseXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
+
+		//DrawCurve(&curve);
 
 		//Takeoff from Moon, travel to Earth
 		curve.r = .8;
@@ -1767,108 +1928,125 @@ Display()
 		curve.b = 0;
 
 		//Takeoff to 'left'
-		curve.p0 = { MoonT[0] + BaseXYZ[0] + XMove, MoonT[1] + BaseXYZ[1], MoonT[2] + BaseXYZ[2] };
-		curve.p1 = { MoonT[0] + BaseXYZ[0] + 30 + XMove, MoonT[1] + BaseXYZ[1], MoonT[2]-100 };
-		curve.p2 = { MoonT[0] + BaseXYZ[0] + 55 + XMove, MoonT[1] + 10, MoonT[2]-50 };
-		curve.p3 = { MoonT[0] + MOrbit * .6 + XMove, MoonT[1] + 10, MoonT[2] };
-		DrawCurve(&curve);
-		
+		curve.p0 = { MoonXYZ[0] + BaseXYZ[0] + XMove, MoonXYZ[1] + BaseXYZ[1], MoonXYZ[2] + BaseXYZ[2] };
+		curve.p1 = { MoonXYZ[0] + BaseXYZ[0] + 30 + XMove, MoonXYZ[1] + BaseXYZ[1], MoonXYZ[2] - 100 };
+		curve.p2 = { MoonXYZ[0] + BaseXYZ[0] + 55 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - 50 };
+		curve.p3 = { MoonXYZ[0] + MOrbit * .6 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
+
 		//'left' to 'top'/2 
-		curve.p0 = { MoonT[0] + MOrbit*.6 + XMove, MoonT[1] + 10, MoonT[2] };
-		curve.p1 = { MoonT[0] + MOrbit*.6 + XMove, MoonT[1], MoonT[2] + MOrbit*.3 };
-		curve.p2 = { MoonT[0] + MOrbit*.45 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.5 };
-		curve.p3 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.6 };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + MOrbit * .6 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] };
+		curve.p1 = { MoonXYZ[0] + MOrbit * .6 + XMove, MoonXYZ[1], MoonXYZ[2] + MOrbit * .3 };
+		curve.p2 = { MoonXYZ[0] + MOrbit * .45 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit * .5 };
+		curve.p3 = { MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit * .6 };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//Moon 1st orbit
 		//'top' to 'right'
-		curve.p0 = { MoonT[0] + XMove, MoonT[1] + 10,  MoonT[2] + MOrbit*.6 };
-		curve.p1 = { MoonT[0] - MOrbit / 1.75 + 100 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.6 };
-		curve.p2 = { MoonT[0] - MOrbit/1.5 +25 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit*.5 };
-		curve.p3 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + XMove, MoonXYZ[1] + 10,  MoonXYZ[2] + MOrbit * .6 };
+		curve.p1 = { MoonXYZ[0] - MOrbit / 1.75 + 100 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit * .6 };
+		curve.p2 = { MoonXYZ[0] - MOrbit / 1.5 + 25 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit * .5 };
+		curve.p3 = { MoonXYZ[0] - MOrbit / 1.5 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'right' to 'bot'
-		curve.p0 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] };
-		curve.p1 = { MoonT[0] - MOrbit/1.5 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit / 1.25 + 125 };
-		curve.p2 = { MoonT[0] - MOrbit / 1.5 + 125 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*.75 };
-		curve.p3 = { MoonT[0] + XMove + 100, MoonT[1] + 10, MoonT[2] - MOrbit * .8 };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] - MOrbit / 1.5 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] };
+		curve.p1 = { MoonXYZ[0] - MOrbit / 1.5 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit / 1.25 + 125 };
+		curve.p2 = { MoonXYZ[0] - MOrbit / 1.5 + 125 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit * .75 };
+		curve.p3 = { MoonXYZ[0] + XMove + 100, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit * .8 };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		// 'bot' to 'left'
-		curve.p0 = { MoonT[0] + XMove+100, MoonT[1] + 10,  MoonT[2] - MOrbit*.8 };
-		curve.p1 = { MoonT[0] + MOrbit / 1.25 - 100 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*.8 };
-		curve.p2 = { MoonT[0] + MOrbit + XMove-10, MoonT[1] + 10, MoonT[2] - MOrbit /2 };
-		curve.p3 = { MoonT[0] + MOrbit + XMove-10, MoonT[1] + 10, MoonT[2] };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + XMove + 100, MoonXYZ[1] + 10,  MoonXYZ[2] - MOrbit * .8 };
+		curve.p1 = { MoonXYZ[0] + MOrbit / 1.25 - 100 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit * .8 };
+		curve.p2 = { MoonXYZ[0] + MOrbit + XMove - 10, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit / 2 };
+		curve.p3 = { MoonXYZ[0] + MOrbit + XMove - 10, MoonXYZ[1] + 10, MoonXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'left' to 'top'
-		curve.p0 = { MoonT[0] + MOrbit + XMove-10, MoonT[1] + 10, MoonT[2] };
-		curve.p1 = { MoonT[0] + MOrbit + XMove, MoonT[1] + 10, MoonT[2] + MOrbit / 1.25 - 100 };
-		curve.p2 = { MoonT[0] + MOrbit / 1.25 - 100 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit };
-		curve.p3 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] + MOrbit };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + MOrbit + XMove - 10, MoonXYZ[1] + 10, MoonXYZ[2] };
+		curve.p1 = { MoonXYZ[0] + MOrbit + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit / 1.25 - 100 };
+		curve.p2 = { MoonXYZ[0] + MOrbit / 1.25 - 100 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit };
+		curve.p3 = { MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//2nd orbit
 		//'top' to 'right'
-		curve.p0 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] + MOrbit };
-		curve.p1 = { MoonT[0] - MOrbit / 1.25 + 50 + XMove, MoonT[1] + 10, MoonT[2] + MOrbit };
-		curve.p2 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] + MOrbit / 1.25 - 100 };
-		curve.p3 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit };
+		curve.p1 = { MoonXYZ[0] - MOrbit / 1.25 + 50 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit };
+		curve.p2 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1] + 10, MoonXYZ[2] + MOrbit / 1.25 - 100 };
+		curve.p3 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1] + 10, MoonXYZ[2] };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 		//'right' to 'bot'
-		curve.p0 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] };
-		curve.p1 = { MoonT[0] - MOrbit + XMove, MoonT[1] + 10, MoonT[2] - MOrbit / 1.25 + 125 };
-		curve.p2 = { MoonT[0] - MOrbit / 1.25 + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*1.1 };
-		curve.p3 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*1.2 };
-		DrawCurve(&curve);
+		curve.p0 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1] + 10, MoonXYZ[2] };
+		curve.p1 = { MoonXYZ[0] - MOrbit + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit / 1.25 + 125 };
+		curve.p2 = { MoonXYZ[0] - MOrbit / 1.25 + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit * 1.1 };
+		curve.p3 = { MoonXYZ[0] + XMove, MoonXYZ[1] + 10, MoonXYZ[2] - MOrbit * 1.2 };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
+		//Not dependent on objects!!!
 		//Travel to Earth
 		//'bot' of Moon to 'top' of Earth
-		curve.p0 = { MoonT[0] + XMove, MoonT[1] + 10, MoonT[2] - MOrbit*1.2 };
-		curve.p1 = { MoonT[0] + XMove + 2 * MOrbit, MoonT[1], MoonT[2] - MOrbit - 150 };
+		curve.p0 = { MoonXYZ[0] + XMove, MoonXYZ[0] + 10, MoonXYZ[0] - MOrbit * 1.2 };
+		curve.p1 = { MoonXYZ[0] + XMove + 2 * MOrbit, 0, MoonXYZ[0] - MOrbit - 150 };
 		curve.p2 = { 6800 + XMove - EOrbit, 0, EOrbit + 250 };
 		curve.p3 = { 6800 + XMove, 0, EOrbit };
-		DrawCurve(&curve);
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//'top' to 'left'/2
 		curve.p0 = { 6800 + XMove, 10, EOrbit };
-		curve.p1 = { 6800 + EOrbit*.6 + XMove, 10, EOrbit*.85 };
+		curve.p1 = { 6800 + EOrbit * .6 + XMove, 10, EOrbit*.85 };
 		curve.p2 = { 6800 + EOrbit / 1.5 + XMove, 10, EOrbit / 2 + 150 };
-		curve.p3 = { 6800 + EOrbit*.7 + XMove, 10, 0 };
-		DrawCurve(&curve);
+		curve.p3 = { 6800 + EOrbit * .7 + XMove, 10, 0 };
+		//DrawCurve(&curve);
+		storePoints(&curve);
 
 		//'left' to splashdown
-		curve.p0 = { 6800 + EOrbit*.7 + XMove, 10, 0 };
-		curve.p1 = { 6800 + EOrbit / 2 + XMove, 10, -EOrbit*.75 };
-		curve.p2 = { 6800 + EOrbit / 2.25 + XMove, 10, -EOrbit / 2 -50 };
-		curve.p3 = { 6800 + EarthDiameter/2 + XMove, 10, 0 };
-		DrawCurve(&curve);
+		curve.p0 = { 6800 + EOrbit * .7 + XMove, 10, 0 };
+		curve.p1 = { 6800 + EOrbit / 2 + XMove, 10, -EOrbit * .75 };
+		curve.p2 = { 6800 + EOrbit / 2.25 + XMove, 10, -EOrbit / 2 - 50 };
+		curve.p3 = { 6800 + EarthDiameter / 2 + XMove, 10, 0 };
+		//DrawCurve(&curve);
+		storePoints(&curve);
+		DrawCurve();
 	}
 
-	//Marker for the landing site
-	if (View == 3) {
-		glPushMatrix();
-		glColor3f(1, 0, 0);
-		glTranslatef(BaseXYZ[0], BaseXYZ[1], BaseXYZ[2]);
-		MjbSphere(5, 50, 50);
-		glPopMatrix();
-
-		DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 15, "Tranquility Base");
+	if (text) {
+		if (!Zoom && View == 3) {//dont display during zoom animation
+			glColor3f(1, 0, 0);
+			DoRasterString(BaseXYZ[0] + 20, BaseXYZ[1] + 15, BaseXYZ[2] - 5, "Tranquility Base");
+		}
+		//Marker for the landing site
+		if (View == 3) {
+			glPushMatrix();
+			glColor3f(1, 0, 0);
+			glTranslatef(BaseXYZ[0], BaseXYZ[1], BaseXYZ[2]);
+			MjbSphere(5, 50, 50);
+			glPopMatrix();
+		}
+		// draw some gratuitous text that is fixed on the screen:
+		glDisable(GL_DEPTH_TEST);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluOrtho2D(0., 100., 0., 100.);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glColor3f(1., 1., 1.);
+		DoRasterString(3., 29., 0., "Apollo 11 - Engr Expo - 5/17/19");
+		DoRasterString(3., 25., 0., "0-9 - Viewpoints");
+		DoRasterString(3., 21., 0., "F - Toggle Flight Path");
+		DoRasterString(3., 17., 0., "S - Toggle Star Map");
+		DoRasterString(3., 13., 0., "M - Toggle Text");
+		DoRasterString(3., 9., 0., "Z - Zoom animation");
+		DoRasterString(3., 5., 0., "Mouse wheel or +/- - Zoom");
+		DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
 	}
-	
-	// draw some gratuitous text that is fixed on the screen:
-	glDisable(GL_DEPTH_TEST);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0., 100., 0., 100.);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glColor3f(1., 1., 1.);
-	DoRasterString(3., 21., 0., "Apollo 11 - Code Freeze - 4/15/19");
-	DoRasterString(3., 17., 0., "0-9 - Viewpoints");
-	DoRasterString(3., 13., 0., "F - Toggle Flight Path");
-	DoRasterString(3., 9., 0., "S - Toggle Star Map");
-	DoRasterString(3., 5., 0., "Mouse wheel or +/- - Zoom");
-	DoRasterString(3., 1., 0., "Dean Akin, Jonathan Ropp, Shannon Sandy");
-	
 	// swap the double-buffered framebuffers:
 	glutSwapBuffers();
 
@@ -2042,6 +2220,7 @@ InitGraphics()
 	glutMenuStateFunc(NULL);
 	glutTimerFunc(-1, NULL, 0);
 	glutIdleFunc(Animate);
+	glutFullScreen();
 
 	// init glew (a window must be open to do this):
 
@@ -2112,8 +2291,8 @@ InitGraphics()
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glBindTexture(GL_TEXTURE_2D, TexM);
-	unsigned char* MoonTexA = BmpToTexture("2k_moon.bmp", &width, &height);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, MoonTexA);
+	unsigned char* MoonXYZexA = BmpToTexture("2k_moon.bmp", &width, &height);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, MoonXYZexA);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -2130,7 +2309,7 @@ InitGraphics()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	
+
 	int width2 = 1200;
 	int height2 = 632;
 
@@ -2173,6 +2352,16 @@ InitGraphics()
 		fprintf(stderr, "GLSL Fragment Lighting Shader Successfully Initialized\n");
 	}
 
+	LunarMask = new GLSLProgram();
+	valid = LunarMask->Create("lunarSurfaceMask.vert", "lunarSurfaceMask.frag");
+	if (!valid)
+	{
+		fprintf(stderr, "GLSL shader error\n");
+	}
+	else {
+		fprintf(stderr, "GLSL lunar mask shader is all good\n");
+	}
+
 	EarthShadeModel = new GLSLProgram();
 	valid = EarthShadeModel->Create("ShadeModel.vert", "ShadeModel.frag");
 	if (!valid)
@@ -2183,7 +2372,7 @@ InitGraphics()
 		fprintf(stderr, "GLSL Earth Shade Model Shader Successfully Initialized\n");
 	}
 
-	MoonShadeModel = new GLSLProgram();	
+	MoonShadeModel = new GLSLProgram();
 	valid = MoonShadeModel->Create("ShadeModel.vert", "ShadeModelMod.frag");
 	if (!valid)
 	{
@@ -2193,8 +2382,9 @@ InitGraphics()
 		fprintf(stderr, "GLSL Moon Shade Model Shader Successfully Initialized\n");
 	}
 	//Initializing keyframe animation objects.
-	Test.keyframeData(test, 4);
 	EarthWalk.keyframeData(EyeEarth, 2);
+	Test.keyframeData(test, 5);
+	Flight.keyframeData(path, 35);
 }
 
 // initialize the display lists that will not change:
@@ -2209,7 +2399,7 @@ InitLists()
 
 	FlagPoleList = glGenLists(1);
 	glNewList(FlagPoleList, GL_COMPILE);
-	
+
 	//vertical cylinder
 	glPushMatrix();
 	glColor3f(1, 1, 1);
@@ -2228,14 +2418,14 @@ InitLists()
 	gluCylinder(quad2, .04, .04, 5 + .04, 10, 100);
 	glPopMatrix();
 	glEndList();
-	
+
 	FlagList = glGenLists(1);
 	glNewList(FlagList, GL_COMPILE);
 
 	//flag
 	glPushMatrix();
 	glBegin(GL_QUADS);
-	
+
 	glTexCoord2f(0, 0);
 	glVertex3f(0, 0, 4);
 	glTexCoord2f(0, 1);
@@ -2248,27 +2438,27 @@ InitLists()
 	glEnd();
 	glPopMatrix();
 	glEndList();
-	
+
 	//Other objects
 	SaturnV = glGenLists(1);
 	glNewList(SaturnV, GL_COMPILE);
-	LoadObjFile("./Apollo_SpaceCraft/Apollo_Spacecraft.obj");
+	LoadObjFileO("./Apollo_SpaceCraft/Apollo_Spacecraft.obj");
 	glEndList();
 
 	Astronaut = glGenLists(1);
 	glNewList(Astronaut, GL_COMPILE);
-	LoadObjFile("Astronaut_.obj");
+	LoadObjFileO("Astronaut_.obj");
 	glEndList();
 	
 	LandingSite = glGenLists(1);
 	glNewList(LandingSite, GL_COMPILE);
-	LoadObjFile("LandingSite.obj");
+	LoadObjFileO("LandingSite.obj");
 	glEndList();
 
 
 	LunarModule = glGenLists(1);
 	glNewList(LunarModule, GL_COMPILE);
-	LoadObjFile("./ApolloLunarModule/Ap.obj");
+	LunarModule = LoadObjFile("./ApolloLunarModule/Ap.obj");
 	glEndList();
 
 }
@@ -2310,65 +2500,86 @@ Keyboard(unsigned char c, int x, int y)
 		stars = !stars;
 		break;
 
+	case 'm':
+	case 'M':
+		text = !text;
+		break;
+
 	case '1':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 1;
 		loadMoon = 1;
+		Flight.Reset();
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '2':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 2;
 		loadMoon = 1;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '3':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 3;
 		loadMoon = 1;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '4':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 4;
 		loadMoon = 0;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '5':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 5;
 		loadMoon = 0;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '6':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 6;
 		loadMoon = 0;
-		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC | SND_FILENAME);
+		PlaySound("OneSmallStep.wav", NULL, SND_ASYNC);
 		break;
 
 	case '7':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 7;
 		loadMoon = 0;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 
 	case '8':
+		Zoom = false;
 		Xrot = Yrot = 0;
 		Scale = 1.0;
 		View = 8;
 		loadMoon = 0;
-		PlaySound("landing.wav", NULL, SND_ASYNC | SND_FILENAME);
+		PlaySound("landing.wav", NULL, SND_ASYNC);
 		break;
 
 	case '9':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 9;
@@ -2376,16 +2587,27 @@ Keyboard(unsigned char c, int x, int y)
 		break;
 
 	case '0':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 0;
 		loadMoon = 0;
 		break;
 	case 'e':
+		Zoom = false;
 		Xrot = Yrot = 0.;
 		Scale = 1.0;
 		View = 10;
 		loadMoon = 0;
+		PlaySound(NULL, NULL, SND_APPLICATION);
+		break;
+	case 'z':
+		Zoom = true;
+		Xrot = Yrot = 0.;
+		Scale = 1.;
+		View = 3;
+		loadMoon = 1;
+		PlaySound(NULL, NULL, SND_APPLICATION);
 		break;
 	case '-':
 		Scale = Scale - .1;
@@ -2395,31 +2617,31 @@ Keyboard(unsigned char c, int x, int y)
 		Scale = Scale + .1;
 		break;
 
-	/*case '0':
-		dotPosX = dotPosX + 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '9':
-		dotPosY = dotPosY + 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '8':
-		dotPosZ = dotPosZ + 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case ')':
-		dotPosX = dotPosX - 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '(':
-		dotPosY = dotPosY - 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-	case '*':
-		dotPosZ = dotPosZ - 1;
-		fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
-		break;
-		*/
+		/*case '0':
+			dotPosX = dotPosX + 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '9':
+			dotPosY = dotPosY + 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '8':
+			dotPosZ = dotPosZ + 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case ')':
+			dotPosX = dotPosX - 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '(':
+			dotPosY = dotPosY - 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+		case '*':
+			dotPosZ = dotPosZ - 1;
+			fprintf(stderr, "X: '%f' Y: '%f' Z: '%f')\n", dotPosX, dotPosY, dotPosZ);
+			break;
+			*/
 	default:
 		fprintf(stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c);
 	}
