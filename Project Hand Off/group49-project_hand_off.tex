@@ -89,14 +89,20 @@ During the 2018-2019 school year, our team worked on creating a 3-D animation of
 
 Three Senior Computer Science Majors formed our team: Dean Akin, Jonathan Ropp, and Shannon Sandy. Mike Bailey, a computer graphics professor at Oregon State University, mentored our group, which was coined \textit{The Apolloers}. We all made progress on all aspects of the animation, but in general, Dean was in charge of keyframing and shaders, Jonathan focused on positioning and documentation, and Shannon compiled mission audio and the lunar surface. Additionally, we worked together on obtaining and loading objects, lighting, 
 
-Who requested it? - OMSI/Jim Todd
-Why was it requested? - 50th anniversary/get excited about space.
-What is its importance? - See above
-Who was/were your client(s)? - Jim Todd, Mike Bailey
-Who are the members of your team? - You better know at this point...
-What were their roles? - Shannon did audio, Dean did keyframing, Jonathan did flight path, we all worked on objects, textures, lighting, etc.
-What was the role of the client(s)? (I.e., did they supervise only, or did they participate in doing development) - Met 2 times, helped design and offered feedback, not very involved. 
-
+Who requested it?
+Jim Todd, Director of Space Science Education at OMSI requested we make an animation about the Apollo 11 mission.
+Why was it requested?
+It was meant to be a commemoration of the feats that were achieved during the Apollo 11 mission. 
+What is its importance?
+It also will serve as a educational tool to teach about what we could achieve back then, and what we can achieve right now.
+Who was/were your client(s)?
+Jim Todd, Director of Space Education at OMSI, and Mike Bailey, Professor of Computer Science at Oregon State University.
+Who are the members of your team?
+Shannon Sandy, Jonathan Ropp, Dean A. Akin
+What were their roles?
+Dean did keyframe animation as well as lighting on the Earth and Moon. Shannon did work on the audio clips, as well as the landing animations. She created the feathered landing site zoom animation as well as work and improve on lighting shaders. Jonathan created the flight path in its entirety, formulated the bezier curves of the static path as well as the dynamic moving flight path through the use of the aformentioned keyframing animation class. 
+What was the role of the client(s)? (I.e., did they supervise only, or did they participate in doing development)
+We met with Jim Todd 2 times before, both times we were briefed on how the planetarium system worked as well as given examples of scripts written in their in-house scripting language, Dark-Matter. We use these scripts as references when we are transfering our project into a Dark-Matter native animation. Communication is limited due to distance and schedules, and because of this, Jim was not present during a majority of the development of the animation, but was present for all of the documentation and provided contextual information important to make the animation as authentic as possible. Dr. Bailey's involvement was day to day, and he was present during a majority of the development of the animation and documentation, and has even contributed a significant amount to the development of the project in the form of pertinent information, technical support, and code contribution. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Requirements doc}
@@ -515,9 +521,72 @@ All the above options, OpenGL, Unity, and DirectX, would be suitable for our 3D 
 \section{Blog Posts}
 \subsection* {Dean Akin's Blog Posts}
 \begin{longtable} {|p{1.5cm}|p{13.5cm}|} \hline
-Fall: Week 1 & \\ \hline
-Winter: Week 1 & \\ \hline
-Spring: Week 1 & \\ \hline
+Fall: Week 4 &
+As of right now we have finished our full problem statement, the main issue that we had to overcome is to make a good performance metrics section that portrayed it well, before we didn’t know how to write it. Due to time constraints and family issues on my part I was unable to meet with them Friday but nonetheless we finished it over google docs/github. We plan on meeting with Mike to go over requirements for our project next week. \\ \hline
+
+Fall: Week 5 &
+All we have to do is do our requirements document, everything is going pretty slow as of right now. Next week it will pick up. \\ \hline
+
+Fall: Week 6 &
+Tech reviews took awhile but all of them got done, still a slow week but documentation is always very small. Everything was smooth sailing for this week, we are planning on working together next week heavily on the design document, as planning correctly this term will decide how it will go next week.  \\ \hline
+
+Fall: Week 7 &
+The tech review didn’t take much, we are just waiting for the design document. \\ \hline
+
+Fall: Week 8 &
+We are currently hashing out the Design document this weekend, everything else seems to be okay. I am doing some pre-development for my final project for CS450 with Mike Bailey, as a proof of concept, and setting the scene. \\ \hline
+
+Fall: Week 9 &
+The only thing happening this week is working on the Requirements document over the weekend via pushing and pulling from github. Nothing else is happening due to a short week because of thanksgiving.  \\ \hline
+
+Winter: Week 1 &
+For progress we met up with Jim Todd at OMSI, he showed the WHOLE planetarium system and its API. We have a more solid understanding on what we want to do, and piping our animation into their system might of been easier than what we thought. We also met with some of the members of their research teams and asked for their opinion on what we should do and received feedback from them, and we headed home. No problems arised since then. We plan on starting development on storyboarding next week, other than that we are doing our required meetings.  \\ \hline
+
+Winter: Week 2 &
+We have managed to plan out certain things that we want to do at certain points of the animation. We have considered using key-frame animation as to have smooth interpolation of the ship and many other moving parts of the animation. Other than that we have been working on our elevator pitch and poster draft, not much has been going on. We plan to set the scene for the moon and to set up the work environment for our animation for further progress in the future early next week. \\ \hline
+
+Winter: Week 3 &
+We have drawn up a skeletal structure of our storyboard, and have decided which points in the animation can be interacted with and which are not. We have a clear goal on what we want to do to tell the best story that we can about the Apollo 11 mission, and next week we are planning to go into more detail on what we want to do within sub-scenes within the animation, and how we may do that. We are going to comprise what we wrote down into a document for Mike Bailey so that we can receive feedback on what we can further do to achieve what we want to do. \\ \hline
+
+Winter: Week 4 &
+Shannon is figuring stuff out on the audio/video stuff and the Lunar Module descent look at function. I am focusing on the key frame animation of Neil and lighting, and Jon is focusing on position of everything. As of right now, we are planning to delve more into the sound boarding than we did before. \\ \hline
+
+Winter: Week 5 &
+This week I worked on creating a key frame class while consulting Mike on what to do, during the meeting with Mike we also learned about the syntactic language that the proprietary software of the planetarium, and that Mike needs to write a MTL parser so we can read the material parameters for the objects which we loaded in. Other than that, we are tweaking position, rotations, etc, and plan on doing the same next week progressively. \\ \hline
+
+Winter: Week 6 &
+I continued on working ont he keyframe class, but ran into some issues. I cannot get it to reset so I am going to be working on that all week. \\ \hline
+
+Winter: Week 7 &
+We are finally able to get some headway on the project, I have finished per fragment writing and have been working heavily on the project while Shannon and Jon have been working on the progress report. Next week I will be working hard on the keyframe class implementation which is a big part of our project. Otherwise we keep going. \\ \hline
+
+Winter: Week 8 &
+Per fragment lighting is done, and I am almost done with the .mtl file parser to get the material parameters for the objects in the scene. Jon has gotten pretty much all of the big positioning done and Shannon has gotten something to work with the video. Next week I will be completing keyframing and animation so that things are moving. \\ \hline
+
+Winter: Week 9 &
+I am finally onto the lighting with the Earth, and how to combine all three textures into one. I have a general jist of what I want to do, but I have to write out what I specifically want to do.  \\ \hline
+
+Winter: Week 10 &
+I have finished some animation, as well as high res, blended texture of the Earth, to simulate the horizon in the original Earthrise picture during the Apollo 11 mission. For next week, I will be loading in the new lunar module/craft obj that we have received and will be adding some of our more common animations. Its basically cleaning up for the beta. No problems have arisen as of yet. \\ \hline
+
+Spring: Week 1 &
+I’m just finishing up Keyframing as it crashed magnificently, and then handing it off so Jon can do the flight path.  \\ \hline
+
+Spring: Week 2 &
+I finished keyframing and am working on an animation using it before the code freeze, otherwise all requirements are done and we just need to add more content. \\ \hline
+
+Spring: Week 3 &
+All I am doing this week is producing the wireframes of the animations I would like to do.  In the next following weeks I will do implement them and tweak them.  \\ \hline
+
+Spring: Week 4 &
+A test animation has been put up, but I am not sure why it very rigid in movement. Further investigation is needed, it is more than likely a simple error as it always is but we will see. Looking around in the animation moves smoothly. \\ \hline
+
+Spring: Week 5 &
+I added some in person perspective animations, and I am testing out why it seems so choppy. As of right now I am just adding more and more, soon I’ll get onto adding the textures onto the models. But that’ll be next week. \\ \hline
+
+Spring: Week 6 &
+I finally was able to move the eye position, and it was literally because of a type casting issue. Otherwise I’m adding all the animation as well as fine tuning performance on the animation.  \\ \hline
+
 \end{longtable}
 
 
