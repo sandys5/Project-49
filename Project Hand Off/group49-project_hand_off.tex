@@ -73,7 +73,7 @@
         \begin{abstract}
         % 6. Fill in your abstract   
     
-We did a super awesome thing! 
+During the 2018-19 school year, our Capstone group created a 3D animation of the Apollo 11 Moon Landing mission for use in the OMSI planetarium. This document is a compilation of all technical documentation that was created during the process, as well as conclusions from the team members. In short, we met many of our goals for this project and created an interactive animation in OpenGL, but more work is being done to translate our project into a format that can be used at OMSI. 
 
         \end{abstract}     
     \end{singlespace}
@@ -86,24 +86,24 @@ We did a super awesome thing!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction to Project}
 
-During the 2018-2019 school year, our team worked on creating a 3-D animation of the  Apollo 11 Moon Landing. Jim Todd, the planetarium director at the Oregon Museum of Science and Industry (OMSI) requested this project for Summer 2019, which will mark the 50th anniversary of the moon landing. Our goal was to accurately depict the Apollo 11 mission in a way that was historically accurate, as well as creating something that would be engaging for all audiences at OMSI, ranging from young children to astrology experts. 
+During the 2018-2019 school year, our team worked on creating a 3-D animation of the  Apollo 11 Moon Landing. Jim Todd, the Director of Space Science Education at the Oregon Museum of Science and Industry (OMSI) requested this project for Summer 2019, which will mark the 50th anniversary of the moon landing. Our goal was to accurately depict the Apollo 11 mission in a way that was historically accurate, as well as creating something that would be engaging for all audiences at OMSI, ranging from young children to astrology experts. 
 
-Three Senior Computer Science Majors formed our team: Dean Akin, Jonathan Ropp, and Shannon Sandy. Mike Bailey, a computer graphics professor at Oregon State University, mentored our group, which was coined \textit{The Apolloers}. We all made progress on all aspects of the animation, but in general, Dean was in charge of keyframing and shaders, Jonathan focused on positioning and documentation, and Shannon compiled mission audio and the lunar surface. Additionally, we worked together on obtaining and loading objects, lighting, and more. Jim Todd also gave us guidance related to how things would realistically look while on the lunar surface. While we were only able to meet in person twice during this project, Jim always gave great feedback and gave us pointers to keep moving forward with the project. 
+Three Senior Computer Science Majors formed our team: Dean Akin, Jonathan Ropp, and Shannon Sandy. Dean did keyframe animation as well as lighting on the Earth and Moon. Shannon did work on the audio clips, as well as the landing animations. She created the feathered landing site zoom animation as well as work and improve on lighting shaders. Jonathan created the flight path in its entirety, formulated the Bezier curves of the static path as well as the dynamic moving flight path through the use of the aforementioned keyframing animation class. Mike Bailey, a computer graphics professor at Oregon State University, mentored our group, which was coined \textit{The Apolloers}. Dr. Bailey's involvement was day to day, and he was present during a majority of the development of the animation and documentation, and has even contributed a significant amount to the development of the project in the form of pertinent information, technical support, and code contribution. Jim Todd also provided contextual information important to make the animation as authentic as possible while on the lunar surface. While we were only able to meet in person twice during this project, Jim always gave great feedback and gave us pointers to keep moving forward with the project. 
 
-Who requested it?
-Jim Todd, Director of Space Science Education at OMSI requested we make an animation about the Apollo 11 mission.
-Why was it requested?
-It was meant to be a commemoration of the feats that were achieved during the Apollo 11 mission. 
-What is its importance?
-It also will serve as a educational tool to teach about what we could achieve back then, and what we can achieve right now.
-Who was/were your client(s)?
-Jim Todd, Director of Space Education at OMSI, and Mike Bailey, Professor of Computer Science at Oregon State University.
-Who are the members of your team?
-Shannon Sandy, Jonathan Ropp, Dean A. Akin
-What were their roles?
-Dean did keyframe animation as well as lighting on the Earth and Moon. Shannon did work on the audio clips, as well as the landing animations. She created the feathered landing site zoom animation as well as work and improve on lighting shaders. Jonathan created the flight path in its entirety, formulated the bezier curves of the static path as well as the dynamic moving flight path through the use of the aformentioned keyframing animation class. 
-What was the role of the client(s)? (I.e., did they supervise only, or did they participate in doing development)
-We met with Jim Todd 2 times before, both times we were briefed on how the planetarium system worked as well as given examples of scripts written in their in-house scripting language, Dark-Matter. We use these scripts as references when we are transfering our project into a Dark-Matter native animation. Communication is limited due to distance and schedules, and because of this, Jim was not present during a majority of the development of the animation, but was present for all of the documentation and provided contextual information important to make the animation as authentic as possible. Dr. Bailey's involvement was day to day, and he was present during a majority of the development of the animation and documentation, and has even contributed a significant amount to the development of the project in the form of pertinent information, technical support, and code contribution. 
+%Who requested it?
+%Jim Todd, Director of Space Science Education at OMSI requested we make an animation about the Apollo 11 mission.
+%Why was it requested?
+%It was meant to be a commemoration of the feats that were achieved during the Apollo 11 mission. 
+%What is its importance?
+%It also will serve as a educational tool to teach about what we could achieve back then, and what we can achieve right now.
+%Who was/were your client(s)?
+%Jim Todd, Director of Space Education at OMSI, and Mike Bailey, Professor of Computer Science at Oregon State University.
+%Who are the members of your team?
+%Shannon Sandy, Jonathan Ropp, Dean A. Akin
+%What were their roles?
+%Dean did keyframe animation as well as lighting on the Earth and Moon. Shannon did work on the audio clips, as well as the landing animations. She created the feathered landing site zoom animation as well as work and improve on lighting shaders. Jonathan created the flight path in its entirety, formulated the bezier curves of the static path as well as the dynamic moving flight path through the use of the aformentioned keyframing animation class. 
+%What was the role of the client(s)? (I.e., did they supervise only, or did they participate in doing development)
+%We met with Jim Todd 2 times before, both times we were briefed on how the planetarium system worked as well as given examples of scripts written in their in-house scripting language, Dark-Matter. We use these scripts as references when we are transferring our project into a Dark-Matter native animation. Communication is limited due to distance and schedules, and because of this, Jim was not present during a majority of the development of the animation, but was present for all of the documentation and provided contextual information important to make the animation as authentic as possible. Dr. Bailey's involvement was day to day, and he was present during a majority of the development of the animation and documentation, and has even contributed a significant amount to the development of the project in the form of pertinent information, technical support, and code contribution. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Requirements doc}
@@ -421,7 +421,7 @@ A 3D animation consists of many different elements that all need to work togethe
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Tech Reviews}
+\section{Tech Review - Dean Akin}
 
 \begin{titlepage}
     \pagenumbering{gobble}
@@ -432,7 +432,92 @@ A 3D animation consists of many different elements that all need to work togethe
         \par\vspace{.2in}
         \centering
         \scshape{
-            \huge CS Capstone Technology Review \par
+            \huge CS Capstone Technology Review - Dean Akin \DocType \par
+            {\large\today}\par
+            \vspace{.5in}
+            \textbf{\Huge\CapstoneProjectName}\par
+            \vfill
+            {\large Prepared for}\par
+            \Huge \CapstoneSponsorCompany\par
+            \vspace{5pt}
+            {\Large\NameSigPair{\CapstoneSponsorPersona}\par}
+            {\Large\NameSigPair{\CapstoneSponsorPersonb}\par}
+            {\large Prepared by }\par
+            Group\CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{5pt}
+            {\Large
+                \NameSigPair{\GroupMemberThree}\par
+            }
+            \vspace{20pt}
+        }
+        \begin{abstract}
+        % 6. Fill in your abstract    
+        	Our group, The Apolloers, is working with Mike Bailey to create a 3D animation about the Apollo 11 Moon Landing. This animation will be put on display in OMSI during the Summer of 2019 for the 50th anniversary of the Apollo 11 mission. All parts of the mission will be included, from Earth Launch to Earth landing, and all sections in between. This document breaks the project into requirements that we will use to guide our project through the development process. 
+        \end{abstract}     
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
+%\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+
+
+% 8. now you write!
+\subsection{Introduction}
+Every great animation has several objects that had to be sculpted and made for the scene , and we will have to do the same for our Saturn 5 model and several other objects to set our scene. The sculpting/modeling software we use is the real question, and each one has their pros and cons. the three options below is ones we may use.
+
+\subsection{Blender} 
+One of the more popular modeling softwares, it is mostly known for it being free, and the great community that backs this software. This is quite attractive to our group due to the fact we have very little budget, this automatically puts Blender as one of our choices. The other reason is because it has such a massive community, someone might of already made the Saturn 5, alot people in the Blender community have made just about anything you could think of, because of this, this could remove some of the time from making the model, to applying the Saturn 5 directly into the scene and going straight into the animation.
+\subsubsection{Feature Rich!}
+Blender is open-source, and because of that, feature development is is quick to be finished, and Blender has been out for awhile now. It has many features that one would heavily use when modeling anything, this includes rigging, fluid simulations, UV mapping, and more, and even has full fledged animation imbedded into it as well. It's interface is quite easy to use, and applying textures to a Saturn 5 shuttle would be much easier there than in OpenGL, the animation is a little hefty and we are not very familiar with the software itself, we can only apply the fundamental aspects to 3D modeling to Blender instead of using Blender at its full potential.
+\subsubsection{Robust Hot-Key Workflow}
+Blender sports a very robust hot-key system, which allows you to almost completely control blender through the keyboard. This means that if we learn the hot-keys for the things that we are doing, our working speed will become much faster. Blender also allows you to customize the control presets, if you wanted to set up Blender to be just like Maya or Max, you can, the Maya and Max control presets for example allow you to set up Blender just like Maya and Max with the same shortcuts and viewport navigation.
+\subsubsection{Constant Updates, Massive Free Plug-In Library, and the Community}
+One of the best things about Blender is that it is constantly updated, and because its constantly updated, its plug-in library is massive. You will find a plug in for just about anything you are doing, and not only that, the community also contributes various plug ins to the collection. What all of this means is that Blender is a software that is feature rich, and if we can use features that can make our job easier, we will use them, and Blender makes it very easy to make that happen. 
+\subsubsection{Conclusion}
+Even with all these features, Blender is very small and portable, and very extensible. Because it is this way, it can run on almost all operating systems, and on very low end hardware. To top it all off, it has everything we need to do a professional job, despite no company backing and lacking of the very latest technologies in 3D and animation. This makes it a very easy choice for us to pick. The only thing that is against us is the very clunky interface, and we still need to learn the software itself. Overall this may be the best pick for us due to the fact that its free, it has the features we need to finish our model quicker, it may even have a community that has created the model already, and has a community that is available to us to solve any problems we may have. 
+\subsection{Maya}
+Maya is one of the most popular 3D animation and modeling programs in the history of computer graphics. In fact, it’s so widely used that probably everyone with eyes has been exposed to something designed with Maya software. Maya is usually known for being the best at animation, in comparison to Autodesk's other design software, 3DS Max. It's easier to make realistic animation and effects with Maya. Maya also has incredible motion-capture handling, this making it the first choice for the film industry. Maya has a free-form approach to 3D modeling: instead of using only modifiers, you can apply modeling layers.
+\subsubsection{Free-form UI}
+Maya has a central tools pane at the top, but it divides its options more granularly (such as geometry, lighting, etc).  Maya is a little more free-form with its modeling: there is less dependence on modifiers, and modeling layers can be applied to the project and mixed a necessary. Holding space bar brings up a myriad of options and operations that can be selected, allowing for quick navigation through the UI. This could help us with being new with the software, and can help us with creating the model. 
+\subsubsection{Nurbs Modeling}
+Nurbs modeling, or Non-Uniform B-Splines provides a 3D modeling framework that is based on geometric primitives and drawn curves. Primitive are simple 3D objects that are created in the shape of common geometric forms such as cubes, spheres, cones, and so on. Primitives can be a great starting point for many complex 3D shapes. You can modify the attributes of NURBS primitives to modify their shape. You can also modify NURBS primitives by trimming away portions of their forms, beveling their edges, or by sculpting them into different shapes using sculpting tools that is native with Maya. This can be in our favor when making the model, the Saturn 5 is no simple 3D object. 
+\subsubsection{Better Human Modeling}
+Maya also has various small tools that make human modeling and animation that makes it more fluid. Most people swear by the poly tools that they're the best, this includes nHair, Soft Body Dynamics, Fur, Fluid Motion, Muscle Dynamics, and so on. Maya is known for better high-poly scultping tools, and better tools for animation and rigging. In terms of this project, non of this really applies to what we are trying to animate, because none of what we are doing requires us to mess with human movement, it more involves orbital mechanics and setting the scene. 
+\subsubsection{Conclusion}
+Maya seems to be the more powerful animation tool, and we could do the whole project in Maya. But the trick here is that alot of the tools are more tailored to character animation than what we would be using it for. Also, Maya is not free, and because of the budget, this kinda turns this away from being an option. Maya also has a much higher skill curve than Blender, which means we need to spend much more time learning the software than actually using it towards our project. Maya also doesn't have as big of a community of Open Source creators, despite it being one of the more popular 3D modeling softwares out there. Like Blender, it has a rich plug-in library which we could use to make our job go much faster. We are most likely not going to use Maya because it isn't the right fit in terms of our project, we need more precise tools than what Maya offer, something that is more user friendly up front.  
+\subsection{3Ds Max}
+3Ds Max software is a product by Autodesk , it is implemented across the Architectural , Engineering and Construction (AEC) industry to perform Architectural 3D modeling , it can perform 3D Mechanical modeling , 3D Architectural rendering , Exterior and 3D Interior walk-through and 3D Architectural fly-through. Autodesk 3Ds max is used by alot of video game developers and many TV commerical studios due to ability to use alot of movie effects. It has modeling capabilities and a flexible plugin architecture and it can be used on Microsoft Windows platform. Besides being used for engineering industry feats, this software has a wide range of usage for media and advertisment. 
+\subsubsection{Rendering Capabilities}
+3D max software has strong rendering capabilities, improved interoperability with industry-standard products as well as the additional time-saving animation and mapping workflow tools , it can add animated people with Populate and lots of small fixes. 3D max software has better viewport performance, it has perspective match tool, better particle system, vector map support, and it can work with other programs, such as Maya, Mudbox, and unity to name a few. It also has a better interface than Maya, it offers some tools and modifiers that are very easy to use, making our job much easier to do. 3D max is used for games while Maya is used for film work, 3D Max has better modeling tools , while Maya has better animation tools.
+\subsubsection{Vector Map Support}
+Vector map support is also a new feature , 3Ds Max enables the users to load the vector graphics as the texture maps , the users can render these texture maps at dynamic resolutions, the graphics will remain the same and clear if these graphics are zoomed-in effectively. This especially is good for us when it comes to making the model for the Saturn 5, than actually doing it manually, this allows use to kill two birds with one stone.
+\subsubsection{Game Creation Ability}
+ds Max helps users create massive game worlds, produce detailed characters, and customize building environments. They will be able to animate individual characters and make scenes that contain many people. The software allows them to simulate the physical properties of liquids like water, oil, and lava. In addition, 3ds Max has animation controllers that users can create, modify, and share. This can also be used for plotting the path of the Saturn 5, 3Ds max is used for more conceptual modeling, and if we can get a better grasp on what we are doing, doing the actual animation will be much easier.
+\subsubsection{Conclusion}
+Like Maya, 3Ds Max has a price tag, and this deters us from using 3Ds Max, and it isn't a small price tag. Although 3Ds Max is a better match for us than Maya for what we are going to use it for, it still doesn't seem to be the best match. It has alot of tools that we aren't going to use, so Blender would be are most likely choice. 
+\subsection{Conclusion}
+With everything considered, Blender seems to be the best choice for us. With a price tag of free, a vast library of tools, and a less steep learning curve, this would be the best for us to use.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Tech Review - Jonathan Ropp}
+
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        \includegraphics[height=4cm]{OSU_horizontal_2C_O_over_B.eps}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone Technology Review - Jonathan Ropp \par
             {\large\today}\par
             \vspace{.5in}
             \textbf{\Huge\CapstoneProjectName}\par
@@ -488,7 +573,7 @@ Unity is an ``engine'', meaning that a lot of overhead is handled for the develo
 The first version of DirectX was released in 1995 and has had many different versions, up to DirectX 12 that was released in 2015 [7]. DirectX is a collection of API's that is included with Microsoft Windows to handle all multimedia tasks, especially 2D and 3D graphics. Notable API's include Direct3D, DirectSound, DirectInput, DirectDraw, and many more. DirectX has been the main graphical driver for Microsoft Window's operating systems and Microsoft Xbox systems with little to no compatibility with other systems. Even though DirectX is still staying strong with Microsoft, it appears that support for DirectX 12 has been dropping for other, multi-system options such as the Vulkan API, especially when it comes to the video game industry [8].
 \newline
 \newline
-The DirectX software development kit (SDK) is made of runtime libraries that are a layer of abstraction up from direct graphical implementations [9]. While developers will still need to understand the basics of computer graphics, DirectX will handle some of the details automatically. This being said, due to competition from other low-level API's, DirectX 12 introduced low-level programming to the system so that developers could make low-level changes to reduce driver overhead [10]. Another area that DirectX has received pressure is the fact that it only runs on Microsoft Systems. Even though it does this very well, current trends in computing favor applications that can be run on many different types of systems. 
+The DirectX software development kit (SDK) is made of runtime libraries that are a layer of abstraction up from direct graphical implementations [9]. While developers will still need to understand the basics of computer graphics, DirectX will handle some of the details automatically. This being said, due to competition from other low-level API's, DirectX 12 introduced low-level programming to the system so that developers could make low-level changes to reduce driver overhead [10]. Another area that DirectX has received pressure is the fact that it only runs on Microsoft Systems. Even though it does this very well, current trends in favor applications that can be run on many different systems. 
 
 \subsection{Comparison}
 We will start by comparing OpenGL and DirectX as these are the most similar. OpenGL provides more low-level options for optimizing graphics so that they can look the best while using as few resources as possible. While DirectX 12 has introduced similar low-level programming, there are still many factors that are handled by the DirectX API itself, which can help introductory developers, but may gloss over some details. Both systems would look similar in the eyes of a developer as they would be programming in a C-style environment to take advantage of graphics libraries/API's. However, one of the most notable differences is that OpenGL is open-source (and therefore works on many different systems) while DirectX is limited to Microsoft supported systems. In today's world, with so many different sysems such as macOS, Linux, Android, IOS, etc., multi-system support is a crucial feature to have when developing multimedia graphics. 
@@ -498,89 +583,6 @@ Comparing Unity and OpenGL is more difficult because OpenGL is a collection of g
 
 \subsection{Conclusion}
 All the above options, OpenGL, Unity, and DirectX, would be suitable for our 3D animation of the Apollo 11 Moon landing. However, with our limited information about how OMSI will want to implement this animation, our group will not be using DirectX because it is not supported on a wide variety of systems. Between OpenGL and Unity, our group will primarily be using OpenGL based on our experience with the system. Also, implementing the physics for the different 3D objects will be best done on the low-level system. However, once the 3D animation is complete, our Group may still utilize Unity for after effects, adding audio to the presentation, and making a deliverable that is easy to use. It is too early to guarantee this, but the tools that Unity offers could make combining all our resources together much smoother than trying to program every aspect in OpenGL. In the end, our main goal is to produce a deliverable to be shown at OMSI and then shared with others, so as the project progresses, our group will use whichever systems we can to best achieve this goal. 
-
-\begin{document}
-\begin{titlepage}
-    \pagenumbering{gobble}
-    \begin{singlespace}
-        \hfill 
-        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
-        \includegraphics[height=4cm]{OSU_horizontal_2C_O_over_B.eps}   
-        \par\vspace{.2in}
-        \centering
-        \scshape{
-            \huge CS Capstone \DocType \par
-            {\large\today}\par
-            \vspace{.5in}
-            \textbf{\Huge\CapstoneProjectName}\par
-            \vfill
-            {\large Prepared for}\par
-            \Huge \CapstoneSponsorCompany\par
-            \vspace{5pt}
-            {\Large\NameSigPair{\CapstoneSponsorPersona}\par}
-            {\Large\NameSigPair{\CapstoneSponsorPersonb}\par}
-            {\large Prepared by }\par
-            Group\CapstoneTeamNumber\par
-            % 5. comment out the line below this one if you do not wish to name your team
-            \CapstoneTeamName\par 
-            \vspace{5pt}
-            {\Large
-                \NameSigPair{\GroupMemberThree}\par
-            }
-            \vspace{20pt}
-        }
-        \begin{abstract}
-        % 6. Fill in your abstract    
-        	Our group, The Apolloers, is working with Mike Bailey to create a 3D animation about the Apollo 11 Moon Landing. This animation will be put on display in OMSI during the Summer of 2019 for the 50th anniversary of the Apollo 11 mission. All parts of the mission will be included, from Earth Launch to Earth landing, and all sections in between. This document breaks the project into requirements that we will use to guide our project through the development process. 
-        \end{abstract}     
-    \end{singlespace}
-\end{titlepage}
-\newpage
-\pagenumbering{arabic}
-\tableofcontents
-% 7. uncomment this (if applicable). Consider adding a page break.
-%\listoffigures
-%\listoftables
-\clearpage
-
-
-% 8. now you write!
-\section{Introduction}
-Every great animation has several objects that had to be sculpted and made for the scene , and we will have to do the same for our Saturn 5 model and several other objects to set our scene. The sculpting/modeling software we use is the real question, and each one has their pros and cons. the three options below is ones we may use.
-
-\section{Blender} 
-One of the more popular modeling softwares, it is mostly known for it being free, and the great community that backs this software. This is quite attractive to our group due to the fact we have very little budget, this automatically puts Blender as one of our choices. The other reason is because it has such a massive community, someone might of already made the Saturn 5, alot people in the Blender community have made just about anything you could think of, because of this, this could remove some of the time from making the model, to applying the Saturn 5 directly into the scene and going straight into the animation.
-\subsection{Feature Rich!}
-Blender is open-source, and because of that, feature development is is quick to be finished, and Blender has been out for awhile now. It has many features that one would heavily use when modeling anything, this includes rigging, fluid simulations, UV mapping, and more, and even has full fledged animation imbedded into it as well. It's interface is quite easy to use, and applying textures to a Saturn 5 shuttle would be much easier there than in OpenGL, the animation is a little hefty and we are not very familiar with the software itself, we can only apply the fundamental aspects to 3D modeling to Blender instead of using Blender at its full potential.
-\subsection{Robust Hot-Key Workflow}
-Blender sports a very robust hot-key system, which allows you to almost completely control blender through the keyboard. This means that if we learn the hot-keys for the things that we are doing, our working speed will become much faster. Blender also allows you to customize the control presets, if you wanted to set up Blender to be just like Maya or Max, you can, the Maya and Max control presets for example allow you to set up Blender just like Maya and Max with the same shortcuts and viewport navigation.
-\subsection{Constant Updates, Massive Free Plug-In Library, and the Community}
-One of the best things about Blender is that it is constantly updated, and because its constantly updated, its plug-in library is massive. You will find a plug in for just about anything you are doing, and not only that, the community also contributes various plug ins to the collection. What all of this means is that Blender is a software that is feature rich, and if we can use features that can make our job easier, we will use them, and Blender makes it very easy to make that happen. 
-\subsection{Conclusion}
-Even with all these features, Blender is very small and portable, and very extensible. Because it is this way, it can run on almost all operating systems, and on very low end hardware. To top it all off, it has everything we need to do a professional job, despite no company backing and lacking of the very latest technologies in 3D and animation. This makes it a very easy choice for us to pick. The only thing that is against us is the very clunky interface, and we still need to learn the software itself. Overall this may be the best pick for us due to the fact that its free, it has the features we need to finish our model quicker, it may even have a community that has created the model already, and has a community that is available to us to solve any problems we may have. 
-\section{Maya}
-Maya is one of the most popular 3D animation and modeling programs in the history of computer graphics. In fact, it’s so widely used that probably everyone with eyes has been exposed to something designed with Maya software. Maya is usually known for being the best at animation, in comparison to Autodesk's other design software, 3DS Max. It's easier to make realistic animation and effects with Maya. Maya also has incredible motion-capture handling, this making it the first choice for the film industry. Maya has a free-form approach to 3D modeling: instead of using only modifiers, you can apply modeling layers.
-\subsection{Free-form UI}
-Maya has a central tools pane at the top, but it divides its options more granularly (such as geometry, lighting, etc).  Maya is a little more free-form with its modeling: there is less dependence on modifiers, and modeling layers can be applied to the project and mixed a necessary. Holding space bar brings up a myriad of options and operations that can be selected, allowing for quick navigation through the UI. This could help us with being new with the software, and can help us with creating the model. 
-\subsection{Nurbs Modeling}
-Nurbs modeling, or Non-Uniform B-Splines provides a 3D modeling framework that is based on geometric primitives and drawn curves. Primitive are simple 3D objects that are created in the shape of common geometric forms such as cubes, spheres, cones, and so on. Primitives can be a great starting point for many complex 3D shapes. You can modify the attributes of NURBS primitives to modify their shape. You can also modify NURBS primitives by trimming away portions of their forms, beveling their edges, or by sculpting them into different shapes using sculpting tools that is native with Maya. This can be in our favor when making the model, the Saturn 5 is no simple 3D object. 
-\subsection{Better Human Modeling}
-Maya also has various small tools that make human modeling and animation that makes it more fluid. Most people swear by the poly tools that they're the best, this includes nHair, Soft Body Dynamics, Fur, Fluid Motion, Muscle Dynamics, and so on. Maya is known for better high-poly scultping tools, and better tools for animation and rigging. In terms of this project, non of this really applies to what we are trying to animate, because none of what we are doing requires us to mess with human movement, it more involves orbital mechanics and setting the scene. 
-\subsection{Conclusion}
-Maya seems to be the more powerful animation tool, and we could do the whole project in Maya. But the trick here is that alot of the tools are more tailored to character animation than what we would be using it for. Also, Maya is not free, and because of the budget, this kinda turns this away from being an option. Maya also has a much higher skill curve than Blender, which means we need to spend much more time learning the software than actually using it towards our project. Maya also doesn't have as big of a community of Open Source creators, despite it being one of the more popular 3D modeling softwares out there. Like Blender, it has a rich plug-in library which we could use to make our job go much faster. We are most likely not going to use Maya because it isn't the right fit in terms of our project, we need more precise tools than what Maya offer, something that is more user friendly up front.  
-\section{3Ds Max}
-3Ds Max software is a product by Autodesk , it is implemented across the Architectural , Engineering and Construction (AEC) industry to perform Architectural 3D modeling , it can perform 3D Mechanical modeling , 3D Architectural rendering , Exterior and 3D Interior walk-through and 3D Architectural fly-through. Autodesk 3Ds max is used by alot of video game developers and many TV commerical studios due to ability to use alot of movie effects. It has modeling capabilities and a flexible plugin architecture and it can be used on Microsoft Windows platform. Besides being used for engineering industry feats, this software has a wide range of usage for media and advertisment. 
-\subsection{Rendering Capabilities}
-3D max software has strong rendering capabilities, improved interoperability with industry-standard products as well as the additional time-saving animation and mapping workflow tools , it can add animated people with Populate and lots of small fixes. 3D max software has better viewport performance, it has perspective match tool, better particle system, vector map support, and it can work with other programs, such as Maya, Mudbox, and unity to name a few. It also has a better interface than Maya, it offers some tools and modifiers that are very easy to use, making our job much easier to do. 3D max is used for games while Maya is used for film work, 3D Max has better modeling tools , while Maya has better animation tools.
-\subsection{Vector Map Support}
-Vector map support is also a new feature , 3Ds Max enables the users to load the vector graphics as the texture maps , the users can render these texture maps at dynamic resolutions, the graphics will remain the same and clear if these graphics are zoomed-in effectively. This especially is good for us when it comes to making the model for the Saturn 5, than actually doing it manually, this allows use to kill two birds with one stone.
-\subsection{Game Creation Ability}
-ds Max helps users create massive game worlds, produce detailed characters, and customize building environments. They will be able to animate individual characters and make scenes that contain many people. The software allows them to simulate the physical properties of liquids like water, oil, and lava. In addition, 3ds Max has animation controllers that users can create, modify, and share. This can also be used for plotting the path of the Saturn 5, 3Ds max is used for more conceptual modeling, and if we can get a better grasp on what we are doing, doing the actual animation will be much easier.
-\subsection{Conclusion}
-Like Maya, 3Ds Max has a price tag, and this deters us from using 3Ds Max, and it isn't a small price tag. Although 3Ds Max is a better match for us than Maya for what we are going to use it for, it still doesn't seem to be the best match. It has alot of tools that we aren't going to use, so Blender would be are most likely choice. 
-\section{Conclusion}
-With everything considered, Blender seems to be the best choice for us. With a price tag of free, a vast library of tools, and a less steep learning curve, this would be the best for us to use.
-\end{document}
 
 \subsection{References}
 \begin{enumerate}
@@ -597,8 +599,13 @@ With everything considered, Blender seems to be the best choice for us. With a p
 \item [10]	Channel 9. (2018). Direct3D 12 API Preview. [online] Available at:
 \url{https://channel9.msdn.com/Events/Build/2014/3-564} [Accessed 1 Nov. 2018].
 
-\clearpage
 \end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Tech Review - Shannon Sandy}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -813,7 +820,7 @@ Our most valuable resource was Mike Bailey, our mentor and computer graphics pro
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{conclusion}
+\section{Conclusion}
 
 %Each of us answers:
 %What technical information did you learn?
@@ -829,6 +836,8 @@ On the flipside, I learned a solid way to keep my development cycle organized an
 Project work is an interesting beast to experience. You're not only in charge of how your contribution works, but how it affects the others in your groups contributions. You need to be weary about what you're doing instead of getting it to work and shipping it. This also promotes a better product as it forces you to be more aware of what you're doing due to outside responses.
 Dividing up the work and playing with eachother strengths really made this project move smoothly, and allowed us to learn from eachother more than if we were to struggle on something we truly are not suited for. Seeing how something works and looking how someone did it truly allows you to understand it than if you were to struggle to get it to work which could promote bad development practices.
 In retrospect, I would more than likely divide my work up more evenly than I did. My organizational skills truly did excel at the latter half of the project development, as I started to get into a ritual of sorts. Other than that, I wouldn't change much.
+
+
 \subsection{Jonathan Ropp's Reflection}
 Working on a large-scale technical project taught me many things about my field, teamwork, and myself. Most of the projects I have done in the past have been short sprints, with this being the first lasting any more than a few months. That resulted in a new dynamic for me and one of the most important things I learned is how much more important good design is with a larger project. Along with that, making changes in the middle of a larger project have more implications, so it is important to make sure all members are on the same page with those changes. 
 
@@ -836,10 +845,11 @@ With our project in-particular, we all gained so many more skills relating to co
 
 Looking back at this project, while I am happy with what we did, I do think we should have focused more on implementing our project at OMSI directly. We decided to take the skills we already learned and turn that into an animation for general computer, which worked well, but still left a lot of work left to get something for use at OMSI. Some of that comes down to some early communication problems we had, resulting in some differing expectations between stakeholders in the project, but overall, I still feel like we met our goals. 
 
+
 \subsection{Shannon Sandy's Reflection}
 
 
-\section{Appendix}
+%\section{Appendix}
 %Some code snippets?
 
 
