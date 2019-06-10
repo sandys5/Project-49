@@ -645,65 +645,65 @@ All the above options, OpenGL, Unity, and DirectX, would be suitable for our 3D 
 \newpage
 \pagenumbering{arabic}
 
-\section{Introduction}
+\subsection{Introduction}
 For our project, my role is to include audio files from the original Apollo 11 mission into our video. The audio will also need to be captioned for accessibility. Audio files from the original mission need to be included because my group aims to create a realistic and entertaining re-enactment of the Apollo 11 mission for the Oregon Museum of Science and Industry (OMSI). For this review, I will be examining technologies for audio captioning, audio management APIs, and sound effects libraries for audio that is not available in the Apollo 11 audio archive.
 
-\section{Audio Captioning}
+\subsection{Audio Captioning}
 When the audio of the conversations between the Apollo 11 crew and Tranquility Base are included in the video, they will also need to be captioned. The technology used to communicate between the Apollo 11 crew and Tranquility Base was very poor compared to modern standards, so captions will be needed to understand the grainy audio. Captions are also required so that Deaf and Hard of Hearing audience members can experience this video to the fullest extent.
 
 The captioning technology we select will need to display a transcript of the current audio file without any errors. The technology will also need to display the captions at the same pace as the audio and be visible to the viewer regardless of the current viewpoint. Our group would also want to avoid having to buy an expensive video editor software in order to create the captions.
 
-\subsection{Hard-Coded Captions in OpenGL}
+\subsubsection{Hard-Coded Captions in OpenGL}
 For our video,  our group could hard-code the captions with OpenGL. In order to do this, captions would have to be implemented after the audio is completely added to the video. In fact, captions would have to be implemented late in the creation process. Hard-coding the captions would mean that they would be part of the scene itself rather than added on top of the finished video by an editor.
 
 By hard-coding the captions, we would be able to control where the text appears and lock it at a certain position in the scene for each viewpoint. The color of the captions can also be changed, which would allow us to color-code the different speakers in the audio file. The fonts and font size are limited, however. The available fonts are Helvetica and Times New Roman, neither of which are dyslexic-friendly. The available font sizes are 10, 12, and 18 for Helvetica and 10 and 24 for Times New Roman [1]. Hard-coding the captions would also require our group to time the audio files and keep track of how long the captions need to stay on the scene before transitioning to the next set of captions. This method would be tedious and take time away from developing other aspects of the video.
 
-\subsection{Unity Text UI}
+\subsubsection{Unity Text UI}
 The text interface for Unity allows for flexibility in captioning. The captions act as layer on top of the scene, allowing us to place the captioning independent of the scene. There is also a wide variety of fonts, font colors, and font sizes available. This would allow us to color-code the captions depending on whether Tranquility Base or the Apollo 11 crew are speaking. Custom fonts can even be imported to Unity and there is also an option to change the font's material. The alignment and overflow of the captions can easily be adjusted with Unity's interface as well. 
 
 Using event triggers in Unity, our group would be able to trigger the captions to play when each audio file begins [2]. Instead of having to time the entire video and figure out when each line of every caption should be displayed, we would have to time every audio file and decide when to transition the captions.
 
-\section{Audio Management APIs}
+\subsection{Audio Management APIs}
 Under the assumption that our group will be using OpenGL to create the video, we will need to import audio management APIs because it does not have any audio support. The audio management API we select will need to allow us to change the volume of the audio files depending on the current viewpoint. We would also need the API to work on a variety of platforms, so the video can work properly in the OMSI planetarium. Our group would also like to avoid paying any licensing fees for the API.
 
-\subsection{OpenAL}
+\subsubsection{OpenAL}
 One API we could use is Open Audio Library, or OpenAL. This free library's functionality closely resembles that of OpenGL, which would be beneficial for our group since OpenGL is the graphics program that we have the most experience with. In fact, the official website for OpenAL claims that anyone with experience with OpenGL will know how to utilize their library. The three basic objects in OpenAL are a Listener, a Source, and a Buffer. Buffers contain audio data and there can be multiple Buffers in a scene attached to one or more Sources. Sources represent the points in a 3D space that the audio is emitting from. Listeners represent the positions where the Sources are heard and there is only one Listener object present.
 
 
 OpenAL allows for audio data to decrease and increase depending on the location of the Listener. This is especially beneficial for our team because we want to implement this functionality in our video. Also, almost 100 video games are credited with using OpenAL, including games that have been produced and distributed by major publishers such as \textit{Bioshock}. This helps lends credibility to OpenAL's performance. OpenAL implementation is also available on a variety of platforms such as Mac OS X, Linux, and Microsoft Windows. This means that our video could be played on a variety of operating systems without problem [3].
 
 
-\subsection{IrrKlang}
+\subsubsection{IrrKlang}
 IrrKlang is a sound engine and audio library that can be used in C++, meaning that it is also compatible with OpenGL. However, irrKlang is only free for non-commercial use. Since we plan for our video to play in the OMSI planetarium, we would most likely have to pay to use irrKlang. IrrKlang is platform independent and runs on operating systems including Windows 8 and 10, Linux, and Mac OS X. This would allow for our video to be viewed on a variety of platforms without problem. 
 
 For each audio file, irrKlang allows the user to define a radius from which the audio will be heard and establishes each audio at a position in 3D space. IrrKlang also has no limit for the amount of audio files that can be included in a scene. Since irrKlang allows the user to increase and decrease the volume of the audio depending on where the listener is, this would allow our group to decrease the volume of the Apollo 11 crew transmissions whenever the viewpoint is outside of Apollo 11 [4]. 
 
-\subsection{FMOD Studio Low Level API}
+\subsubsection{FMOD Studio Low Level API}
 The FMOD Studio Low Level API allows for audio data to be placed in a 3D space. For each frame of the scene, the position and velocity for the listener object is set. Depending on the listener object's distance from the audio data and its velocity, the volume and pitch of the audio will increase or decrease [5]. For our video, we want for the volume of the Apollo 11 crew transmissions to increase when the viewpoint is inside the Apollo 11 and decrease when it is not. Currently, our group does not want to alter the pitch of the audio data, since that could cause the audio to be difficult to hear by the viewer.
 
 The FMOD Studio Low Level API is available for a variety of platforms including Linux, Mac OS X, and Windows. The API also has a plug-in for Unity, so if our team decides to use Unity instead of OpenGL, we could use the same audio API regardless. Over 2,000 video games are credited with using FMOD API, including games that have been produced and published by major publishers such as \textit{Witcher 2}. However, it is unclear which video games are using the FMOD Studio Low Level API or the more complex FMOD Studio API. This may lend some credibility to the API's performance. It is unclear if our team would have to pay a licensing fee. The official site for FMOD states that if a video game developer has a budget of less than \$550,00, that developer is allowed to use their products for free for one game per year. However, if the products are not being used for a game, the developer must contact the company to receive a custom licensing fee [6]. Since our group is creating a video for OMSI, it is possible that we would have to pay a licensing fee.
 
-\section{Sound Effects}
+\subsection{Sound Effects}
 While our group has access to the archive of audio files from the Apollo 11 mission, these audio files only include the communication between the Apollo 11 crew and Tranquility Base. For our video, we intend to include other sounds such as the roar of the Saturn 5 launch and the splash of the splashdown to Earth. While it is possible to try to recreate these sounds, we are currently searching for an audio library that contains these sounds. These audio files will need to sound accurate and not like a cartoon sound effect. Much like the previous technologies, our group would like to avoid paying a licensing fee.
 
-\subsection{FMOD.io}
+\subsubsection{FMOD.io}
 FMOD.io contains a large library of audio files created specifically for sound effects in video games. In order to access this library, our group would need to download FMOD Studio. In addition to any licensing fee, we would need to pay 99 cents for each audio file that we download. FMOD.io allows the user to preview every audio file before they purchase it, so we would be able to determine which audio files would be realistic enough for our video.
 
 FMOD.io organizes the audio files by categories based what genre the audio might be used for. This would help our group easily search for the audio files we need. Since this library was created for video game sound effects, we would be able to trigger the audio files to play at certain points in the video [6]. For example, we could script a trigger event so an audio file would play when the Saturn 5 begins to launch. Since FMOD Studio has a plug-in with Unity, we could also use FMOD.io if our group decides to use Unity to create our video.
 
-\subsection{Noise for Fun}
+\subsubsection{Noise for Fun}
 Noise for Fun is a website created by a sound designer and composer that contains a variety of free sound effects. The website organizes audio files by categories that help identify the genre of the sound. Tags are also used to help further describe each audio file. Users can also listen to each audio file before they download it, so we would be able to confirm if the audio file sounds realistic enough to use in our video.
 
 Noise for Fun is still in beta, so the utility of the site may not be as refined as other professional sites. One issue we may have with the site is finding realistic sound effects. The creator has stated that comical and fantasy sound effects are prioritized, so it may be hard to find audio files that depict a realistic "splash" sound during the splashdown in our video [7].
 
-\section{Conclusion}
+\subsection{Conclusion}
 To add captions to our video, our group will hard-code the transcriptions in OpenGL. While the Unity UI Text has significantly more freedom and options when adding text to a scene, our group is planning to create the Apollo 11 mission video in OpenGL. I believe that the Unity UI Text is more user-friendly and would require less scripting, but we do not plan to use Unity to create our video.
 
 For our audio management API, our group will use OpenAL. Unlike the other API's, OpenAL will be free for our group to use. OpenAL will also allow us to decrease and increase the volume of our audio files depending on the current viewpoint. The creators of OpenAL also claim that anyone who knows how to code with OpenGL will know how to code with OpenAL. This will be beneficial to our team since we have the most experience using OpenGL to create 3D graphics.
 
 In order to obtain the audio files that are not included in the NASA audio archive of the Apollo 11 mission, our group will use the files available at Noise for Fun. While I believe that FMOD.io would offer more realistic and better quality audio, it would be significantly more expensive to use it. With Noise for Fun, we would be able to  download all the necessary audio files for free. 
-\newpage
-\section{Citations}
+
+\subsection{Citations}
 [1] M. Kilgard, \textit{10.1 glutBitmapCharacter}, 23-Feb-1996. [Online]. 
 \newline
 Available: https://www.opengl.org/resources/libraries/glut/spec3/node76.html. [Accessed: 02-Nov-2018].
@@ -712,7 +712,7 @@ Available: https://www.opengl.org/resources/libraries/glut/spec3/node76.html. [A
 
 [3] Openal.org. (2018). \textit{OpenAL: Cross Platform 3D Audio.} [online] Available at: https://www.openal.org/ [Accessed 2 Nov. 2018].
  
-[4] “irrKlang,” \textit{irrKlang - an audio library for C , C# and .NET and high level 3D and 2D sound engine.} [Online]. Available: https://www.ambiera.com/irrklang/index.html. [Accessed: 02-Nov-2018].
+[4] “irrKlang,” \textit{irrKlang - an audio library for C , C\# and .NET and high level 3D and 2D sound engine.} [Online]. Available: https://www.ambiera.com/irrklang/index.html. [Accessed: 02-Nov-2018].
 
 [5] \textit{FMOD Low Level API - An Overview.} [Online]. 
 \newline
@@ -721,8 +721,7 @@ Available: https://www.fmod.com/docs/api/content/generated/common/lowlevel\_intr
 [6] \textit{fmod.com}, 2018. [Online]. Available: https://www.fmod.com/. [Accessed: 02-Nov-2018].
 
 [7] F. Vicarelli, “Free Sound Effects for Download at NoiseForFun.com,” \textit{NoiseForFun.com}, 2012. [Online]. Available: https://www.noiseforfun.com/. [Accessed: 02-Nov-2018]
-\end{document}
-
+\clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1092,6 +1091,23 @@ Plans: We plan to meet tomorrow morning to work on finishing the final details o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Project documentation}
 
+This animation was written using OpenGL and can most easily be built using Microsoft Visual Studios. A user would be able to open our solution (.sln) file in Visual Studios and compile the program. The program should automatically find the best Windows SDK to use, but if not, we compiled using version 10.0.17134.0 in Visual Studios 2017. Also, the OpenGL solutions must be built on a Win32 platform. As long as these settings are chosen correctly, a user should be able to debug and build the project. 
+
+Once built, the program will run automatically, but will also output an executable file at "ProjectCode/Debug/Apollo11.exe" that can be ran without building again. Please note that depending on the machine this is being ran on, it can take a few minutes to load all the assets before the animation will start. Once the animation has loaded, the user will see usable keybindings on the screen, but here is a complete list: 
+\begin{itemize}
+\item Left-click and drag - Move scene
+\item 0-9 - Change views 
+\item E, W, Z - Additional views
+\item F - Toggle flight path
+\item L - Toggle lighting
+\item M - Toggle text
+\item Q - Quit animation
+\item R - Toggle repeat animation
+\item S - Toggle star map
+\item +/- or scroll wheel - Zoom in/out
+\end{itemize}
+
+%'Project flow' here:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
